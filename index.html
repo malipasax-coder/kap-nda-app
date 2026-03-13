@@ -3,11 +3,18 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-    <title>Kapında V11 - Ultimate Full System</title>
+    <title>Kapında V12 - Ultimate Full System</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;800;900&display=swap');
-        :root { --primary: #4f46e5; --secondary: #0f172a; --bg-color: #f1f5f9; --card-bg: #ffffff; --text-main: #1e293b; --text-muted: #64748b; --danger: #ef4444; --success: #10b981; --warning: #f59e0b; --border: #e2e8f0; --glass: rgba(255, 255, 255, 0.85); }
+        
+        :root { 
+            --primary: #4f46e5; --secondary: #0f172a; --bg-color: #f1f5f9; 
+            --card-bg: #ffffff; --text-main: #1e293b; --text-muted: #64748b; 
+            --danger: #ef4444; --success: #10b981; --warning: #f59e0b; 
+            --border: #e2e8f0; --glass: rgba(255, 255, 255, 0.85); 
+        }
+
         body { font-family: 'Plus Jakarta Sans', sans-serif; background: #333; margin: 0; display: flex; justify-content: center; height: 100vh; overflow: hidden; }
         .app-shell { width: 100%; max-width: 414px; height: 100vh; background: var(--bg-color); position: relative; overflow: hidden; display: flex; flex-direction: column; box-shadow: 0 0 50px rgba(0,0,0,0.5); }
         
@@ -17,9 +24,10 @@
         .cart-badge { position: absolute; top: -5px; right: -5px; background: var(--danger); color: white; font-size: 10px; width: 18px; height: 18px; border-radius: 50%; display: flex; justify-content: center; align-items: center; font-weight: bold; border: 2px solid var(--card-bg); }
 
         .view-container { flex: 1; position: relative; overflow: hidden; background: var(--bg-color); }
-        .view { position: absolute; top: 0; left: 0; width: 100%; height: 100%; overflow-y: auto; padding: 20px; padding-bottom: 100px; box-sizing: border-box; transition: transform 0.35s cubic-bezier(0.25, 1, 0.5, 1), opacity 0.35s ease; transform: translateX(100%); opacity: 0; pointer-events: none; }
-        .view.active { transform: translateX(0); opacity: 1; pointer-events: all; }
-        .view.prev { transform: translateX(-30%); opacity: 0; } 
+        /* Kasmayı önleyen donanım hızlandırması (translateZ) eklendi */
+        .view { position: absolute; top: 0; left: 0; width: 100%; height: 100%; overflow-y: auto; padding: 20px; padding-bottom: 100px; box-sizing: border-box; transition: transform 0.35s cubic-bezier(0.25, 1, 0.5, 1), opacity 0.35s ease; transform: translateX(100%) translateZ(0); opacity: 0; pointer-events: none; }
+        .view.active { transform: translateX(0) translateZ(0); opacity: 1; pointer-events: all; }
+        .view.prev { transform: translateX(-30%) translateZ(0); opacity: 0; } 
 
         .dashboard-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 15px; margin-top: 15px; }
         .module-card { background: var(--card-bg); border-radius: 20px; padding: 20px 15px; text-align: center; border: 1px solid var(--border); box-shadow: 0 10px 25px rgba(0,0,0,0.02); cursor: pointer; transition: 0.2s; }
@@ -35,17 +43,19 @@
 
         .input-group { margin-bottom: 15px; text-align: left; }
         .input-group label { display: block; font-size: 11px; font-weight: 800; color: var(--text-muted); margin-bottom: 6px; text-transform: uppercase;}
-        .input-group input, .input-group select { width: 100%; padding: 14px; border: 2px solid var(--bg-color); border-radius: 12px; font-size: 14px; background: var(--bg-color); color: var(--text-main); font-family: inherit; font-weight: 600; outline: none; transition: 0.2s;}
-        
-        button { border: none; padding: 15px; border-radius: 14px; font-weight: 800; font-size: 14px; cursor: pointer; transition: 0.2s; width: 100%; display: flex; justify-content: center; align-items: center; gap: 8px; font-family: inherit; }
+        .input-group input, .input-group select { width: 100%; padding: 14px; border: 2px solid var(--border); border-radius: 12px; font-size: 14px; background: var(--bg-color); color: var(--text-main); font-family: inherit; font-weight: 600; outline: none; transition: 0.2s; box-sizing: border-box;}
+        .input-group input:focus { border-color: var(--primary); background: var(--card-bg); }
+
+        button { border: none; padding: 15px; border-radius: 14px; font-weight: 800; font-size: 14px; cursor: pointer; transition: 0.2s; width: 100%; display: flex; justify-content: center; align-items: center; gap: 8px; font-family: inherit; box-sizing: border-box;}
         button:active { transform: scale(0.97); }
         .btn-primary { background: var(--primary); color: white; }
         .btn-success { background: var(--success); color: white; }
         .btn-danger { background: var(--danger); color: white; }
         .btn-outline { background: transparent; border: 2px solid var(--primary); color: var(--primary); }
 
-        .crm-item { display: flex; justify-content: space-between; align-items: center; padding: 15px; background: var(--bg-color); border-radius: 16px; margin-bottom: 10px; cursor: pointer; border: 1px solid transparent; }
-        .crm-avatar { width: 40px; height: 40px; border-radius: 12px; background: var(--card-bg); display: flex; justify-content: center; align-items: center; font-size: 18px; color: var(--primary); font-weight: 800; border: 1px solid var(--border); }
+        .crm-item { display: flex; justify-content: space-between; align-items: center; padding: 15px; background: var(--card-bg); border-radius: 16px; margin-bottom: 10px; cursor: pointer; border: 1px solid var(--border); transition: 0.2s;}
+        .crm-item:active { transform: scale(0.98); border-color: var(--primary); }
+        .crm-avatar { width: 40px; height: 40px; border-radius: 12px; background: var(--bg-color); display: flex; justify-content: center; align-items: center; font-size: 18px; color: var(--primary); font-weight: 800; border: 1px solid var(--border); }
 
         .bottom-nav { position: absolute; bottom: 0; width: 100%; background: var(--glass); backdrop-filter: blur(15px); -webkit-backdrop-filter: blur(15px); border-top: 1px solid rgba(255,255,255,0.5); display: flex; padding: 10px 10px 25px 10px; z-index: 30; box-sizing: border-box; }
         .nav-item { flex: 1; text-align: center; color: var(--text-muted); font-size: 10px; font-weight: 800; cursor: pointer; padding: 10px 0; border-radius: 16px; transition: 0.3s; display: none; }
@@ -66,7 +76,7 @@
         .bank-amount { font-size: 40px; font-weight: 900; color: var(--success); margin: 15px 0 5px 0; letter-spacing: -1px; }
         .bank-iban { font-family: monospace; font-size: 13px; background: var(--bg-color); padding: 12px; border-radius: 12px; border: 1px dashed var(--border); margin-top: 10px; font-weight: bold; word-break: break-all;}
         
-        #toast { position: absolute; top: 30px; left: 50%; transform: translateX(-50%) translateY(-20px); background: var(--secondary); color: white; padding: 14px 24px; border-radius: 30px; font-size: 13px; font-weight: 800; z-index: 1000; opacity: 0; transition: 0.3s; pointer-events: none;}
+        #toast { position: absolute; top: 30px; left: 50%; transform: translateX(-50%) translateY(-20px); background: var(--secondary); color: white; padding: 14px 24px; border-radius: 30px; font-size: 13px; font-weight: 800; z-index: 1000; opacity: 0; transition: 0.3s; pointer-events: none; text-align: center;}
         #toast.show { transform: translateX(-50%) translateY(0); opacity: 1; }
     </style>
 </head>
@@ -79,7 +89,7 @@
             <div class="bank-card">
                 <div style="position:absolute; top:20px; right:20px; width:30px; height:30px; background:var(--bg-color); border-radius:50%; display:flex; justify-content:center; align-items:center; cursor:pointer;" onclick="closePaymentModal()"><i class="fa-solid fa-xmark"></i></div>
                 <div style="width: 60px; height: 60px; background: #dcfce7; color: var(--success); border-radius: 20px; display: flex; justify-content: center; align-items: center; font-size: 24px; margin: 0 auto;"><i class="fa-solid fa-money-bill-transfer"></i></div>
-                <p style="color:var(--text-muted); font-size:12px; font-weight:800; margin:20px 0 0 0; text-transform:uppercase;">Ödenecek Tutar</p>
+                <p style="color:var(--text-muted); font-size:12px; font-weight:800; margin:20px 0 0 0;">ÖDENECEK TUTAR</p>
                 <div class="bank-amount" id="payAmount">0 ₺</div>
                 <div style="text-align: left; margin-top: 25px;">
                     <label style="font-size:10px; font-weight:800; color:var(--text-muted);">ALICI AD SOYAD</label>
@@ -120,11 +130,11 @@
             <div class="view active" id="authView" style="display:flex; flex-direction:column; justify-content:center;">
                 <div style="text-align:center; margin-bottom:30px;">
                     <div style="width: 80px; height: 80px; background: var(--primary); border-radius: 24px; color: white; display: flex; justify-content: center; align-items: center; font-size: 40px; margin: 0 auto 15px auto; transform: rotate(-10deg);"><i class="fa-solid fa-bolt"></i></div>
-                    <h1 style="margin:0; font-weight:800; font-size:28px;">Kapında V11</h1>
-                    <p style="color:var(--text-muted); font-weight:600;">Eksiksiz İşletim Sistemi</p>
+                    <h1 style="margin:0; font-weight:800; font-size:28px;">Kapında V12</h1>
+                    <p style="color:var(--text-muted); font-weight:600;">Eksiksiz & Kasmayan Sistem</p>
                 </div>
                 <div class="card" style="padding: 25px;">
-                    <p style="font-size:11px; text-align:center; color:var(--text-muted); margin-bottom:15px;">Admin (admin.com) | Temsilci (satici@mail.com) | Esnaf (esnaf@mail.com) | Şifre: 1</p>
+                    <p style="font-size:11px; text-align:center; color:var(--text-muted); margin-bottom:15px;">Admin (admin.com) | Temsilci (satici@mail.com) | Esnaf (esnaf@mail.com) | Müşteri (musteri@mail.com) - Şifre: 1</p>
                     <div class="input-group"><label>E-POSTA</label><input type="text" id="loginEmail" value="admin.com"></div>
                     <div class="input-group"><label>ŞİFRE</label><input type="password" id="loginPass" value="1"></div>
                     <button class="btn-primary" onclick="girisYap()" style="margin-top:20px;">GİRİŞ YAP</button>
@@ -134,6 +144,7 @@
             <div class="view" id="homeView">
                 <div class="card" style="background: linear-gradient(135deg, var(--primary), #818cf8); color:white; border:none;">
                     <h3 style="margin:0; color:white;">Vitrin Fırsatları</h3>
+                    <p style="margin:5px 0 0 0; font-size:12px; opacity:0.8;">Sisteme eklenen tüm ürünler burada.</p>
                 </div>
                 <h4 style="margin:20px 0 10px 0;">Popüler Ürünler</h4>
                 <div id="productGrid" style="display:grid; grid-template-columns: 1fr 1fr; gap:15px;"></div>
@@ -148,6 +159,25 @@
                 </div>
             </div>
 
+            <div class="view" id="kumbaraView">
+                <div class="card" style="background:var(--secondary); color:white; text-align:center; padding:30px 20px; border:none;">
+                    <i class="fa-solid fa-vault" style="font-size:40px; color:var(--warning); margin-bottom:15px;"></i>
+                    <p style="margin:0; font-size:12px; font-weight:800; opacity:0.8;">KUMBARA BAKİYEM (BLOKELİ)</p>
+                    <h1 style="margin:10px 0 0 0; font-size:42px; font-weight:900; color:var(--warning);" id="kumbaraBakiyeTutar">0 ₺</h1>
+                    <p style="margin:10px 0 0 0; font-size:11px; color:var(--success);">Haftalık Bonus Getirisi: %5</p>
+                </div>
+                <div class="card">
+                    <h4 style="margin:0 0 15px 0; color:var(--text-main);"><i class="fa-solid fa-lock" style="color:var(--primary);"></i> Ana Bakiyeden Kumbaraya Aktar</h4>
+                    <p style="font-size:12px; color:var(--text-muted); margin-top:-5px; margin-bottom:15px;">Mevcut cüzdanınızdaki parayı kumbaraya atarak faiz/bonus kazanabilirsiniz.</p>
+                    <p style="font-size:12px; font-weight:bold; margin-bottom:10px;">Ana Bakiye: <span id="kumbaraAnaBakiyeGosterim" style="color:var(--primary);">0 ₺</span></p>
+                    <div class="input-group">
+                        <label>Kumbaraya Atılacak Tutar (₺)</label>
+                        <input type="number" id="kumbaraYatirMiktar" placeholder="Örn: 1000">
+                    </div>
+                    <button class="btn-primary" onclick="kumbarayaParaAt()"><i class="fa-solid fa-arrow-down"></i> Kumbaraya Kilitle</button>
+                </div>
+            </div>
+
             <div class="view" id="walletView">
                 <div class="card" style="background:var(--secondary); color:white; text-align:center; padding:30px 20px; border:none;">
                     <p style="margin:0; font-size:12px; font-weight:800; opacity:0.8;">CÜZDAN BAKİYEM</p>
@@ -155,7 +185,7 @@
                 </div>
                 <div class="card">
                     <h4 style="margin:0 0 15px 0;"><i class="fa-solid fa-money-bill-transfer" style="color:var(--primary);"></i> Esnaftan Nakit Çek</h4>
-                    <div class="input-group"><label>Çekilecek Tutar (₺)</label><input type="number" id="cekimMiktari" placeholder="Örn: 500" style="text-align:center;"></div>
+                    <div class="input-group"><label>Çekilecek Tutar (₺)</label><input type="number" id="cekimMiktari" placeholder="Örn: 500" style="text-align:center; font-size:18px;"></div>
                     <button class="btn-primary" onclick="nakitKoduUret()">Tek Kullanımlık Kod Üret</button>
                     <div id="uretilenKodKutusu" style="font-family:monospace; font-size:32px; font-weight:900; letter-spacing:5px; color:var(--primary); background:var(--bg-color); padding:20px; border-radius:16px; border:2px dashed var(--primary); margin:20px 0; text-align:center; display:none;">KPN-0000</div>
                     <p id="uretilenKodBilgi" style="display:none; font-size:11px; color:var(--success); text-align:center; font-weight:bold;">Bu kodu esnafa söyleyerek nakit alabilirsiniz.</p>
@@ -163,12 +193,20 @@
             </div>
 
             <div class="view" id="storeView">
-                <div class="stat-box" style="background: var(--primary); margin-bottom:15px;"><p>SİSTEMDEN ALACAĞIM</p><h3 id="esnafBakiye">0 ₺</h3></div>
+                <div class="stat-box" style="background: var(--primary); margin-bottom:15px; border-radius:20px;"><p>SİSTEMDEN ALACAĞIM</p><h3 id="esnafBakiye">0 ₺</h3></div>
+                
                 <div class="card" style="border:2px solid var(--success);">
-                    <h4 style="margin:0 0 15px 0; color:var(--success); text-align:center;"><i class="fa-solid fa-qrcode"></i> KOD İLE NAKİT VER</h4>
-                    <p style="font-size:12px; color:var(--text-muted); text-align:center;">Temsilcinin kodunu girin, tutar alacağınıza eklensin.</p>
+                    <h4 style="margin:0 0 15px 0; color:var(--success); text-align:center;"><i class="fa-solid fa-qrcode"></i> KOD BOZDURMA KASASI</h4>
+                    <p style="font-size:12px; color:var(--text-muted); text-align:center;">Temsilcinin kodunu girin, tutar sistem alacağınıza eklensin.</p>
                     <div class="input-group"><input type="text" id="bozdurulacakKod" placeholder="Örn: KPN-1234" style="font-size:20px; font-weight:900; letter-spacing:3px; text-transform:uppercase; text-align:center;"></div>
                     <button class="btn-success" onclick="koduBozdur()"><i class="fa-solid fa-check-double"></i> Kodu Onayla</button>
+                </div>
+
+                <div class="card">
+                    <h4 style="margin:0 0 15px 0; color:var(--primary);"><i class="fa-solid fa-box-open"></i> Vitrine Ürün Yükle</h4>
+                    <div class="input-group"><label>Ürün Adı</label><input type="text" id="esnafUrunAd"></div>
+                    <div class="input-group"><label>Fiyat (₺)</label><input type="number" id="esnafUrunFiyat"></div>
+                    <button class="btn-primary" onclick="esnafUrunEkle()">Sisteme Yükle</button>
                 </div>
             </div>
 
@@ -185,7 +223,7 @@
                 <div class="dashboard-grid">
                     <div class="module-card" onclick="switchView('crmView')"><div class="module-icon" style="background:#e0e7ff; color:#4f46e5;"><i class="fa-solid fa-users-gear"></i></div><h4>Kullanıcılar</h4></div>
                     <div class="module-card" onclick="switchView('financeView')"><div class="module-icon" style="background:#dcfce7; color:#10b981;"><i class="fa-solid fa-chart-pie"></i></div><h4>Finans Merkezi</h4></div>
-                    <div class="module-card" onclick="switchView('ecommerceView')"><div class="module-icon" style="background:#fef3c7; color:#f59e0b;"><i class="fa-solid fa-box-open"></i></div><h4>E-Ticaret</h4></div>
+                    <div class="module-card" onclick="switchView('ecommerceView')"><div class="module-icon" style="background:#fef3c7; color:#f59e0b;"><i class="fa-solid fa-box-open"></i></div><h4>Genel E-Ticaret</h4></div>
                     <div class="module-card" onclick="location.reload()"><div class="module-icon" style="background:#fee2e2; color:#ef4444;"><i class="fa-solid fa-power-off"></i></div><h4>Çıkış</h4></div>
                 </div>
             </div>
@@ -206,6 +244,13 @@
                     <p style="margin:0; font-size:11px; font-weight:800; color:var(--text-muted);">DAĞITILAN KOMİSYON</p>
                     <h3 style="margin:5px 0 0 0; font-size:24px; color:var(--primary);" id="finansKomisyon">0 ₺</h3>
                 </div>
+                
+                <h4 style="margin:25px 0 10px 0;"><i class="fa-solid fa-vault" style="color:var(--warning);"></i> Sistemdeki Kumbara Havuzu</h4>
+                <div class="card" style="text-align:center; background:var(--warning); color:white; border:none; margin-bottom:25px;">
+                    <p style="margin:0; font-size:11px; font-weight:bold;">ÜYELERİN BLOKEDEKİ TOPLAM PARASI</p>
+                    <h2 style="margin:5px 0 0 0; font-size:28px;" id="finansKumbaraHavuzu">0 ₺</h2>
+                </div>
+
                 <h4 style="margin:25px 0 10px 0;"><i class="fa-solid fa-store" style="color:var(--text-muted);"></i> Ödenecek Esnaf Alacakları</h4>
                 <div id="finansEsnafListesi"></div>
                 <h4 style="margin:25px 0 10px 0;"><i class="fa-solid fa-sitemap" style="color:var(--primary);"></i> Temsilci Hak Edişleri</h4>
@@ -213,179 +258,624 @@
             </div>
 
             <div class="view" id="ecommerceView">
-                <div style="display:flex; align-items:center; gap:15px; margin-bottom:20px;"><div class="header-action" onclick="switchView('adminView')"><i class="fa-solid fa-arrow-left"></i></div><h3 style="margin:0;">Ürün Yönetimi</h3></div>
+                <div style="display:flex; align-items:center; gap:15px; margin-bottom:20px;"><div class="header-action" onclick="switchView('adminView')"><i class="fa-solid fa-arrow-left"></i></div><h3 style="margin:0;">Genel Ürün Yönetimi</h3></div>
                 <div class="card">
-                    <h4 style="margin:0 0 15px 0; color:var(--primary);"><i class="fa-solid fa-plus-circle"></i> Yeni Ürün Ekle</h4>
-                    <div class="input-group"><label>Ürün Adı</label><input type="text" id="yeniUrunAd"></div>
-                    <div class="input-group"><label>Fiyat (₺)</label><input type="number" id="yeniUrunFiyat"></div>
+                    <h4 style="margin:0 0 15px 0; color:var(--primary);"><i class="fa-solid fa-plus-circle"></i> Sistem Adına Ürün Ekle</h4>
+                    <div class="input-group"><label>Ürün Adı</label><input type="text" id="adminYeniUrunAd"></div>
+                    <div class="input-group"><label>Fiyat (₺)</label><input type="number" id="adminYeniUrunFiyat"></div>
                     <button class="btn-primary" onclick="adminUrunEkle()">Sisteme Yükle</button>
                 </div>
-                <h4 style="margin:20px 0 10px 0;">Sistemdeki Ürünler</h4>
+                <h4 style="margin:20px 0 10px 0;">Sistemdeki Tüm Ürünler</h4>
                 <div id="adminUrunListesi"></div>
             </div>
         </div>
 
         <div class="bottom-nav" id="appNav">
             <div class="nav-item nav-all" id="nav-home" onclick="switchView('homeView'); navAktif(this);"><i class="fa-solid fa-layer-group"></i><span>Vitrin</span></div>
-            <div class="nav-item nav-seller" id="nav-wallet" onclick="switchView('walletView'); navAktif(this);"><i class="fa-solid fa-wallet"></i><span>Cüzdanım</span></div>
-            <div class="nav-item nav-store" id="nav-store" onclick="switchView('storeView'); navAktif(this);"><i class="fa-solid fa-store"></i><span>POS Kasa</span></div>
+            
+            <div class="nav-item nav-customer nav-seller" id="nav-kumbara" onclick="switchView('kumbaraView'); navAktif(this);"><i class="fa-solid fa-vault"></i><span>Kumbara</span></div>
+            
+            <div class="nav-item nav-seller" id="nav-wallet" onclick="switchView('walletView'); navAktif(this);"><i class="fa-solid fa-wallet"></i><span>Cüzdan</span></div>
+            <div class="nav-item nav-store" id="nav-store" onclick="switchView('storeView'); navAktif(this);"><i class="fa-solid fa-store"></i><span>Mağazam</span></div>
             <div class="nav-item nav-admin" id="nav-admin" onclick="switchView('adminView'); navAktif(this);"><i class="fa-solid fa-grip"></i><span>Yönetim</span></div>
-            <div class="nav-item nav-all" onclick="location.reload();"><i class="fa-solid fa-power-off" style="color:var(--danger);"></i><span style="color:var(--danger);">Çıkış</span></div>
+            <div class="nav-item nav-all" onclick="location.reload();"><i class="fa-solid fa-power-off" style="color:var(--danger);"></i><span>Çıkış</span></div>
         </div>
     </div>
 
     <script>
-        // 1. FULL DATABASE INITIALIZATION
+        // --- 1. VERİTABANI BAŞLATMA ---
         function initDB() {
             if (!localStorage.getItem('kapinda_users')) {
-                const users = {
-                    'admin.com': { rol: 'admin', isim: 'Hakan (Kurucu)', sifre: '1', bakiye: 0 },
-                    'esnaf@mail.com': { rol: 'store', isim: 'Arena Store', gercekAd: 'Umut Yılmaz', iban: 'TR12 3456 7890 1234 5678 9012 34', sifre: '1', bakiye: 0 },
-                    'satici@mail.com': { rol: 'seller', isim: 'Ali Temsilci', gercekAd: 'Ali Kaya', iban: 'TR99 0000 0000 0000 0000 0000 00', sifre: '1', bakiye: 1500 },
-                    'musteri@mail.com': { rol: 'customer', isim: 'Canan', sifre: '1', bakiye: 0, sponsor: 'satici@mail.com' }
+                const initialUsers = {
+                    'admin.com': { rol: 'admin', isim: 'Süper Admin', sifre: '1', bakiye: 0, kumbara: 0 },
+                    'esnaf@mail.com': { rol: 'store', isim: 'Arena Store', gercekAd: 'Umut Yılmaz', iban: 'TR12 3456 7890 1234 5678 9012 34', sifre: '1', bakiye: 0, kumbara: 0 },
+                    'satici@mail.com': { rol: 'seller', isim: 'Ali Temsilci', gercekAd: 'Ali Kaya', iban: 'TR99 0000 0000 0000 0000 0000 00', sifre: '1', bakiye: 1500, kumbara: 0 },
+                    'musteri@mail.com': { rol: 'customer', isim: 'Canan Müşteri', sifre: '1', bakiye: 500, kumbara: 0, sponsor: 'satici@mail.com' }
                 };
-                localStorage.setItem('kapinda_users', JSON.stringify(users));
-                localStorage.setItem('kapinda_products', JSON.stringify([
-                    {id:1, ad:'Arena Gaming Mouse', fiyat:1000, saticiMail:'esnaf@mail.com', resim:'https://images.unsplash.com/photo-1527443224154-c4a3942d3acf?w=300'},
-                    {id:2, ad:'Mekanik Klavye', fiyat:2000, saticiMail:'esnaf@mail.com', resim:'https://images.unsplash.com/photo-1595225476474-87563907a212?w=300'}
-                ]));
-                localStorage.setItem('kapinda_stats', JSON.stringify({ciro: 0, netKar: 0, toplamKomisyon: 0}));
+                localStorage.setItem('kapinda_users', JSON.stringify(initialUsers));
+                
+                const initialProducts = [
+                    {id: 1, ad: 'Arena Gaming Mouse', fiyat: 1000, saticiMail: 'esnaf@mail.com', resim: 'https://images.unsplash.com/photo-1527443224154-c4a3942d3acf?w=300'},
+                    {id: 2, ad: 'Mekanik Klavye', fiyat: 2000, saticiMail: 'esnaf@mail.com', resim: 'https://images.unsplash.com/photo-1595225476474-87563907a212?w=300'}
+                ];
+                localStorage.setItem('kapinda_products', JSON.stringify(initialProducts));
+                localStorage.setItem('kapinda_stats', JSON.stringify({ciro: 0, netKar: 0, toplamKomisyon: 0, kumbaraHavuzu: 0}));
                 localStorage.setItem('kapinda_codes', JSON.stringify({}));
             }
         }
+        
         initDB();
 
-        let aktifKullaniciEmail = null; let sepet = []; let currentView = 'authView';
-        function dbGet(k) { return JSON.parse(localStorage.getItem(k)); }
-        function dbSet(k, v) { localStorage.setItem(k, JSON.stringify(v)); }
+        // --- 2. GLOBAL DEĞİŞKENLER VE YARDIMCI FONKSİYONLAR ---
+        let aktifKullaniciEmail = null;
+        let sepet = [];
+        let currentView = 'authView';
 
-        function showToast(msg, isErr=false) {
-            const t = document.getElementById('toast'); 
-            t.innerHTML = isErr ? `<i class="fa-solid fa-triangle-exclamation"></i> ${msg}` : `<i class="fa-solid fa-check-circle"></i> ${msg}`;
-            t.style.background = isErr ? "var(--danger)" : "var(--secondary)";
-            t.classList.add('show'); setTimeout(() => t.classList.remove('show'), 3000);
+        function dbGet(key) {
+            return JSON.parse(localStorage.getItem(key));
         }
 
-        function switchView(target) {
-            if(target === currentView) return;
-            document.getElementById(currentView).classList.add('prev');
-            document.getElementById(target).classList.add('active');
-            document.querySelectorAll('.view').forEach(v => { if(v.id!==target && v.id!==currentView) {v.classList.remove('active'); v.classList.remove('prev');}});
-            currentView = target;
+        function dbSet(key, value) {
+            localStorage.setItem(key, JSON.stringify(value));
+        }
 
-            if(target === 'homeView') vitrinCiz();
-            if(target === 'adminView') dashboardCiz();
-            if(target === 'crmView') adminUyeleriCiz();
-            if(target === 'financeView') finansCiz();
-            if(target === 'ecommerceView') adminUrunCiz();
-            if(target === 'walletView') cüzdanCiz();
-            if(target === 'storeView') posCiz();
+        function showToast(message, isError = false) {
+            const toastEl = document.getElementById('toast'); 
+            toastEl.innerHTML = isError ? `<i class="fa-solid fa-triangle-exclamation"></i> ${message}` : `<i class="fa-solid fa-check-circle"></i> ${message}`;
+            toastEl.style.background = isError ? "var(--danger)" : "var(--success)";
             
-            document.getElementById('cartIconBox').style.display = (target === 'homeView' || target === 'cartView') ? 'flex' : 'none';
-        }
-        function navAktif(el) { document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active')); el.classList.add('active'); }
-
-        // AUTHENTICATION
-        function girisYap() {
-            const email = document.getElementById('loginEmail').value.trim(); const pass = document.getElementById('loginPass').value.trim();
-            const users = dbGet('kapinda_users');
-            if(users[email] && users[email].sifre === pass) {
-                aktifKullaniciEmail = email; const u = users[email];
-                document.getElementById('appHeader').style.display = 'flex'; document.getElementById('appNav').style.display = 'flex';
-                document.querySelectorAll('.nav-item').forEach(n => n.style.display = 'none'); document.querySelectorAll('.nav-all').forEach(n => n.style.display = 'block');
-                
-                let tar = 'homeView'; let nId = 'nav-home';
-                if(u.rol === 'admin') { document.getElementById('nav-admin').style.display = 'block'; document.getElementById('adminMailYazisi').innerText = u.isim; tar = 'adminView'; nId = 'nav-admin'; }
-                if(u.rol === 'seller') { document.getElementById('nav-wallet').style.display = 'block'; tar = 'walletView'; nId = 'nav-wallet'; }
-                if(u.rol === 'store') { document.getElementById('nav-store').style.display = 'block'; tar = 'storeView'; nId = 'nav-store'; }
-
-                switchView(tar); navAktif(document.getElementById(nId)); showToast(`Hoş Geldin, ${u.isim.split(' ')[0]}`);
-            } else { showToast("Hatalı Giriş!", true); }
+            toastEl.classList.add('show');
+            setTimeout(() => {
+                toastEl.classList.remove('show');
+            }, 3000);
         }
 
-        // CUSTOMER SHOPPING
-        function vitrinCiz() {
-            const p = dbGet('kapinda_products'); let h = '';
-            p.forEach(x => { h += `<div class="card" style="padding:0; overflow:hidden;"><div style="height:120px; background:url('${x.resim}') center/cover;"></div><div style="padding:15px;"><h4 style="margin:0;">${x.ad}</h4><p style="color:var(--primary); font-weight:900; font-size:18px; margin:8px 0;">${x.fiyat} ₺</p><button class="btn-primary" style="padding:10px; font-size:11px;" onclick="sepeteEkle('${x.ad}', ${x.fiyat})">Sepete Ekle</button></div></div>`; });
-            document.getElementById('productGrid').innerHTML = h;
-        }
-        function sepeteEkle(ad, f) {
-            sepet.push({ad, fiyat:f}); document.getElementById('cartCount').innerText = sepet.length; let h = ''; let t = 0;
-            sepet.forEach(x => { t += x.fiyat; h += `<div class="crm-item" style="cursor:default;"><b>${x.ad}</b><b style="color:var(--primary);">${x.fiyat} ₺</b></div>`; });
-            document.getElementById('cartItemsContainer').innerHTML = h; document.getElementById('cartTotal').innerText = t + " ₺"; showToast("Sepete Eklendi");
-        }
-        function odemeTamamla() {
-            if(sepet.length===0) return showToast("Sepet Boş", true);
-            let s = dbGet('kapinda_stats'); let u = dbGet('kapinda_users'); let alici = aktifKullaniciEmail;
-            sepet.forEach(x => {
-                s.ciro += x.fiyat;
-                u['esnaf@mail.com'].bakiye += (x.fiyat * 0.80); // Esnaf %80
-                let sponsor = u[alici].sponsor; let sKari = x.fiyat * 0.10;
-                if(sponsor && u[sponsor]) { u[sponsor].bakiye += (x.fiyat * 0.10); s.toplamKomisyon += (x.fiyat * 0.10); } else { sKari += (x.fiyat * 0.10); }
-                s.netKar += sKari;
+        // --- 3. EKRAN (VIEW) YÖNETİMİ ---
+        function switchView(targetId) {
+            if (targetId === currentView) return;
+            
+            const currentEl = document.getElementById(currentView);
+            const targetEl = document.getElementById(targetId);
+            
+            // Animasyonlar için sınıfları ayarla
+            document.querySelectorAll('.view').forEach(view => {
+                if (view.id !== targetId && view.id !== currentView) {
+                    view.classList.remove('active');
+                    view.classList.remove('prev');
+                }
             });
-            dbSet('kapinda_stats', s); dbSet('kapinda_users', u);
-            sepet=[]; document.getElementById('cartCount').innerText="0"; document.getElementById('cartItemsContainer').innerHTML=''; document.getElementById('cartTotal').innerText="0 ₺";
-            switchView('homeView'); showToast("Ödeme Onaylandı");
-        }
+            
+            currentEl.classList.add('prev');
+            currentEl.classList.remove('active');
+            
+            targetEl.classList.add('active');
+            targetEl.classList.remove('prev');
+            
+            currentView = targetId;
 
-        // WALLET & POS (MİKRO EKONOMİ)
-        function cüzdanCiz() { document.getElementById('temsilciBakiye').innerText = dbGet('kapinda_users')[aktifKullaniciEmail].bakiye.toLocaleString('tr-TR') + " ₺"; document.getElementById('uretilenKodKutusu').style.display='none'; document.getElementById('uretilenKodBilgi').style.display='none';}
-        function nakitKoduUret() {
-            let m = parseInt(document.getElementById('cekimMiktari').value); let u = dbGet('kapinda_users')[aktifKullaniciEmail];
-            if(!m || m<=0) return showToast("Geçerli miktar girin", true); if(m>u.bakiye) return showToast("Bakiye yetersiz!", true);
-            let k = "KPN-" + Math.floor(1000 + Math.random() * 9000); let c = dbGet('kapinda_codes');
-            c[k] = { miktar: m, sahip: aktifKullaniciEmail, durum: 'aktif' }; dbSet('kapinda_codes', c);
-            document.getElementById('uretilenKodKutusu').innerText = k; document.getElementById('uretilenKodKutusu').style.display='block'; document.getElementById('uretilenKodBilgi').style.display='block'; document.getElementById('cekimMiktari').value=''; showToast("Kod Üretildi");
-        }
-        function posCiz() { document.getElementById('esnafBakiye').innerText = dbGet('kapinda_users')[aktifKullaniciEmail].bakiye.toLocaleString('tr-TR') + " ₺"; }
-        function koduBozdur() {
-            let k = document.getElementById('bozdurulacakKod').value.trim().toUpperCase(); let c = dbGet('kapinda_codes'); let u = dbGet('kapinda_users');
-            if(c[k] && c[k].durum === 'aktif') {
-                u[c[k].sahip].bakiye -= c[k].miktar; u[aktifKullaniciEmail].bakiye += c[k].miktar; c[k].durum = 'kullanildi';
-                dbSet('kapinda_users', u); dbSet('kapinda_codes', c); document.getElementById('bozdurulacakKod').value=''; posCiz(); showToast("Kasa İşlemi Başarılı");
-            } else { showToast("Geçersiz Kod!", true); }
-        }
-
-        // ADMIN CRM & FINANS (TAM SÜRÜM)
-        function dashboardCiz() { const s = dbGet('kapinda_stats'); document.getElementById('dashCiro').innerText = s.ciro+" ₺"; document.getElementById('dashKar').innerText = s.netKar+" ₺"; }
-        function adminUyeleriCiz(f='') {
-            const u = dbGet('kapinda_users'); let h = '';
-            for(let e in u) { if(e.includes(f)||u[e].isim.toLowerCase().includes(f.toLowerCase())) h += `<div class="crm-item" onclick="openSheet('${e}')"><div style="display:flex; gap:10px; align-items:center;"><div class="crm-avatar">${u[e].isim.charAt(0)}</div><div><h4 style="margin:0;">${u[e].isim} <span style="font-size:9px;">[${u[e].rol}]</span></h4><p style="margin:0; font-size:10px;">${e}</p></div></div><b style="color:var(--success);">${u[e].bakiye} ₺</b></div>`; }
-            document.getElementById('adminUyeListesi').innerHTML = h;
-        }
-        function openSheet(e) { const u = dbGet('kapinda_users')[e]; document.getElementById('editEmail').value=e; document.getElementById('editName').value=u.isim; document.getElementById('editBalance').value=u.bakiye; document.getElementById('editRole').value=u.rol; document.getElementById('editPass').value=u.sifre; document.getElementById('crmSheetOverlay').classList.add('active'); }
-        function closeSheet() { document.getElementById('crmSheetOverlay').classList.remove('active'); }
-        function adminUyeKaydet() { const e=document.getElementById('editEmail').value; const u=dbGet('kapinda_users'); u[e].isim=document.getElementById('editName').value; u[e].bakiye=parseFloat(document.getElementById('editBalance').value); u[e].rol=document.getElementById('editRole').value; u[e].sifre=document.getElementById('editPass').value; dbSet('kapinda_users', u); closeSheet(); adminUyeleriCiz(); dashboardCiz(); showToast("Güncellendi"); }
-
-        function finansCiz() {
-            const s = dbGet('kapinda_stats'); const u = dbGet('kapinda_users');
-            document.getElementById('finansToplamCiro').innerText=s.ciro+" ₺"; document.getElementById('finansNetKar').innerText=s.netKar+" ₺"; document.getElementById('finansKomisyon').innerText=s.toplamKomisyon+" ₺";
-            let eH = ''; let sH = '';
-            for(let e in u) {
-                if(u[e].rol==='store' && u[e].bakiye>0) eH += `<div class="crm-item" onclick="openPaymentModal('${e}')"><div><b style="display:block;">${u[e].isim}</b><span style="font-size:10px;">Ürün Satış</span></div><div style="text-align:right;"><b style="color:var(--danger); font-size:16px;">${u[e].bakiye} ₺</b><div style="font-size:10px; color:var(--primary);">ÖDE ></div></div></div>`;
-                if(u[e].rol==='seller' && u[e].bakiye>0) sH += `<div class="crm-item" onclick="openPaymentModal('${e}')"><div><b style="display:block;">${u[e].isim}</b><span style="font-size:10px;">Ağ Komisyonu</span></div><div style="text-align:right;"><b style="color:var(--warning); font-size:16px;">${u[e].bakiye} ₺</b><div style="font-size:10px; color:var(--primary);">ÖDE ></div></div></div>`;
+            // Ekran yüklendiğinde çalışması gereken fonksiyonlar
+            switch (targetId) {
+                case 'homeView': vitrinCiz(); break;
+                case 'adminView': dashboardCiz(); break;
+                case 'crmView': adminUyeleriCiz(); break;
+                case 'financeView': finansCiz(); break;
+                case 'ecommerceView': adminUrunCiz(); break;
+                case 'walletView': cüzdanCiz(); break;
+                case 'storeView': posCiz(); esnafUrunCiz(); break;
+                case 'kumbaraView': kumbaraCiz(); break;
             }
-            document.getElementById('finansEsnafListesi').innerHTML = eH || '<p style="text-align:center; font-size:12px; color:var(--text-muted);">Borç yok.</p>'; document.getElementById('finansSaticiListesi').innerHTML = sH || '<p style="text-align:center; font-size:12px; color:var(--text-muted);">Borç yok.</p>';
+            
+            // Header Başlıklarını Ayarla
+            const titles = {
+                'homeView': 'Kapında Vitrin',
+                'cartView': 'Sepetim',
+                'adminView': 'Yönetim Merkezi',
+                'crmView': 'Üye Yönetimi',
+                'financeView': 'Finans Merkezi',
+                'ecommerceView': 'Genel E-Ticaret',
+                'walletView': 'Temsilci Cüzdanı',
+                'storeView': 'Esnaf Kasası',
+                'kumbaraView': 'Dijital Kumbara'
+            };
+            
+            document.getElementById('headerTitle').innerText = titles[targetId] || 'Kapında';
+            
+            // Sepet ikonunu sadece vitrin ve sepette göster
+            document.getElementById('cartIconBox').style.display = (targetId === 'homeView' || targetId === 'cartView') ? 'flex' : 'none';
         }
-        function openPaymentModal(e) {
-            const u = dbGet('kapinda_users')[e]; document.getElementById('payEmail').value = e; document.getElementById('payAmount').innerText = u.bakiye+" ₺";
-            document.getElementById('payName').innerText = u.gercekAd ? u.gercekAd : u.isim; document.getElementById('payIban').innerText = u.iban ? u.iban : 'TR55 0000 0000 0000 0000 0000 00';
+
+        function navAktif(element) {
+            document.querySelectorAll('.nav-item').forEach(nav => nav.classList.remove('active'));
+            element.classList.add('active');
+        }
+
+        // --- 4. GİRİŞ SİSTEMİ (AUTH) ---
+        function girisYap() {
+            const email = document.getElementById('loginEmail').value.trim();
+            const pass = document.getElementById('loginPass').value.trim();
+            const users = dbGet('kapinda_users');
+            
+            if (users[email] && users[email].sifre === pass) {
+                aktifKullaniciEmail = email;
+                const user = users[email];
+                
+                document.getElementById('appHeader').style.display = 'flex';
+                document.getElementById('appNav').style.display = 'flex';
+                
+                // Önce tüm menüleri gizle
+                document.querySelectorAll('.nav-item').forEach(nav => nav.style.display = 'none');
+                
+                // Herkese açık olanları göster
+                document.querySelectorAll('.nav-all').forEach(nav => nav.style.display = 'block');
+                
+                // Role göre menüleri ve hedef ekranı belirle
+                let targetView = 'homeView';
+                let navId = 'nav-home';
+                
+                if (user.rol === 'admin') {
+                    document.getElementById('nav-admin').style.display = 'block';
+                    document.getElementById('adminMailYazisi').innerText = user.isim;
+                    targetView = 'adminView';
+                    navId = 'nav-admin';
+                }
+                
+                if (user.rol === 'seller') {
+                    document.getElementById('nav-wallet').style.display = 'block';
+                    document.getElementById('nav-kumbara').style.display = 'block';
+                    targetView = 'walletView';
+                    navId = 'nav-wallet';
+                }
+                
+                if (user.rol === 'store') {
+                    document.getElementById('nav-store').style.display = 'block';
+                    targetView = 'storeView';
+                    navId = 'nav-store';
+                }
+
+                if (user.rol === 'customer') {
+                    document.getElementById('nav-kumbara').style.display = 'block';
+                    targetView = 'homeView';
+                    navId = 'nav-home';
+                }
+
+                switchView(targetView);
+                navAktif(document.getElementById(navId));
+                showToast(`Hoş Geldin, ${user.isim.split(' ')[0]}`);
+                
+            } else {
+                showToast("Hatalı E-posta veya Şifre!", true);
+            }
+        }
+
+        // --- 5. KUMBARA (DİJİTAL KASA) SİSTEMİ ---
+        function kumbaraCiz() {
+            const user = dbGet('kapinda_users')[aktifKullaniciEmail];
+            
+            // Eğer kullanıcının veritabanında kumbara alanı yoksa oluştur (Eski veriler için)
+            if(user.kumbara === undefined) user.kumbara = 0;
+
+            document.getElementById('kumbaraBakiyeTutar').innerText = user.kumbara.toLocaleString('tr-TR') + " ₺";
+            document.getElementById('kumbaraAnaBakiyeGosterim').innerText = user.bakiye.toLocaleString('tr-TR') + " ₺";
+            document.getElementById('kumbaraYatirMiktar').value = '';
+        }
+
+        function kumbarayaParaAt() {
+            const miktar = parseInt(document.getElementById('kumbaraYatirMiktar').value);
+            const users = dbGet('kapinda_users');
+            const stats = dbGet('kapinda_stats');
+            const user = users[aktifKullaniciEmail];
+
+            if(!user.kumbara) user.kumbara = 0;
+
+            if (!miktar || miktar <= 0) {
+                return showToast("Geçerli bir miktar girin.", true);
+            }
+
+            if (miktar > user.bakiye) {
+                return showToast("Ana bakiyeniz yetersiz!", true);
+            }
+
+            // Parayı aktar
+            user.bakiye -= miktar;
+            user.kumbara += miktar;
+            
+            // Havuza ekle
+            stats.kumbaraHavuzu += miktar;
+
+            dbSet('kapinda_users', users);
+            dbSet('kapinda_stats', stats);
+            
+            kumbaraCiz();
+            showToast(`${miktar} TL başarıyla kumbaraya kilitlendi!`);
+        }
+
+
+        // --- 6. MÜŞTERİ VİTRİN VE SEPET ---
+        function vitrinCiz() {
+            const products = dbGet('kapinda_products');
+            let html = '';
+            
+            products.forEach(product => {
+                let imageSrc = product.resim ? product.resim : 'https://images.unsplash.com/photo-1505740420928-5e560c06d30e?w=300';
+                
+                html += `
+                <div class="card" style="padding:0; overflow:hidden;">
+                    <div style="height:120px; background:url('${imageSrc}') center/cover;"></div>
+                    <div style="padding:15px;">
+                        <h4 style="margin:0;">${product.ad}</h4>
+                        <p style="color:var(--primary); font-weight:900; font-size:18px; margin:8px 0;">${product.fiyat} ₺</p>
+                        <button class="btn-primary" style="padding:10px; font-size:12px;" onclick="sepeteEkle('${product.ad}', ${product.fiyat}, '${product.saticiMail}')">Sepete Ekle</button>
+                    </div>
+                </div>`;
+            });
+            
+            document.getElementById('productGrid').innerHTML = html;
+        }
+
+        function sepeteEkle(ad, fiyat, saticiMail) {
+            sepet.push({ad: ad, fiyat: fiyat, saticiMail: saticiMail});
+            document.getElementById('cartCount').innerText = sepet.length;
+            
+            let html = '';
+            let total = 0;
+            
+            sepet.forEach(item => {
+                total += item.fiyat;
+                html += `
+                <div class="crm-item" style="cursor:default;">
+                    <b>${item.ad}</b>
+                    <b style="color:var(--primary);">${item.fiyat} ₺</b>
+                </div>`;
+            });
+            
+            document.getElementById('cartItemsContainer').innerHTML = html;
+            document.getElementById('cartTotal').innerText = total + " ₺";
+            showToast("Ürün sepete eklendi!");
+        }
+
+        function odemeTamamla() {
+            if (sepet.length === 0) return showToast("Sepetiniz boş!", true);
+            
+            let stats = dbGet('kapinda_stats');
+            let users = dbGet('kapinda_users');
+            let aliciMail = aktifKullaniciEmail;
+            
+            sepet.forEach(item => {
+                stats.ciro += item.fiyat;
+                
+                // %80 Esnafa Dağıtımı
+                let esnafPayi = item.fiyat * 0.80;
+                let saticiVarMi = item.saticiMail && users[item.saticiMail];
+                
+                if (saticiVarMi) {
+                    users[item.saticiMail].bakiye += esnafPayi;
+                } else {
+                    // Fallback (Ürünün satıcısı silinmişse varsayılan mağazaya at)
+                    users['esnaf@mail.com'].bakiye += esnafPayi;
+                }
+                
+                // %10 Temsilciye ve Admin Kârı
+                let sponsorMail = users[aliciMail].sponsor;
+                let sistemKari = item.fiyat * 0.10; // Sabit Admin payı
+                
+                if (sponsorMail && users[sponsorMail]) {
+                    let temsilciPayi = item.fiyat * 0.10;
+                    users[sponsorMail].bakiye += temsilciPayi;
+                    stats.toplamKomisyon += temsilciPayi;
+                } else {
+                    // Eğer müşterinin sponsoru yoksa, temsilci komisyonu da admine kalır
+                    sistemKari += (item.fiyat * 0.10);
+                }
+                
+                stats.netKar += sistemKari;
+            });
+            
+            dbSet('kapinda_stats', stats);
+            dbSet('kapinda_users', users);
+            
+            // Sepeti Temizle
+            sepet = [];
+            document.getElementById('cartCount').innerText = "0";
+            document.getElementById('cartItemsContainer').innerHTML = '';
+            document.getElementById('cartTotal').innerText = "0 ₺";
+            
+            switchView('homeView');
+            showToast("Ödeme Onaylandı ve Komisyonlar Dağıtıldı!");
+        }
+
+        // --- 7. CÜZDAN VE POS (MİKRO EKONOMİ) ---
+        function cüzdanCiz() {
+            const user = dbGet('kapinda_users')[aktifKullaniciEmail];
+            document.getElementById('temsilciBakiye').innerText = user.bakiye.toLocaleString('tr-TR') + " ₺";
+            
+            // Kutu alanlarını gizle (her girişte sıfırlanır)
+            document.getElementById('uretilenKodKutusu').style.display = 'none';
+            document.getElementById('uretilenKodBilgi').style.display = 'none';
+        }
+
+        function nakitKoduUret() {
+            const miktar = parseInt(document.getElementById('cekimMiktari').value);
+            const users = dbGet('kapinda_users');
+            const user = users[aktifKullaniciEmail];
+            
+            if (!miktar || miktar <= 0) return showToast("Lütfen geçerli bir tutar girin.", true);
+            if (miktar > user.bakiye) return showToast("Yetersiz bakiye!", true);
+            
+            // Kod Üret (KPN- + 4 Rakam)
+            const kod = "KPN-" + Math.floor(1000 + Math.random() * 9000);
+            
+            const codes = dbGet('kapinda_codes');
+            codes[kod] = { miktar: miktar, sahipMail: aktifKullaniciEmail, durum: 'aktif' };
+            dbSet('kapinda_codes', codes);
+            
+            // UI Güncelleme
+            document.getElementById('uretilenKodKutusu').innerText = kod;
+            document.getElementById('uretilenKodKutusu').style.display = 'block';
+            document.getElementById('uretilenKodBilgi').style.display = 'block';
+            document.getElementById('cekimMiktari').value = '';
+            
+            showToast("Nakit çekim kodu başarıyla üretildi!");
+        }
+
+        function posCiz() {
+            const user = dbGet('kapinda_users')[aktifKullaniciEmail];
+            document.getElementById('esnafBakiye').innerText = user.bakiye.toLocaleString('tr-TR') + " ₺";
+        }
+
+        function koduBozdur() {
+            const girilenKod = document.getElementById('bozdurulacakKod').value.trim().toUpperCase();
+            const codes = dbGet('kapinda_codes');
+            const users = dbGet('kapinda_users');
+            
+            if (!girilenKod) return showToast("Lütfen bir kod girin.", true);
+            
+            if (codes[girilenKod] && codes[girilenKod].durum === 'aktif') {
+                const islemMiktari = codes[girilenKod].miktar;
+                const kodSahibiMail = codes[girilenKod].sahipMail;
+                
+                // Parayı transfer et
+                users[kodSahibiMail].bakiye -= islemMiktari;
+                users[aktifKullaniciEmail].bakiye += islemMiktari;
+                
+                // Kodu kullanıldı olarak işaretle
+                codes[girilenKod].durum = 'kullanildi';
+                
+                dbSet('kapinda_users', users);
+                dbSet('kapinda_codes', codes);
+                
+                document.getElementById('bozdurulacakKod').value = '';
+                posCiz(); // Esnaf bakiyesini güncelle
+                
+                showToast(`İşlem Başarılı! Esnaf kasanıza ${islemMiktari} ₺ eklendi.`);
+            } else {
+                showToast("Geçersiz veya daha önce kullanılmış bir kod girdiniz!", true);
+            }
+        }
+
+        function esnafUrunEkle() {
+            const ad = document.getElementById('esnafUrunAd').value.trim();
+            const fiyat = parseInt(document.getElementById('esnafUrunFiyat').value);
+            
+            if (!ad || !fiyat) return showToast("Lütfen ürün adı ve fiyatı girin.", true);
+            
+            const products = dbGet('kapinda_products');
+            products.push({
+                id: Date.now(),
+                ad: ad,
+                fiyat: fiyat,
+                saticiMail: aktifKullaniciEmail,
+                resim: 'https://images.unsplash.com/photo-1505740420928-5e560c06d30e?w=300'
+            });
+            
+            dbSet('kapinda_products', products);
+            
+            document.getElementById('esnafUrunAd').value = '';
+            document.getElementById('esnafUrunFiyat').value = '';
+            
+            showToast("Ürününüz başarıyla vitrine eklendi!");
+        }
+
+        // --- 8. ADMIN DASHBOARD & CRM ---
+        function dashboardCiz() {
+            const stats = dbGet('kapinda_stats');
+            document.getElementById('dashCiro').innerText = stats.ciro.toLocaleString('tr-TR') + " ₺";
+            document.getElementById('dashKar').innerText = stats.netKar.toLocaleString('tr-TR') + " ₺";
+        }
+
+        function adminUyeleriCiz(filter = '') {
+            const users = dbGet('kapinda_users');
+            let html = '';
+            
+            for (let email in users) {
+                const user = users[email];
+                
+                if (email.toLowerCase().includes(filter.toLowerCase()) || user.isim.toLowerCase().includes(filter.toLowerCase())) {
+                    let basHarf = user.isim.charAt(0).toUpperCase();
+                    
+                    html += `
+                    <div class="crm-item" onclick="openSheet('${email}')">
+                        <div style="display:flex; gap:12px; align-items:center;">
+                            <div class="crm-avatar">${basHarf}</div>
+                            <div>
+                                <h4 style="margin:0; font-size:14px; color:var(--text-main);">${user.isim} <span style="font-size:9px; color:var(--primary);">[${user.rol}]</span></h4>
+                                <p style="margin:3px 0 0 0; font-size:11px; color:var(--text-muted);">${email}</p>
+                            </div>
+                        </div>
+                        <div style="text-align:right;">
+                            <b style="color:var(--success); font-size:16px;">${user.bakiye} ₺</b>
+                        </div>
+                    </div>`;
+                }
+            }
+            
+            document.getElementById('adminUyeListesi').innerHTML = html;
+        }
+
+        function openSheet(email) {
+            const user = dbGet('kapinda_users')[email];
+            document.getElementById('editEmail').value = email;
+            document.getElementById('editName').value = user.isim;
+            document.getElementById('editBalance').value = user.bakiye;
+            document.getElementById('editRole').value = user.rol;
+            document.getElementById('editPass').value = user.sifre;
+            
+            document.getElementById('crmSheetOverlay').classList.add('active');
+        }
+
+        function closeSheet() {
+            document.getElementById('crmSheetOverlay').classList.remove('active');
+        }
+        
+        function adminUyeKaydet() {
+            const email = document.getElementById('editEmail').value;
+            const users = dbGet('kapinda_users');
+            
+            users[email].isim = document.getElementById('editName').value;
+            users[email].bakiye = parseFloat(document.getElementById('editBalance').value);
+            users[email].rol = document.getElementById('editRole').value;
+            users[email].sifre = document.getElementById('editPass').value;
+            
+            dbSet('kapinda_users', users);
+            closeSheet();
+            adminUyeleriCiz();
+            dashboardCiz();
+            showToast("Kullanıcı bilgileri güncellendi.");
+        }
+
+        // --- 9. ADMIN FINANS VE BANKA ÖDEME ---
+        function finansCiz() {
+            const stats = dbGet('kapinda_stats');
+            const users = dbGet('kapinda_users');
+            
+            document.getElementById('finansToplamCiro').innerText = stats.ciro.toLocaleString('tr-TR') + " ₺";
+            document.getElementById('finansNetKar').innerText = stats.netKar.toLocaleString('tr-TR') + " ₺";
+            document.getElementById('finansKomisyon').innerText = stats.toplamKomisyon.toLocaleString('tr-TR') + " ₺";
+            
+            // Kumbara Havuzu Gösterimi
+            if(stats.kumbaraHavuzu === undefined) stats.kumbaraHavuzu = 0;
+            document.getElementById('finansKumbaraHavuzu').innerText = stats.kumbaraHavuzu.toLocaleString('tr-TR') + " ₺";
+            
+            let esnafHtml = '';
+            let saticiHtml = '';
+            
+            for (let email in users) {
+                let user = users[email];
+                
+                // Esnaf Borç Listesi
+                if (user.rol === 'store' && user.bakiye > 0) {
+                    esnafHtml += `
+                    <div class="crm-item" onclick="openPaymentModal('${email}')">
+                        <div>
+                            <b style="display:block; color:var(--text-main);">${user.isim}</b>
+                            <span style="font-size:11px; color:var(--text-muted);">Ürün Satış Hak Edişi</span>
+                        </div>
+                        <div style="text-align:right;">
+                            <b style="color:var(--danger); font-size:18px;">${user.bakiye} ₺</b>
+                            <div style="font-size:10px; font-weight:bold; color:var(--primary); margin-top:4px;">ÖDEME YAP <i class="fa-solid fa-chevron-right"></i></div>
+                        </div>
+                    </div>`;
+                }
+                
+                // Temsilci Borç Listesi
+                if (user.rol === 'seller' && user.bakiye > 0) {
+                    saticiHtml += `
+                    <div class="crm-item" onclick="openPaymentModal('${email}')">
+                        <div>
+                            <b style="display:block; color:var(--text-main);">${user.isim}</b>
+                            <span style="font-size:11px; color:var(--text-muted);">Ağ Komisyonu</span>
+                        </div>
+                        <div style="text-align:right;">
+                            <b style="color:var(--warning); font-size:18px;">${user.bakiye} ₺</b>
+                            <div style="font-size:10px; font-weight:bold; color:var(--primary); margin-top:4px;">ÖDEME YAP <i class="fa-solid fa-chevron-right"></i></div>
+                        </div>
+                    </div>`;
+                }
+            }
+            
+            document.getElementById('finansEsnafListesi').innerHTML = esnafHtml || '<p style="text-align:center; font-size:13px; color:var(--text-muted); font-weight:bold;">Ödenecek esnaf borcu bulunmuyor.</p>';
+            document.getElementById('finansSaticiListesi').innerHTML = saticiHtml || '<p style="text-align:center; font-size:13px; color:var(--text-muted); font-weight:bold;">Komisyon hak edişi bulunmuyor.</p>';
+        }
+
+        function openPaymentModal(email) {
+            const user = dbGet('kapinda_users')[email];
+            document.getElementById('payEmail').value = email;
+            document.getElementById('payAmount').innerText = user.bakiye.toLocaleString('tr-TR') + " ₺";
+            
+            document.getElementById('payName').innerText = user.gercekAd ? user.gercekAd : user.isim;
+            document.getElementById('payIban').innerText = user.iban ? user.iban : 'TR55 0000 0000 0000 0000 0000 00';
+            
             document.getElementById('paymentModal').classList.add('active');
         }
-        function closePaymentModal() { document.getElementById('paymentModal').classList.remove('active'); }
-        function processPayment() { const e = document.getElementById('payEmail').value; const u = dbGet('kapinda_users'); u[e].bakiye = 0; dbSet('kapinda_users', u); closePaymentModal(); setTimeout(()=>{finansCiz(); showToast("Banka Transferi Onaylandı");}, 300); }
 
+        function closePaymentModal() {
+            document.getElementById('paymentModal').classList.remove('active');
+        }
+
+        function processPayment() {
+            const email = document.getElementById('payEmail').value;
+            const users = dbGet('kapinda_users');
+            
+            users[email].bakiye = 0; // Borç ödendi, sıfırla
+            dbSet('kapinda_users', users);
+            
+            closePaymentModal();
+            
+            // Animasyon süresi (transition) bittikten sonra UI güncelle
+            setTimeout(() => {
+                finansCiz();
+                showToast("Banka Transferi Onaylandı ve Bakiye Sıfırlandı.");
+            }, 300);
+        }
+
+        // --- 10. ADMIN E-TİCARET ÜRÜN YÖNETİMİ ---
         function adminUrunCiz() {
-            const p = dbGet('kapinda_products'); let h = '';
-            p.forEach((x, i) => { h += `<div class="crm-item" style="cursor:default;"><div><h4 style="margin:0;">${x.ad}</h4><b style="color:var(--primary);">${x.fiyat} ₺</b></div><button class="btn-danger" style="width:auto; padding:8px 15px;" onclick="adminUrunSil(${i})"><i class="fa-solid fa-trash"></i></button></div>`; });
-            document.getElementById('adminUrunListesi').innerHTML = h || '<p style="text-align:center; font-size:12px;">Ürün Yok.</p>';
+            const products = dbGet('kapinda_products');
+            let html = '';
+            
+            products.forEach((product, index) => {
+                html += `
+                <div class="crm-item" style="cursor:default;">
+                    <div style="flex:1;">
+                        <h4 style="margin:0; color:var(--text-main);">${product.ad}</h4>
+                        <b style="color:var(--primary); font-size:16px;">${product.fiyat} ₺</b>
+                    </div>
+                    <button class="btn-danger" style="width:auto; padding:12px 18px; border-radius:12px;" onclick="adminUrunSil(${index})"><i class="fa-solid fa-trash"></i></button>
+                </div>`;
+            });
+            
+            document.getElementById('adminUrunListesi').innerHTML = html || '<p style="text-align:center; font-size:13px; color:var(--text-muted);">Sistemde hiç ürün bulunmuyor.</p>';
         }
+
         function adminUrunEkle() {
-            let ad = document.getElementById('yeniUrunAd').value; let f = parseInt(document.getElementById('yeniUrunFiyat').value);
-            if(!ad || !f) return showToast("Hata!", true); const p = dbGet('kapinda_products'); p.push({id:Date.now(), ad:ad, fiyat:f, resim:'https://images.unsplash.com/photo-1505740420928-5e560c06d30e?w=300'}); dbSet('kapinda_products', p); document.getElementById('yeniUrunAd').value=''; document.getElementById('yeniUrunFiyat').value=''; adminUrunCiz(); showToast("Eklendi");
+            const ad = document.getElementById('adminYeniUrunAd').value.trim();
+            const fiyat = parseInt(document.getElementById('adminYeniUrunFiyat').value);
+            
+            if (!ad || !fiyat) return showToast("Lütfen ürün adı ve fiyatı girin.", true);
+            
+            const products = dbGet('kapinda_products');
+            products.push({
+                id: Date.now(),
+                ad: ad,
+                fiyat: fiyat,
+                resim: 'https://images.unsplash.com/photo-1505740420928-5e560c06d30e?w=300' // Placeholder
+            });
+            
+            dbSet('kapinda_products', products);
+            
+            document.getElementById('adminYeniUrunAd').value = '';
+            document.getElementById('adminYeniUrunFiyat').value = '';
+            adminUrunCiz();
+            showToast("Ürün başarıyla eklendi.");
         }
-        function adminUrunSil(i) { const p = dbGet('kapinda_products'); p.splice(i,1); dbSet('kapinda_products', p); adminUrunCiz(); showToast("Silindi"); }
+
+        function adminUrunSil(index) {
+            const products = dbGet('kapinda_products');
+            products.splice(index, 1);
+            dbSet('kapinda_products', products);
+            adminUrunCiz();
+            showToast("Ürün sistemden silindi.");
+        }
+
     </script>
 </body>
 </html>
