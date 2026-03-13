@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-    <title>Kapında V15.2 - Stabilize Sürüm</title>
+    <title>Kapında V15.3 - The Masterpiece</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     
     <script src="https://www.gstatic.com/firebasejs/10.8.1/firebase-app-compat.js"></script>
@@ -64,7 +64,7 @@
         .btn-outline { background: transparent; border: 2px solid var(--primary); color: var(--primary); }
 
         .crm-item { display: flex; justify-content: space-between; align-items: center; padding: 15px; background: var(--card-bg); border-radius: 16px; margin-bottom: 10px; border: 1px solid var(--border); transition: 0.2s;}
-        .crm-avatar { width: 40px; height: 40px; border-radius: 12px; background: var(--bg-color); display: flex; justify-content: center; align-items: center; font-size: 18px; color: var(--primary); font-weight: 800; }
+        .crm-avatar { width: 40px; height: 40px; border-radius: 12px; background: var(--bg-color); display: flex; justify-content: center; align-items: center; font-size: 18px; color: var(--primary); font-weight: 800; border: 1px solid var(--border); }
 
         .bottom-nav { position: absolute; bottom: 0; width: 100%; background: var(--glass); backdrop-filter: blur(15px); border-top: 1px solid rgba(255,255,255,0.5); display: flex; padding: 10px 10px 25px 10px; z-index: 30; }
         .nav-item { flex: 1; text-align: center; color: var(--text-muted); font-size: 10px; font-weight: 800; cursor: pointer; padding: 10px 0; border-radius: 16px; transition: 0.3s; display: none; }
@@ -96,7 +96,7 @@
         #toast { position: absolute; top: 30px; left: 50%; transform: translateX(-50%) translateY(-20px); background: var(--success); color: white; padding: 14px 24px; border-radius: 30px; font-size: 13px; font-weight: 800; z-index: 1000; opacity: 0; transition: 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); pointer-events: none; text-align: center; width: max-content; max-width: 90%; box-shadow: 0 10px 30px rgba(0,0,0,0.3);}
         #toast.show { transform: translateX(-50%) translateY(0); opacity: 1; }
 
-        /* MOBİL UYUMLU NATIVE GRAFİK BARI (ÇÖKMEYİ ÖNLEYEN YENİ YAPI) */
+        /* MOBİL UYUMLU NATIVE GRAFİK BARI */
         .native-chart-container { width: 100%; height: 18px; background: var(--bg-color); border-radius: 10px; overflow: hidden; display: flex; margin-top: 10px; }
         .native-chart-bar { height: 100%; transition: width 1s ease-in-out; }
     </style>
@@ -107,8 +107,8 @@
         
         <div id="serverLoading">
             <div class="spinner"></div>
-            <h2 style="margin:0; font-weight:900;">KAPINDA V15.2</h2>
-            <p style="font-size:12px; opacity:0.7; margin-top:5px;">Sistem Stabilize Ediliyor...</p>
+            <h2 style="margin:0; font-weight:900;">KAPINDA V15.3</h2>
+            <p style="font-size:12px; opacity:0.7; margin-top:5px;">Sistem Tamamen Onarıldı...</p>
         </div>
 
         <div id="toast"><i class="fa-solid fa-cloud"></i> Bulut Senkronizasyonu Aktif</div>
@@ -172,8 +172,8 @@
             <div class="view active" id="authView" style="display:flex; flex-direction:column; justify-content:center;">
                 <div style="text-align:center; margin-bottom:30px;">
                     <div style="width: 80px; height: 80px; background: var(--primary); border-radius: 24px; color: white; display: flex; justify-content: center; align-items: center; font-size: 40px; margin: 0 auto 15px auto; transform: rotate(-10deg);"><i class="fa-solid fa-bolt"></i></div>
-                    <h1 style="margin:0; font-weight:800; font-size:28px;">Kapında V15.2</h1>
-                    <p style="color:var(--text-muted); font-weight:600;">Sıfır Hata, Yüksek Performans</p>
+                    <h1 style="margin:0; font-weight:800; font-size:28px;">Kapında V15.3</h1>
+                    <p style="color:var(--text-muted); font-weight:600;">The Masterpiece</p>
                 </div>
 
                 <div class="tabs" style="margin: 0 20px 15px 20px;">
@@ -230,13 +230,14 @@
                 </div>
                 
                 <div class="card" style="border:2px solid var(--success);">
-                    <h4 style="margin:0 0 10px 0; color:var(--success); text-align:center;"><i class="fa-solid fa-qrcode"></i> KOD BOZDURMA</h4>
+                    <h4 style="margin:0 0 10px 0; color:var(--success); text-align:center;"><i class="fa-solid fa-qrcode"></i> KOD BOZDURMA KASASI</h4>
+                    <p style="font-size:12px; color:var(--text-muted); text-align:center;">Temsilcinin kodunu girin, tutar sistem alacağınıza eklensin.</p>
                     <div class="input-group"><input type="text" id="bozdurulacakKod" placeholder="Örn: KPN-1234" style="font-size:20px; font-weight:900; letter-spacing:3px; text-align:center;"></div>
                     <button class="btn-success" onclick="koduBozdur()">Kodu Onayla</button>
                 </div>
 
                 <div class="card">
-                    <h4 style="margin:0 0 15px 0; color:var(--primary);"><i class="fa-solid fa-camera"></i> Ürün Yükle</h4>
+                    <h4 style="margin:0 0 15px 0; color:var(--primary);"><i class="fa-solid fa-camera"></i> Vitrine Ürün Yükle</h4>
                     <div class="input-group"><label>Ürün Adı</label><input type="text" id="esnafUrunAd"></div>
                     <div class="input-group"><label>Fiyat (₺)</label><input type="number" id="esnafUrunFiyat"></div>
                     <div class="input-group"><label>Kategori</label>
@@ -306,12 +307,12 @@
                 <h4 style="margin:20px 0 10px 0;"><i class="fa-solid fa-store" style="color:var(--text-muted);"></i> Esnaf Alacakları</h4>
                 <div id="finansEsnafListesi"></div>
                 
-                <h4 style="margin:25px 0 10px 0;"><i class="fa-solid fa-sitemap" style="color:var(--primary);"></i> Temsilci Hak Edişleri</h4>
+                <h4 style="margin:25px 0 10px 0;"><i class="fa-solid fa-sitemap" style="color:var(--primary);"></i> Temsilci Komisyon Hak Edişleri</h4>
                 <div id="finansSaticiListesi"></div>
             </div>
 
             <div class="view" id="ecommerceView">
-                <div style="display:flex; align-items:center; gap:15px; margin-bottom:20px;"><div class="header-action" onclick="switchView('adminView')"><i class="fa-solid fa-arrow-left"></i></div><h3 style="margin:0;">Sistem Ürünleri</h3></div>
+                <div style="display:flex; align-items:center; gap:15px; margin-bottom:20px;"><div class="header-action" onclick="switchView('adminView')"><i class="fa-solid fa-arrow-left"></i></div><h3 style="margin:0;">Genel E-Ticaret</h3></div>
                 <div class="card">
                     <h4 style="margin:0 0 15px 0; color:var(--primary);"><i class="fa-solid fa-plus-circle"></i> Sistem Adına Ürün Ekle</h4>
                     <div class="input-group"><label>Ürün Adı</label><input type="text" id="adminYeniUrunAd"></div>
@@ -330,7 +331,12 @@
                 <div id="adminUrunListesi"></div>
             </div>
 
-            <div class="view" id="crmView"><div style="display:flex; align-items:center; gap:15px; margin-bottom:20px;"><div class="header-action" onclick="switchView('adminView')"><i class="fa-solid fa-arrow-left"></i></div><h3 style="margin:0;">Üyeler</h3></div><div class="input-group"><input type="text" placeholder="Üye ara..." onkeyup="adminUyeleriCiz(this.value)"></div><div id="adminUyeListesi"></div></div>
+            <div class="view" id="crmView">
+                <div style="display:flex; align-items:center; gap:15px; margin-bottom:20px;"><div class="header-action" onclick="switchView('adminView')"><i class="fa-solid fa-arrow-left"></i></div><h3 style="margin:0;">Üyeler</h3></div>
+                <div class="input-group"><input type="text" placeholder="Üye ara..." onkeyup="adminUyeleriCiz(this.value)"></div>
+                <div id="adminUyeListesi"></div>
+            </div>
+
             <div class="view" id="ordersView"><h3 style="margin-bottom:20px;"><i class="fa-solid fa-box" style="color:var(--primary);"></i> Siparişlerim</h3><div id="musteriSiparisListesi"></div></div>
             <div class="view" id="storeOrdersView"><div class="stat-box" style="background: var(--warning); margin-bottom:15px; border-radius:20px;"><p style="color:#854d0e;">BEKLEYEN SİPARİŞ</p><h3 id="esnafBekleyenSiparisSayisi" style="color:#854d0e;">0</h3></div><div id="esnafSiparisListesi"></div></div>
             <div class="view" id="walletView"><div class="card" style="background:var(--secondary); color:white; text-align:center;"><p style="margin:0; font-size:12px; font-weight:800; opacity:0.8;">BAKİYEM</p><h1 style="margin:10px 0 0 0; font-size:36px; color:var(--success);" id="temsilciBakiye">0 ₺</h1></div><div class="card"><h4 style="margin:0 0 15px 0;">Nakit Çek</h4><div class="input-group"><input type="number" id="cekimMiktari" placeholder="Tutar"></div><button class="btn-primary" onclick="nakitKoduUret()">Kod Üret</button><div id="uretilenKodKutusu" style="font-family:monospace; font-size:32px; font-weight:900; letter-spacing:5px; color:var(--primary); background:var(--bg-color); padding:20px; border-radius:16px; border:2px dashed var(--primary); margin:20px 0; text-align:center; display:none;"></div></div></div>
@@ -353,18 +359,26 @@
 
     <script>
         const firebaseConfig = { apiKey: "AIzaSyBWSlha9fD_q3zHXaRJ3ocJdtALqkrW-LU", authDomain: "kapinda-8d3ef.firebaseapp.com", projectId: "kapinda-8d3ef", storageBucket: "kapinda-8d3ef.firebasestorage.app", messagingSenderId: "246456710881", appId: "1:246456710881:web:c2a7bdb5e3b9065d1829a0" };
-        firebase.initializeApp(firebaseConfig); const db = firebase.firestore();
+        firebase.initializeApp(firebaseConfig); 
+        const db = firebase.firestore();
 
         let appData = { users: {}, products: [], stats: {}, codes: {}, orders: [], plans: {} };
-        let aktifKullaniciEmail = null; let sepet = []; let currentView = 'authView'; let seciliKategori = 'Tümü'; 
-        let oldStats = null; let oldOrdersCount = 0; let oldBakiye = -1;
+        let aktifKullaniciEmail = null; 
+        let sepet = []; 
+        let currentView = 'authView'; 
+        let seciliKategori = 'Tümü'; 
+        let oldStats = null; 
+        let oldOrdersCount = 0; 
+        let oldBakiye = -1;
 
         window.onload = async () => {
             try {
                 const initCheck = await db.collection('kapinda').doc('stats').get();
                 if (!initCheck.exists) await setupFirebaseDatabase();
                 listenToCloud();
-            } catch (err) { document.getElementById('serverLoading').innerHTML = "<h3 style='color:red;'>Bağlantı Hatası</h3>"; }
+            } catch (err) { 
+                document.getElementById('serverLoading').innerHTML = "<h3 style='color:red;'>Bağlantı Hatası</h3>"; 
+            }
         };
 
         async function setupFirebaseDatabase() {
@@ -378,17 +392,22 @@
                 {id: 1, ad: 'Arena Mouse', fiyat: 1000, saticiMail: 'esnaf@mail.com', kategori: 'Elektronik', resim: 'https://images.unsplash.com/photo-1527443224154-c4a3942d3acf?w=300'}
             ]});
             await db.collection('kapinda').doc('plans').set({
-                free: { id: 'free', ad: 'Standart', fiyat: 0, oran: 0.05, desc: '%5 komisyon.' }, pro: { id: 'pro', ad: 'Pro', fiyat: 100, oran: 0.10, desc: '%10 komisyon.' }, elite: { id: 'elite', ad: 'Elite VIP', fiyat: 500, oran: 0.20, desc: '%20 komisyon.' }
+                free: { id: 'free', ad: 'Standart', fiyat: 0, oran: 0.05, desc: '%5 komisyon.' }, 
+                pro: { id: 'pro', ad: 'Pro', fiyat: 100, oran: 0.10, desc: '%10 komisyon.' }, 
+                elite: { id: 'elite', ad: 'Elite VIP', fiyat: 500, oran: 0.20, desc: '%20 komisyon.' }
             });
             await db.collection('kapinda').doc('stats').set({ ciro: 0, netKar: 0, toplamKomisyon: 0, abonelikGeliri: 0 });
-            await db.collection('kapinda').doc('orders').set({ list: [] }); await db.collection('kapinda').doc('codes').set({});
+            await db.collection('kapinda').doc('orders').set({ list: [] }); 
+            await db.collection('kapinda').doc('codes').set({});
         }
 
         function listenToCloud() {
             let isFirstLoad = true;
+            
             ['users', 'stats', 'codes', 'plans'].forEach(col => {
                 db.collection('kapinda').doc(col).onSnapshot(doc => { 
                     if(doc.exists) appData[col] = doc.data(); 
+                    
                     if(!isFirstLoad && col === 'users' && aktifKullaniciEmail && appData.users[aktifKullaniciEmail]) {
                         let yeniBakiye = appData.users[aktifKullaniciEmail].bakiye;
                         if(oldBakiye !== -1 && yeniBakiye > oldBakiye) showToast(`Cüzdanınıza para eklendi: +${yeniBakiye - oldBakiye} ₺`, false);
@@ -401,11 +420,14 @@
             ['products', 'orders'].forEach(col => {
                 db.collection('kapinda').doc(col).onSnapshot(doc => { 
                     if(doc.exists) appData[col] = doc.data().list || []; 
+                    
                     if(!isFirstLoad && col === 'orders' && aktifKullaniciEmail) {
                         let yeniSiparisSayisi = appData.orders.length;
                         if(yeniSiparisSayisi > oldOrdersCount) {
                             let sonSiparis = appData.orders[0];
-                            if(sonSiparis.esnafMail === aktifKullaniciEmail || aktifKullaniciEmail === 'admin.com') showToast(`🔔 Yeni Sipariş Geldi!`, false);
+                            if(sonSiparis.esnafMail === aktifKullaniciEmail || aktifKullaniciEmail === 'admin.com') {
+                                showToast(`🔔 Yeni Sipariş Geldi!`, false);
+                            }
                         }
                         oldOrdersCount = yeniSiparisSayisi;
                     }
@@ -417,148 +439,621 @@
                 document.getElementById('serverLoading').style.opacity = '0'; 
                 setTimeout(() => document.getElementById('serverLoading').style.display = 'none', 500); 
                 isFirstLoad = false;
+                
                 let savedUser = localStorage.getItem('kapinda_session');
-                if(savedUser && appData.users[savedUser]) { document.getElementById('loginEmail').value = savedUser; document.getElementById('loginPass').value = appData.users[savedUser].sifre; girisYap(true); }
+                if(savedUser && appData.users[savedUser]) { 
+                    document.getElementById('loginEmail').value = savedUser; 
+                    document.getElementById('loginPass').value = appData.users[savedUser].sifre; 
+                    girisYap(true); 
+                }
             }, 1000);
         }
 
         function dbGet(k) { return appData[k.replace('kapinda_', '')]; }
-        function dbSet(k, v) { let col = k.replace('kapinda_', ''); if(col==='products' || col==='orders') db.collection('kapinda').doc(col).set({ list: v }); else db.collection('kapinda').doc(col).set(v); }
-        function showToast(msg, isErr=false) { const t = document.getElementById('toast'); t.innerHTML = isErr ? `<i class="fa-solid fa-triangle-exclamation"></i> ${msg}` : `<i class="fa-solid fa-check-circle"></i> ${msg}`; t.style.background = isErr ? "var(--danger)" : "var(--success)"; t.classList.add('show'); setTimeout(() => t.classList.remove('show'), 3000); }
-        function authTab(tab) { document.querySelectorAll('#authView .tab').forEach(t=>t.classList.remove('active')); document.getElementById('tab'+tab.charAt(0).toUpperCase()+tab.slice(1)).classList.add('active'); document.getElementById('loginForm').style.display = tab==='login'?'block':'none'; document.getElementById('registerForm').style.display = tab==='register'?'block':'none'; }
-
-        function girisYap(isAuto = false) {
-            const email = document.getElementById('loginEmail').value.trim(); const pass = document.getElementById('loginPass').value.trim(); const users = dbGet('kapinda_users');
-            if (users[email] && users[email].sifre === pass) {
-                aktifKullaniciEmail = email; const u = users[email]; oldBakiye = u.bakiye; oldOrdersCount = appData.orders.length; 
-                localStorage.setItem('kapinda_session', email);
-                document.getElementById('appHeader').style.display = 'flex'; document.getElementById('appNav').style.display = 'flex';
-                document.querySelectorAll('.nav-item').forEach(nav => nav.style.display = 'none'); document.querySelectorAll('.nav-all').forEach(nav => nav.style.display = 'block');
-                
-                let tar = 'homeView'; let nId = 'nav-home';
-                if(u.rol === 'admin') { document.getElementById('nav-admin').style.display = 'block'; document.getElementById('adminMailYazisi').innerText = u.isim; tar = 'adminView'; nId = 'nav-admin'; }
-                else if(u.rol === 'seller') { document.querySelectorAll('.nav-seller').forEach(n=>n.style.display='block'); tar = 'networkView'; nId = 'nav-network'; }
-                else if(u.rol === 'store') { document.querySelectorAll('.nav-store').forEach(n=>n.style.display='block'); tar = 'storeOrdersView'; nId = 'nav-storeOrders'; }
-                else { document.querySelectorAll('.nav-customer').forEach(n=>n.style.display='block'); }
-                
-                switchView(tar); navAktif(document.getElementById(nId)); 
-                if(!isAuto) showToast(`Hoş Geldin, ${u.isim}`);
-            } else { if(!isAuto) showToast("Hatalı Giriş!", true); }
+        
+        function dbSet(k, v) { 
+            let col = k.replace('kapinda_', ''); 
+            if(col==='products' || col==='orders') {
+                db.collection('kapinda').doc(col).set({ list: v }); 
+            } else {
+                db.collection('kapinda').doc(col).set(v); 
+            }
+        }
+        
+        function showToast(msg, isErr=false) { 
+            const t = document.getElementById('toast'); 
+            t.innerHTML = isErr ? `<i class="fa-solid fa-triangle-exclamation"></i> ${msg}` : `<i class="fa-solid fa-check-circle"></i> ${msg}`; 
+            t.style.background = isErr ? "var(--danger)" : "var(--success)"; 
+            t.classList.add('show'); 
+            setTimeout(() => t.classList.remove('show'), 3000); 
         }
 
-        function sistemdenCikis() { localStorage.removeItem('kapinda_session'); location.reload(); }
+        function authTab(tab) { 
+            document.querySelectorAll('#authView .tab').forEach(t=>t.classList.remove('active')); 
+            document.getElementById('tab'+tab.charAt(0).toUpperCase()+tab.slice(1)).classList.add('active'); 
+            document.getElementById('loginForm').style.display = tab==='login'?'block':'none'; 
+            document.getElementById('registerForm').style.display = tab==='register'?'block':'none'; 
+        }
+
+        function girisYap(isAuto = false) {
+            const email = document.getElementById('loginEmail').value.trim(); 
+            const pass = document.getElementById('loginPass').value.trim(); 
+            const users = dbGet('kapinda_users');
+            
+            if (users[email] && users[email].sifre === pass) {
+                aktifKullaniciEmail = email; 
+                const u = users[email]; 
+                oldBakiye = u.bakiye; 
+                oldOrdersCount = appData.orders.length; 
+                
+                localStorage.setItem('kapinda_session', email);
+                
+                document.getElementById('appHeader').style.display = 'flex'; 
+                document.getElementById('appNav').style.display = 'flex';
+                document.querySelectorAll('.nav-item').forEach(nav => nav.style.display = 'none'); 
+                document.querySelectorAll('.nav-all').forEach(nav => nav.style.display = 'block');
+                
+                let tar = 'homeView'; 
+                let nId = 'nav-home';
+                
+                if(u.rol === 'admin') { 
+                    document.getElementById('nav-admin').style.display = 'block'; 
+                    document.getElementById('adminMailYazisi').innerText = u.isim; 
+                    tar = 'adminView'; nId = 'nav-admin'; 
+                }
+                else if(u.rol === 'seller') { 
+                    document.querySelectorAll('.nav-seller').forEach(n=>n.style.display='block'); 
+                    tar = 'networkView'; nId = 'nav-network'; 
+                }
+                else if(u.rol === 'store') { 
+                    document.querySelectorAll('.nav-store').forEach(n=>n.style.display='block'); 
+                    tar = 'storeOrdersView'; nId = 'nav-storeOrders'; 
+                }
+                else { 
+                    document.querySelectorAll('.nav-customer').forEach(n=>n.style.display='block'); 
+                }
+                
+                switchView(tar); 
+                navAktif(document.getElementById(nId)); 
+                
+                if(!isAuto) showToast(`Hoş Geldin, ${u.isim.split(' ')[0]}`);
+            } else { 
+                if(!isAuto) showToast("Hatalı Giriş!", true); 
+            }
+        }
+
+        function sistemdenCikis() { 
+            localStorage.removeItem('kapinda_session'); 
+            location.reload(); 
+        }
 
         function switchView(tId) {
             if(tId === currentView) return;
-            document.getElementById(currentView).classList.add('prev'); document.getElementById(tId).classList.add('active');
-            document.querySelectorAll('.view').forEach(v => { if(v.id!==tId && v.id!==currentView) {v.classList.remove('active'); v.classList.remove('prev');}});
-            currentView = tId; reRenderCurrentView();
+            document.getElementById(currentView).classList.add('prev'); 
+            document.getElementById(tId).classList.add('active');
+            
+            document.querySelectorAll('.view').forEach(v => { 
+                if(v.id!==tId && v.id!==currentView) {
+                    v.classList.remove('active'); 
+                    v.classList.remove('prev');
+                }
+            });
+            currentView = tId; 
+            reRenderCurrentView();
             document.getElementById('cartIconBox').style.display = (tId==='homeView' || tId==='cartView') ? 'flex' : 'none';
         }
-        function navAktif(el) { document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active')); el.classList.add('active'); }
 
-        function reRenderCurrentView() {
-            if(currentView==='homeView') vitrinCiz(); if(currentView==='adminView') dashboardCiz(); if(currentView==='financeView') finansCiz();
-            if(currentView==='crmView') adminUyeleriCiz(); if(currentView==='ecommerceView') adminUrunCiz();
-            if(currentView==='storeOrdersView') esnafSiparisCiz(); if(currentView==='ordersView') musteriSiparisCiz();
-            if(currentView==='walletView') cüzdanCiz(); if(currentView==='storeView') posCiz(); if(currentView==='networkView') networkCiz(); if(currentView==='subscriptionView') abonelikCiz();
+        function navAktif(el) { 
+            document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active')); 
+            el.classList.add('active'); 
         }
 
-        function kategoriSec(el, kat) { document.querySelectorAll('.cat-chip').forEach(c => c.classList.remove('active')); el.classList.add('active'); seciliKategori = kat; vitrinCiz(); }
-        function resimCevir(input, target) { let file = input.files[0]; if(file) { if(file.size > 1048576) { showToast("1MB altı resim seçin.", true); input.value = ''; return; } let reader = new FileReader(); reader.onloadend = function() { document.getElementById(target).value = reader.result; }; reader.readAsDataURL(file); } }
+        function reRenderCurrentView() {
+            if(currentView==='homeView') vitrinCiz(); 
+            if(currentView==='adminView') dashboardCiz(); 
+            if(currentView==='financeView') finansCiz();
+            if(currentView==='crmView') adminUyeleriCiz(); 
+            if(currentView==='ecommerceView') adminUrunCiz();
+            if(currentView==='storeOrdersView') esnafSiparisCiz(); 
+            if(currentView==='ordersView') musteriSiparisCiz();
+            if(currentView==='walletView') cüzdanCiz(); 
+            if(currentView==='storeView') posCiz(); 
+            if(currentView==='networkView') networkCiz(); 
+            if(currentView==='subscriptionView') abonelikCiz();
+        }
 
+        function kategoriSec(el, kat) { 
+            document.querySelectorAll('.cat-chip').forEach(c => c.classList.remove('active')); 
+            el.classList.add('active'); 
+            seciliKategori = kat; 
+            vitrinCiz(); 
+        }
+
+        function resimCevir(input, target) { 
+            let file = input.files[0]; 
+            if(file) { 
+                if(file.size > 1048576) { 
+                    showToast("1MB altı resim seçin.", true); 
+                    input.value = ''; return; 
+                } 
+                let reader = new FileReader(); 
+                reader.onloadend = function() { document.getElementById(target).value = reader.result; }; 
+                reader.readAsDataURL(file); 
+            } 
+        }
+
+        // --- VİTRİN VE E-TİCARET ---
         function vitrinCiz() {
-            const p = dbGet('kapinda_products'); const arama = document.getElementById('aramaKutusu').value.toLowerCase(); let h = '';
-            p.forEach(x => { 
-                let m = true; if(seciliKategori !== 'Tümü' && x.kategori !== seciliKategori) m = false; if(arama && !x.ad.toLowerCase().includes(arama)) m = false;
-                if(m) { let r = x.resim || 'https://images.unsplash.com/photo-1505740420928-5e560c06d30e?w=300'; h += `<div class="card" style="padding:0; overflow:hidden;"><div style="height:120px; background:url('${r}') center/cover;"></div><div style="padding:15px;"><h4 style="margin:0; font-size:13px;">${x.ad}</h4><p style="color:var(--primary); font-weight:900; font-size:18px; margin:8px 0;">${x.fiyat} ₺</p><button class="btn-primary" style="padding:10px; font-size:11px;" onclick="sepeteEkle('${x.ad}', ${x.fiyat}, '${x.saticiMail}')">Sepete Ekle</button></div></div>`; }
-            }); document.getElementById('productGrid').innerHTML = h || '<p style="grid-column: span 2; text-align:center;">Ürün bulunamadı.</p>';
+            const products = dbGet('kapinda_products'); 
+            const arama = document.getElementById('aramaKutusu').value.toLowerCase(); 
+            let html = '';
+            
+            products.forEach(p => { 
+                let match = true; 
+                if(seciliKategori !== 'Tümü' && p.kategori !== seciliKategori) match = false; 
+                if(arama && !p.ad.toLowerCase().includes(arama)) match = false;
+                
+                if(match) { 
+                    let r = p.resim || 'https://images.unsplash.com/photo-1505740420928-5e560c06d30e?w=300'; 
+                    html += `
+                    <div class="card" style="padding:0; overflow:hidden;">
+                        <div style="height:120px; background:url('${r}') center/cover;"></div>
+                        <div style="padding:15px;">
+                            <h4 style="margin:0; font-size:13px;">${p.ad}</h4>
+                            <p style="color:var(--primary); font-weight:900; font-size:18px; margin:8px 0;">${p.fiyat} ₺</p>
+                            <button class="btn-primary" style="padding:10px; font-size:11px;" onclick="sepeteEkle('${p.ad}', ${p.fiyat}, '${p.saticiMail}')">Sepete Ekle</button>
+                        </div>
+                    </div>`; 
+                }
+            }); 
+            document.getElementById('productGrid').innerHTML = html || '<p style="grid-column: span 2; text-align:center;">Ürün bulunamadı.</p>';
         }
 
         function esnafUrunEkle() {
-            const ad = document.getElementById('esnafUrunAd').value.trim(); const f = parseInt(document.getElementById('esnafUrunFiyat').value); const kat = document.getElementById('esnafUrunKategori').value; const r = document.getElementById('esnafResimBase64').value;
-            if(!ad || !f) return showToast("Hata", true); const p = dbGet('kapinda_products'); p.push({id:Date.now(), ad:ad, fiyat:f, saticiMail:aktifKullaniciEmail, kategori: kat, resim: r || 'https://images.unsplash.com/photo-1505740420928-5e560c06d30e?w=300'}); dbSet('kapinda_products', p); 
-            document.getElementById('esnafUrunAd').value=''; document.getElementById('esnafUrunFiyat').value=''; document.getElementById('esnafResimBase64').value=''; document.getElementById('esnafResimSec').value=''; showToast("Ürün Yüklendi!");
+            const ad = document.getElementById('esnafUrunAd').value.trim(); 
+            const f = parseInt(document.getElementById('esnafUrunFiyat').value); 
+            const kat = document.getElementById('esnafUrunKategori').value; 
+            const r = document.getElementById('esnafResimBase64').value;
+            
+            if(!ad || !f) return showToast("Hata, alanları doldurun.", true); 
+            
+            const p = dbGet('kapinda_products'); 
+            p.push({id:Date.now(), ad:ad, fiyat:f, saticiMail:aktifKullaniciEmail, kategori: kat, resim: r || 'https://images.unsplash.com/photo-1505740420928-5e560c06d30e?w=300'}); 
+            dbSet('kapinda_products', p); 
+            
+            document.getElementById('esnafUrunAd').value=''; 
+            document.getElementById('esnafUrunFiyat').value=''; 
+            document.getElementById('esnafResimBase64').value=''; 
+            document.getElementById('esnafResimSec').value=''; 
+            showToast("Ürün Yüklendi!");
         }
 
-        // SEPET
-        function sepeteEkle(ad, f, sMail) { sepet.push({ad, fiyat:f, saticiMail: sMail}); document.getElementById('cartCount').innerText = sepet.length; let h = ''; let t = 0; sepet.forEach(x => { t += x.fiyat; h += `<div class="crm-item" style="padding:10px;"><b>${x.ad}</b><b style="color:var(--primary);">${x.fiyat} ₺</b></div>`; }); document.getElementById('cartItemsContainer').innerHTML = h; document.getElementById('cartTotal').innerText = t + " ₺"; showToast("Eklendi"); }
+        // --- SEPET VE SİPARİŞ ---
+        function sepeteEkle(ad, f, sMail) { 
+            sepet.push({ad, fiyat:f, saticiMail: sMail}); 
+            document.getElementById('cartCount').innerText = sepet.length; 
+            
+            let html = ''; let total = 0; 
+            sepet.forEach(x => { 
+                total += x.fiyat; 
+                html += `
+                <div class="crm-item" style="padding:10px;">
+                    <b>${x.ad}</b>
+                    <b style="color:var(--primary);">${x.fiyat} ₺</b>
+                </div>`; 
+            }); 
+            document.getElementById('cartItemsContainer').innerHTML = html; 
+            document.getElementById('cartTotal').innerText = total + " ₺"; 
+            showToast("Eklendi"); 
+        }
+
         function odemeTamamla() {
-            if (sepet.length === 0) return showToast("Sepet boş!", true); const adres = document.getElementById('siparisAdresi').value.trim(); if (!adres) return showToast("Adres girin!", true);
-            const stats = dbGet('kapinda_stats'); const users = dbGet('kapinda_users'); const plans = dbGet('kapinda_plans'); const orders = dbGet('kapinda_orders'); const aliciEmail = aktifKullaniciEmail;
-            const newOrder = { id: 'ORD-' + Math.floor(10000 + Math.random() * 90000), tarih: new Date().toLocaleDateString(), musteri: users[aliciEmail].isim, musteriMail: aliciEmail, adres: adres, items: [...sepet], toplam: 0, durum: 'bekliyor', esnafMail: sepet[0].saticiMail };
+            if (sepet.length === 0) return showToast("Sepet boş!", true); 
+            const adres = document.getElementById('siparisAdresi').value.trim(); 
+            if (!adres) return showToast("Adres girin!", true);
+            
+            const stats = dbGet('kapinda_stats'); 
+            const users = dbGet('kapinda_users'); 
+            const plans = dbGet('kapinda_plans'); 
+            const orders = dbGet('kapinda_orders'); 
+            const aliciEmail = aktifKullaniciEmail;
+            
+            const newOrder = { 
+                id: 'ORD-' + Math.floor(10000 + Math.random() * 90000), 
+                tarih: new Date().toLocaleDateString(), 
+                musteri: users[aliciEmail].isim, 
+                musteriMail: aliciEmail, adres: adres, 
+                items: [...sepet], toplam: 0, durum: 'bekliyor', esnafMail: sepet[0].saticiMail 
+            };
+
             sepet.forEach(item => {
-                newOrder.toplam += item.fiyat; stats.ciro += item.fiyat;
-                if (users[item.saticiMail]) users[item.saticiMail].bakiye += (item.fiyat * 0.80); else users['esnaf@mail.com'].bakiye += (item.fiyat * 0.80);
-                let sponsorMail = users[aliciEmail].sponsor; let komisyonOrani = 0;
-                if (sponsorMail && users[sponsorMail]) { komisyonOrani = plans[users[sponsorMail].seviye].oran; let temsilciPayi = item.fiyat * komisyonOrani; users[sponsorMail].bakiye += temsilciPayi; if(!users[sponsorMail].agKazanci) users[sponsorMail].agKazanci = 0; users[sponsorMail].agKazanci += temsilciPayi; stats.toplamKomisyon += temsilciPayi; }
+                newOrder.toplam += item.fiyat; 
+                stats.ciro += item.fiyat;
+                
+                if (users[item.saticiMail]) {
+                    users[item.saticiMail].bakiye += (item.fiyat * 0.80); 
+                } else {
+                    users['esnaf@mail.com'].bakiye += (item.fiyat * 0.80);
+                }
+                
+                let sponsorMail = users[aliciEmail].sponsor; 
+                let komisyonOrani = 0;
+                
+                if (sponsorMail && users[sponsorMail]) { 
+                    komisyonOrani = plans[users[sponsorMail].seviye].oran; 
+                    let temsilciPayi = item.fiyat * komisyonOrani; 
+                    users[sponsorMail].bakiye += temsilciPayi; 
+                    if(!users[sponsorMail].agKazanci) users[sponsorMail].agKazanci = 0; 
+                    users[sponsorMail].agKazanci += temsilciPayi; 
+                    stats.toplamKomisyon += temsilciPayi; 
+                }
                 stats.netKar += ((item.fiyat * 0.20) - (item.fiyat * komisyonOrani));
             });
-            orders.unshift(newOrder); dbSet('kapinda_stats', stats); dbSet('kapinda_users', users); dbSet('kapinda_orders', orders);
-            sepet = []; document.getElementById('cartCount').innerText = "0"; document.getElementById('cartItemsContainer').innerHTML = ''; document.getElementById('cartTotal').innerText = "0 ₺"; document.getElementById('siparisAdresi').value = ''; switchView('ordersView'); showToast("Sipariş Verildi!");
+            
+            orders.unshift(newOrder); 
+            dbSet('kapinda_stats', stats); 
+            dbSet('kapinda_users', users); 
+            dbSet('kapinda_orders', orders);
+            
+            sepet = []; 
+            document.getElementById('cartCount').innerText = "0"; 
+            document.getElementById('cartItemsContainer').innerHTML = ''; 
+            document.getElementById('cartTotal').innerText = "0 ₺"; 
+            document.getElementById('siparisAdresi').value = ''; 
+            switchView('ordersView'); 
+            showToast("Sipariş Verildi!");
         }
 
-        function musteriSiparisCiz() { const orders = dbGet('kapinda_orders'); let html = ''; orders.forEach(o => { if(o.musteriMail === aktifKullaniciEmail) { let badge = o.durum === 'bekliyor' ? '<span class="badge" style="background:var(--warning); color:white;">Hazırlanıyor</span>' : '<span class="badge" style="background:var(--success); color:white;">Kargolandı</span>'; html += `<div class="card"><div style="display:flex; justify-content:space-between; margin-bottom:10px;"><b style="color:var(--primary); font-size:12px;">#${o.id}</b> ${badge}</div><p style="font-size:13px; font-weight:bold; margin:0;">Tutar: ${o.toplam} ₺</p></div>`; } }); document.getElementById('musteriSiparisListesi').innerHTML = html || '<p style="text-align:center;">Sipariş yok.</p>'; }
-        function esnafSiparisCiz() { const orders = dbGet('kapinda_orders'); let html = ''; let count = 0; orders.forEach(o => { if(o.esnafMail === aktifKullaniciEmail || aktifKullaniciEmail === 'admin.com') { if(o.durum === 'bekliyor') count++; html += `<div class="card" style="border:1px solid ${o.durum === 'bekliyor' ? 'var(--warning)' : 'var(--border)'};"><div style="display:flex; justify-content:space-between; margin-bottom:10px;"><b>#${o.id}</b> <b style="color:var(--success);">${o.toplam} ₺</b></div><p style="font-size:11px; background:var(--bg-color); padding:8px;">${o.adres}</p>${o.durum === 'bekliyor' ? `<button class="btn-success" style="padding:10px; font-size:12px;" onclick="kargola('${o.id}')">Kargoya Ver</button>` : `<p style="color:var(--success); text-align:center; font-weight:bold; font-size:11px;">Gönderildi</p>`}</div>`; } }); document.getElementById('esnafSiparisListesi').innerHTML = html || '<p style="text-align:center;">Sipariş yok.</p>'; document.getElementById('esnafBekleyenSiparisSayisi').innerText = count; }
-        function kargola(orderId) { const orders = dbGet('kapinda_orders'); orders.forEach(o => { if(o.id === orderId) o.durum = 'kargolandi'; }); dbSet('kapinda_orders', orders); showToast("Güncellendi."); }
+        // --- SİPARİŞ LİSTELERİ ---
+        function musteriSiparisCiz() { 
+            const orders = dbGet('kapinda_orders'); 
+            let html = ''; 
+            
+            orders.forEach(o => { 
+                if(o.musteriMail === aktifKullaniciEmail) { 
+                    let badge = o.durum === 'bekliyor' ? '<span class="badge" style="background:var(--warning); color:white;">Hazırlanıyor</span>' : '<span class="badge" style="background:var(--success); color:white;">Kargolandı</span>'; 
+                    html += `
+                    <div class="card">
+                        <div style="display:flex; justify-content:space-between; margin-bottom:10px;">
+                            <b style="color:var(--primary); font-size:12px;">#${o.id}</b> ${badge}
+                        </div>
+                        <p style="font-size:13px; font-weight:bold; margin:0;">Tutar: ${o.toplam} ₺</p>
+                    </div>`; 
+                } 
+            }); 
+            document.getElementById('musteriSiparisListesi').innerHTML = html || '<p style="text-align:center;">Sipariş yok.</p>'; 
+        }
 
-        function cüzdanCiz() { document.getElementById('temsilciBakiye').innerText = dbGet('kapinda_users')[aktifKullaniciEmail].bakiye + " ₺"; document.getElementById('uretilenKodKutusu').style.display='none'; }
-        function nakitKoduUret() { let m = parseInt(document.getElementById('cekimMiktari').value); let u = dbGet('kapinda_users')[aktifKullaniciEmail]; if(!m || m<=0 || m>u.bakiye) return showToast("Hata", true); let k = "KPN-" + Math.floor(1000 + Math.random() * 9000); let c = dbGet('kapinda_codes'); c[k] = { miktar: m, sahip: aktifKullaniciEmail, durum: 'aktif' }; dbSet('kapinda_codes', c); document.getElementById('uretilenKodKutusu').innerText = k; document.getElementById('uretilenKodKutusu').style.display='block'; document.getElementById('cekimMiktari').value=''; showToast("Kod Üretildi"); }
-        function posCiz() { document.getElementById('esnafBakiye').innerText = dbGet('kapinda_users')[aktifKullaniciEmail].bakiye + " ₺"; }
-        function koduBozdur() { let k = document.getElementById('bozdurulacakKod').value.trim().toUpperCase(); let c = dbGet('kapinda_codes'); let u = dbGet('kapinda_users'); if(c[k] && c[k].durum === 'aktif') { u[c[k].sahip].bakiye -= c[k].miktar; u[aktifKullaniciEmail].bakiye += c[k].miktar; c[k].durum = 'kullanildi'; dbSet('kapinda_users', u); dbSet('kapinda_codes', c); document.getElementById('bozdurulacakKod').value=''; showToast("Başarılı"); } else showToast("Hata!", true); }
+        function esnafSiparisCiz() { 
+            const orders = dbGet('kapinda_orders'); 
+            let html = ''; let count = 0; 
+            
+            orders.forEach(o => { 
+                if(o.esnafMail === aktifKullaniciEmail || aktifKullaniciEmail === 'admin.com') { 
+                    if(o.durum === 'bekliyor') count++; 
+                    html += `
+                    <div class="card" style="border:1px solid ${o.durum === 'bekliyor' ? 'var(--warning)' : 'var(--border)'};">
+                        <div style="display:flex; justify-content:space-between; margin-bottom:10px;">
+                            <b>#${o.id}</b> <b style="color:var(--success);">${o.toplam} ₺</b>
+                        </div>
+                        <p style="font-size:11px; background:var(--bg-color); padding:8px;">${o.adres}</p>
+                        ${o.durum === 'bekliyor' ? `<button class="btn-success" style="padding:10px; font-size:12px;" onclick="kargola('${o.id}')">Kargoya Ver</button>` : `<p style="color:var(--success); text-align:center; font-weight:bold; font-size:11px;">Gönderildi</p>`}
+                    </div>`; 
+                } 
+            }); 
+            
+            document.getElementById('esnafSiparisListesi').innerHTML = html || '<p style="text-align:center;">Sipariş yok.</p>'; 
+            document.getElementById('esnafBekleyenSiparisSayisi').innerText = count; 
+        }
 
-        function abonelikCiz() { const user = dbGet('kapinda_users')[aktifKullaniciEmail]; const plans = dbGet('kapinda_plans'); document.getElementById('mevcutPaketAd').className = `badge ${user.seviye}`; document.getElementById('mevcutPaketAd').innerText = plans[user.seviye].ad; let html = ''; for(let key in plans) { const p = plans[key]; const isCurrent = user.seviye === key; const bColor = key === 'elite' ? 'var(--warning)' : (key === 'pro' ? 'var(--primary)' : 'var(--text-muted)'); html += `<div class="card" style="border: 2px solid ${isCurrent ? 'var(--success)' : 'var(--border)'};"><div style="display:flex; justify-content:space-between;"><div><h4 style="margin:0; color:${bColor};">${p.ad}</h4></div><h2 style="margin:0;">${p.fiyat} ₺</h2></div>${!isCurrent ? `<button class="btn-primary" style="margin-top:15px; padding:10px; font-size:12px; background:${bColor};" onclick="abonelikModalAc('${key}')">Geç</button>` : `<button class="btn-success" style="margin-top:15px; padding:10px; font-size:12px;" disabled>Mevcut Paket</button>`}</div>`; } document.getElementById('abonelikPaketleriListesi').innerHTML = html; }
-        function abonelikModalAc(planId) { const p = dbGet('kapinda_plans')[planId]; document.getElementById('subConfirmName').innerText = p.ad; document.getElementById('subConfirmPrice').innerText = p.fiyat + " ₺"; document.getElementById('subTargetPlan').value = planId; document.getElementById('subSheetOverlay').classList.add('active'); }
-        function abonelikSatinAlOnay() { const planId = document.getElementById('subTargetPlan').value; const users = dbGet('kapinda_users'); const plans = dbGet('kapinda_plans'); const stats = dbGet('kapinda_stats'); const user = users[aktifKullaniciEmail]; const plan = plans[planId]; if(user.bakiye < plan.fiyat) return showToast("Bakiye yetersiz!", true); user.bakiye -= plan.fiyat; user.seviye = planId; if(user.rol === 'customer' && planId !== 'free') user.rol = 'seller'; stats.ciro += plan.fiyat; stats.netKar += plan.fiyat; stats.abonelikGeliri = (stats.abonelikGeliri||0) + plan.fiyat; dbSet('kapinda_users', users); dbSet('kapinda_stats', stats); closeSheet('subSheetOverlay'); if(user.rol === 'seller') document.querySelectorAll('.nav-seller').forEach(n => n.style.display = 'block'); showToast("Abonelik İşlendi."); }
-        function networkCiz() { const users = dbGet('kapinda_users'); const me = users[aktifKullaniciEmail]; document.getElementById('benimSponsorKodum').innerText = me.refKod || 'YOK'; document.getElementById('networkToplamKazanc').innerText = (me.agKazanci||0) +" ₺"; let count = 0; let html = ''; for(let email in users) { if(users[email].sponsor === aktifKullaniciEmail) { count++; const u = users[email]; html += `<div class="crm-item" style="padding:10px;"><div><h4 style="margin:0;">${u.isim}</h4></div></div>`; } } document.getElementById('networkKisiSayisi').innerText = count; document.getElementById('altEkipListesi').innerHTML = html || '<p style="text-align:center;">Kimse yok.</p>'; }
+        function kargola(orderId) { 
+            const orders = dbGet('kapinda_orders'); 
+            orders.forEach(o => { if(o.id === orderId) o.durum = 'kargolandi'; }); 
+            dbSet('kapinda_orders', orders); 
+            showToast("Kargolandı olarak güncellendi."); 
+            esnafSiparisCiz(); // Arayüzü anında güncelle
+        }
 
-        // --- YENİ NATIVE MOBİL GRAFİK SİSTEMİ (ÇÖKMEYİ ENGELLEYEN YAPI) ---
+        // --- CÜZDAN & KOD ---
+        function cüzdanCiz() { 
+            document.getElementById('temsilciBakiye').innerText = dbGet('kapinda_users')[aktifKullaniciEmail].bakiye + " ₺"; 
+            document.getElementById('uretilenKodKutusu').style.display='none'; 
+        }
+
+        function nakitKoduUret() { 
+            let miktar = parseInt(document.getElementById('cekimMiktari').value); 
+            let user = dbGet('kapinda_users')[aktifKullaniciEmail]; 
+            
+            if(!miktar || miktar<=0 || miktar>user.bakiye) return showToast("Hata! Bakiye yetersiz.", true); 
+            
+            let kod = "KPN-" + Math.floor(1000 + Math.random() * 9000); 
+            let codes = dbGet('kapinda_codes'); 
+            
+            codes[kod] = { miktar: miktar, sahip: aktifKullaniciEmail, durum: 'aktif' }; 
+            dbSet('kapinda_codes', codes); 
+            
+            document.getElementById('uretilenKodKutusu').innerText = kod; 
+            document.getElementById('uretilenKodKutusu').style.display='block'; 
+            document.getElementById('cekimMiktari').value=''; 
+            showToast("Kod Üretildi"); 
+        }
+
+        function posCiz() { 
+            document.getElementById('esnafBakiye').innerText = dbGet('kapinda_users')[aktifKullaniciEmail].bakiye + " ₺"; 
+        }
+
+        function koduBozdur() { 
+            let kod = document.getElementById('bozdurulacakKod').value.trim().toUpperCase(); 
+            let codes = dbGet('kapinda_codes'); 
+            let users = dbGet('kapinda_users'); 
+            
+            if(codes[kod] && codes[kod].durum === 'aktif') { 
+                users[codes[kod].sahip].bakiye -= codes[kod].miktar; 
+                users[aktifKullaniciEmail].bakiye += codes[kod].miktar; 
+                codes[kod].durum = 'kullanildi'; 
+                dbSet('kapinda_users', users); 
+                dbSet('kapinda_codes', codes); 
+                document.getElementById('bozdurulacakKod').value=''; 
+                showToast("İşlem Başarılı"); 
+            } else { 
+                showToast("Hatalı Kod!", true); 
+            } 
+        }
+
+        // --- ABONELİK VE NETWORK ---
+        function abonelikCiz() { 
+            const user = dbGet('kapinda_users')[aktifKullaniciEmail]; 
+            const plans = dbGet('kapinda_plans'); 
+            document.getElementById('mevcutPaketAd').className = `badge ${user.seviye}`; 
+            document.getElementById('mevcutPaketAd').innerText = plans[user.seviye].ad; 
+            
+            let html = ''; 
+            for(let key in plans) { 
+                const p = plans[key]; 
+                const isCurrent = user.seviye === key; 
+                const bColor = key === 'elite' ? 'var(--warning)' : (key === 'pro' ? 'var(--primary)' : 'var(--text-muted)'); 
+                
+                html += `
+                <div class="card" style="border: 2px solid ${isCurrent ? 'var(--success)' : 'var(--border)'};">
+                    <div style="display:flex; justify-content:space-between;">
+                        <div>
+                            <h4 style="margin:0; color:${bColor};">${p.ad}</h4>
+                        </div>
+                        <h2 style="margin:0;">${p.fiyat} ₺</h2>
+                    </div>
+                    ${!isCurrent ? `<button class="btn-primary" style="margin-top:15px; padding:10px; font-size:12px; background:${bColor};" onclick="abonelikModalAc('${key}')">Geç</button>` : `<button class="btn-success" style="margin-top:15px; padding:10px; font-size:12px;" disabled>Mevcut Paket</button>`}
+                </div>`; 
+            } 
+            document.getElementById('abonelikPaketleriListesi').innerHTML = html; 
+        }
+
+        function abonelikModalAc(planId) { 
+            const p = dbGet('kapinda_plans')[planId]; 
+            document.getElementById('subConfirmName').innerText = p.ad; 
+            document.getElementById('subConfirmPrice').innerText = p.fiyat + " ₺"; 
+            document.getElementById('subTargetPlan').value = planId; 
+            document.getElementById('subSheetOverlay').classList.add('active'); 
+        }
+
+        function abonelikSatinAlOnay() { 
+            const planId = document.getElementById('subTargetPlan').value; 
+            const users = dbGet('kapinda_users'); 
+            const plans = dbGet('kapinda_plans'); 
+            const stats = dbGet('kapinda_stats'); 
+            
+            const user = users[aktifKullaniciEmail]; 
+            const plan = plans[planId]; 
+            
+            if(user.bakiye < plan.fiyat) return showToast("Bakiye yetersiz!", true); 
+            
+            user.bakiye -= plan.fiyat; 
+            user.seviye = planId; 
+            
+            if(user.rol === 'customer' && planId !== 'free') user.rol = 'seller'; 
+            
+            stats.ciro += plan.fiyat; 
+            stats.netKar += plan.fiyat; 
+            stats.abonelikGeliri = (stats.abonelikGeliri||0) + plan.fiyat; 
+            
+            dbSet('kapinda_users', users); 
+            dbSet('kapinda_stats', stats); 
+            
+            document.getElementById('subSheetOverlay').classList.remove('active'); 
+            if(user.rol === 'seller') document.querySelectorAll('.nav-seller').forEach(n => n.style.display = 'block'); 
+            showToast("Abonelik İşlendi."); 
+        }
+
+        function networkCiz() { 
+            const users = dbGet('kapinda_users'); 
+            const me = users[aktifKullaniciEmail]; 
+            document.getElementById('benimSponsorKodum').innerText = me.refKod || 'YOK'; 
+            document.getElementById('networkToplamKazanc').innerText = (me.agKazanci||0) +" ₺"; 
+            
+            let count = 0; 
+            let html = ''; 
+            
+            for(let email in users) { 
+                if(users[email].sponsor === aktifKullaniciEmail) { 
+                    count++; 
+                    const u = users[email]; 
+                    html += `
+                    <div class="crm-item" style="padding:10px;">
+                        <div><h4 style="margin:0;">${u.isim}</h4></div>
+                    </div>`; 
+                } 
+            } 
+            document.getElementById('networkKisiSayisi').innerText = count; 
+            document.getElementById('altEkipListesi').innerHTML = html || '<p style="text-align:center;">Kimse yok.</p>'; 
+        }
+
+        // --- ADMIN DASHBOARD & CRM (ŞIK LİSTELER GERİ GELDİ) ---
         function dashboardCiz() { 
             const s = dbGet('kapinda_stats'); 
             document.getElementById('dashCiro').innerText = s.ciro + " ₺"; 
-            document.getElementById('dashKar').innerText = s.netKar + " ₺"; 
             
-            // Esnaf payı, Komisyon ve Net Karın oranlarını hesapla
-            let esnafPayi = s.ciro - s.netKar - s.toplamKomisyon; // Basit hesap
+            let esnafPayi = s.ciro - s.netKar - s.toplamKomisyon; 
             if (esnafPayi < 0) esnafPayi = 0;
             
-            let esnafYuzde = 0; let komisyonYuzde = 0; let karYuzde = 0;
+            let eYuzde = 0; let kYuzde = 0; let karYuzde = 0;
             
             if (s.ciro > 0) {
-                esnafYuzde = (esnafPayi / s.ciro) * 100;
-                komisyonYuzde = (s.toplamKomisyon / s.ciro) * 100;
+                eYuzde = (esnafPayi / s.ciro) * 100;
+                kYuzde = (s.toplamKomisyon / s.ciro) * 100;
                 karYuzde = (s.netKar / s.ciro) * 100;
             }
 
-            // CSS Barlarına genişlik ver (Animasyonlu)
             setTimeout(() => {
-                document.getElementById('barEsnaf').style.width = esnafYuzde + '%';
-                document.getElementById('barKomisyon').style.width = komisyonYuzde + '%';
+                document.getElementById('barEsnaf').style.width = eYuzde + '%';
+                document.getElementById('barKomisyon').style.width = kYuzde + '%';
                 document.getElementById('barKar').style.width = karYuzde + '%';
             }, 100);
         }
 
-        function adminUyeleriCiz(f='') { const u = dbGet('kapinda_users'); let h = ''; for(let e in u) { if(e.includes(f)||u[e].isim.toLowerCase().includes(f.toLowerCase())) h += `<div class="crm-item" onclick="openSheet('${e}')"><div><h4 style="margin:0;">${u[e].isim} <span style="font-size:9px;">[${u[e].rol}]</span></h4><p style="margin:0; font-size:10px;">${e}</p></div><b style="color:var(--success);">${u[e].bakiye} ₺</b></div>`; } document.getElementById('adminUyeListesi').innerHTML = h; }
-        function openSheet(e) { const u = dbGet('kapinda_users')[e]; document.getElementById('editEmail').value=e; document.getElementById('editName').value=u.isim; document.getElementById('editBalance').value=u.bakiye; document.getElementById('editRole').value=u.rol; document.getElementById('editSeviye').value=u.seviye; document.getElementById('editPass').value=u.sifre; document.getElementById('crmSheetOverlay').classList.add('active'); }
+        function adminUyeleriCiz(f='') { 
+            const u = dbGet('kapinda_users'); 
+            let html = ''; 
+            for(let e in u) { 
+                if(e.includes(f) || u[e].isim.toLowerCase().includes(f.toLowerCase())) {
+                    html += `
+                    <div class="crm-item" onclick="openSheet('${e}')">
+                        <div style="display:flex; gap:10px; align-items:center;">
+                            <div class="crm-avatar">${u[e].isim.charAt(0)}</div>
+                            <div>
+                                <h4 style="margin:0;">${u[e].isim} <span style="font-size:9px; color:var(--primary);">[${u[e].rol}]</span></h4>
+                                <p style="margin:0; font-size:10px; color:var(--text-muted);">${e}</p>
+                            </div>
+                        </div>
+                        <b style="color:var(--success); font-size:16px;">${u[e].bakiye} ₺</b>
+                    </div>`; 
+                }
+            } 
+            document.getElementById('adminUyeListesi').innerHTML = html; 
+        }
+
+        function openSheet(e) { 
+            const u = dbGet('kapinda_users')[e]; 
+            document.getElementById('editEmail').value=e; 
+            document.getElementById('editName').value=u.isim; 
+            document.getElementById('editBalance').value=u.bakiye; 
+            document.getElementById('editRole').value=u.rol; 
+            document.getElementById('editSeviye').value=u.seviye; 
+            document.getElementById('editPass').value=u.sifre; 
+            document.getElementById('crmSheetOverlay').classList.add('active'); 
+        }
         function closeSheet(id) { document.getElementById(id).classList.remove('active'); }
-        function adminUyeKaydet() { const e=document.getElementById('editEmail').value; const u=dbGet('kapinda_users'); u[e].isim=document.getElementById('editName').value; u[e].bakiye=parseFloat(document.getElementById('editBalance').value); u[e].rol=document.getElementById('editRole').value; u[e].seviye=document.getElementById('editSeviye').value; u[e].sifre=document.getElementById('editPass').value; dbSet('kapinda_users', u); closeSheet('crmSheetOverlay'); showToast("Kaydedildi"); }
+        function adminUyeKaydet() { 
+            const e=document.getElementById('editEmail').value; 
+            const u=dbGet('kapinda_users'); 
+            u[e].isim=document.getElementById('editName').value; 
+            u[e].bakiye=parseFloat(document.getElementById('editBalance').value); 
+            u[e].rol=document.getElementById('editRole').value; 
+            u[e].seviye=document.getElementById('editSeviye').value; 
+            u[e].sifre=document.getElementById('editPass').value; 
+            dbSet('kapinda_users', u); 
+            closeSheet('crmSheetOverlay'); 
+            showToast("Kaydedildi"); 
+        }
 
         function finansCiz() {
-            const s = dbGet('kapinda_stats'); const u = dbGet('kapinda_users');
-            document.getElementById('finansToplamCiro').innerText=s.ciro+" ₺"; document.getElementById('finansNetKar').innerText=s.netKar+" ₺"; document.getElementById('finansAbonelikGeliri').innerText=(s.abonelikGeliri||0)+" ₺"; document.getElementById('finansKomisyon').innerText=s.toplamKomisyon+" ₺";
-            let eH = ''; let sH = '';
+            const s = dbGet('kapinda_stats'); 
+            const u = dbGet('kapinda_users');
+            document.getElementById('finansToplamCiro').innerText=s.ciro+" ₺"; 
+            document.getElementById('finansNetKar').innerText=s.netKar+" ₺"; 
+            document.getElementById('finansAbonelikGeliri').innerText=(s.abonelikGeliri||0)+" ₺"; 
+            document.getElementById('finansKomisyon').innerText=s.toplamKomisyon+" ₺";
+            
+            let esnafHtml = ''; 
+            let saticiHtml = '';
+            
             for(let e in u) {
-                if(u[e].rol==='store' && u[e].bakiye>0) eH += `<div class="crm-item" onclick="openPaymentModal('${e}')"><div><b style="display:block;">${u[e].isim}</b></div><div style="text-align:right;"><b style="color:var(--danger);">${u[e].bakiye} ₺</b></div></div>`;
-                if(u[e].rol==='seller' && u[e].bakiye>0) sH += `<div class="crm-item" onclick="openPaymentModal('${e}')"><div><b style="display:block;">${u[e].isim}</b></div><div style="text-align:right;"><b style="color:var(--warning);">${u[e].bakiye} ₺</b></div></div>`;
+                if(u[e].rol==='store' && u[e].bakiye>0) {
+                    esnafHtml += `
+                    <div class="crm-item" onclick="openPaymentModal('${e}')">
+                        <div>
+                            <b style="display:block;">${u[e].isim}</b>
+                            <span style="font-size:10px; color:var(--text-muted);">Esnaf Hak Edişi</span>
+                        </div>
+                        <div style="text-align:right;">
+                            <b style="color:var(--danger); font-size:16px;">${u[e].bakiye} ₺</b>
+                            <div style="font-size:10px; color:var(--primary); font-weight:bold;">ÖDEME YAP ></div>
+                        </div>
+                    </div>`;
+                }
+                if(u[e].rol==='seller' && u[e].bakiye>0) {
+                    saticiHtml += `
+                    <div class="crm-item" onclick="openPaymentModal('${e}')">
+                        <div>
+                            <b style="display:block;">${u[e].isim}</b>
+                            <span style="font-size:10px; color:var(--text-muted);">Ağ Komisyonu</span>
+                        </div>
+                        <div style="text-align:right;">
+                            <b style="color:var(--warning); font-size:16px;">${u[e].bakiye} ₺</b>
+                            <div style="font-size:10px; color:var(--primary); font-weight:bold;">ÖDEME YAP ></div>
+                        </div>
+                    </div>`;
+                }
             }
-            document.getElementById('finansEsnafListesi').innerHTML = eH || '<p style="text-align:center; font-size:12px;">Borç yok.</p>'; document.getElementById('finansSaticiListesi').innerHTML = sH || '<p style="text-align:center; font-size:12px;">Borç yok.</p>';
+            document.getElementById('finansEsnafListesi').innerHTML = esnafHtml || '<p style="text-align:center; font-size:12px;">Borç yok.</p>'; 
+            document.getElementById('finansSaticiListesi').innerHTML = saticiHtml || '<p style="text-align:center; font-size:12px;">Borç yok.</p>';
         }
-        function openPaymentModal(e) { const u = dbGet('kapinda_users')[e]; document.getElementById('payEmail').value = e; document.getElementById('payAmount').innerText = u.bakiye+" ₺"; document.getElementById('paymentModal').classList.add('active'); }
-        function processPayment() { const e = document.getElementById('payEmail').value; const u = dbGet('kapinda_users'); u[e].bakiye = 0; dbSet('kapinda_users', u); document.getElementById('paymentModal').classList.remove('active'); showToast("Ödendi"); }
 
-        function adminUrunCiz() { const p = dbGet('kapinda_products'); let h = ''; p.forEach((x, i) => { h += `<div class="crm-item"><div><h4 style="margin:0;">${x.ad}</h4></div><button class="btn-danger" style="width:auto; padding:8px 15px;" onclick="adminUrunSil(${i})"><i class="fa-solid fa-trash"></i></button></div>`; }); document.getElementById('adminUrunListesi').innerHTML = h; }
-        function adminUrunEkle() { let ad = document.getElementById('adminYeniUrunAd').value; let f = parseInt(document.getElementById('adminYeniUrunFiyat').value); let kat = document.getElementById('adminYeniUrunKategori').value; let r = document.getElementById('adminResimBase64').value; if(!ad || !f) return; const p = dbGet('kapinda_products'); p.push({id:Date.now(), ad:ad, fiyat:f, saticiMail:'esnaf@mail.com', kategori: kat, resim: r || 'https://images.unsplash.com/photo-1505740420928-5e560c06d30e?w=300'}); dbSet('kapinda_products', p); document.getElementById('adminYeniUrunAd').value=''; document.getElementById('adminYeniUrunFiyat').value=''; document.getElementById('adminResimBase64').value=''; showToast("Eklendi"); }
-        function adminUrunSil(i) { const p = dbGet('kapinda_products'); p.splice(i,1); dbSet('kapinda_products', p); showToast("Silindi"); }
+        function openPaymentModal(e) { 
+            const u = dbGet('kapinda_users')[e]; 
+            document.getElementById('payEmail').value = e; 
+            document.getElementById('payAmount').innerText = u.bakiye+" ₺"; 
+            document.getElementById('paymentModal').classList.add('active'); 
+        }
+
+        function processPayment() { 
+            const e = document.getElementById('payEmail').value; 
+            const u = dbGet('kapinda_users'); 
+            u[e].bakiye = 0; 
+            dbSet('kapinda_users', u); 
+            document.getElementById('paymentModal').classList.remove('active'); 
+            showToast("Ödendi"); 
+        }
+
+        function adminUrunCiz() { 
+            const p = dbGet('kapinda_products'); 
+            let html = ''; 
+            p.forEach((x, i) => { 
+                html += `
+                <div class="crm-item">
+                    <div>
+                        <h4 style="margin:0;">${x.ad}</h4>
+                        <b style="color:var(--primary);">${x.fiyat} ₺</b>
+                    </div>
+                    <button class="btn-danger" style="width:auto; padding:8px 15px;" onclick="adminUrunSil(${i})"><i class="fa-solid fa-trash"></i></button>
+                </div>`; 
+            }); 
+            document.getElementById('adminUrunListesi').innerHTML = html || '<p style="text-align:center; font-size:12px;">Ürün Yok.</p>'; 
+        }
+
+        function adminUrunEkle() { 
+            let ad = document.getElementById('adminYeniUrunAd').value; 
+            let f = parseInt(document.getElementById('adminYeniUrunFiyat').value); 
+            let kat = document.getElementById('adminYeniUrunKategori').value; 
+            let r = document.getElementById('adminResimBase64').value; 
+            
+            if(!ad || !f) return showToast("Alanları doldurun!", true); 
+            
+            const p = dbGet('kapinda_products'); 
+            p.push({id:Date.now(), ad:ad, fiyat:f, saticiMail:'esnaf@mail.com', kategori: kat, resim: r || 'https://images.unsplash.com/photo-1505740420928-5e560c06d30e?w=300'}); 
+            dbSet('kapinda_products', p); 
+            
+            document.getElementById('adminYeniUrunAd').value=''; 
+            document.getElementById('adminYeniUrunFiyat').value=''; 
+            document.getElementById('adminResimBase64').value=''; 
+            document.getElementById('adminResimSec').value='';
+            showToast("Eklendi"); 
+        }
+
+        function adminUrunSil(i) { 
+            const p = dbGet('kapinda_products'); 
+            p.splice(i,1); 
+            dbSet('kapinda_products', p); 
+            showToast("Silindi"); 
+        }
     </script>
 </body>
 </html>
