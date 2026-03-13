@@ -3,18 +3,18 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-    <title>Kapında V15.1 - The Flawless Empire</title>
+    <title>Kapında V15.2 - Stabilize Sürüm</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     
     <script src="https://www.gstatic.com/firebasejs/10.8.1/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.8.1/firebase-firestore-compat.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;800;900&display=swap');
         
         :root { --primary: #4f46e5; --secondary: #0f172a; --bg-color: #f1f5f9; --card-bg: #ffffff; --text-main: #1e293b; --text-muted: #64748b; --danger: #ef4444; --success: #10b981; --warning: #f59e0b; --border: #e2e8f0; --glass: rgba(255, 255, 255, 0.85); }
 
+        * { box-sizing: border-box; }
         body { font-family: 'Plus Jakarta Sans', sans-serif; background: #333; margin: 0; display: flex; justify-content: center; height: 100vh; overflow: hidden; }
         .app-shell { width: 100%; max-width: 414px; height: 100vh; background: var(--bg-color); position: relative; overflow: hidden; display: flex; flex-direction: column; box-shadow: 0 0 50px rgba(0,0,0,0.5); }
         
@@ -28,26 +28,26 @@
         .cart-badge { position: absolute; top: -5px; right: -5px; background: var(--danger); color: white; font-size: 10px; width: 18px; height: 18px; border-radius: 50%; display: flex; justify-content: center; align-items: center; font-weight: bold; border: 2px solid var(--card-bg); }
 
         .view-container { flex: 1; position: relative; overflow: hidden; background: var(--bg-color); }
-        .view { position: absolute; top: 0; left: 0; width: 100%; height: 100%; overflow-y: auto; padding: 20px; padding-bottom: 100px; box-sizing: border-box; transition: transform 0.35s cubic-bezier(0.25, 1, 0.5, 1), opacity 0.35s ease; transform: translateX(100%) translateZ(0); opacity: 0; pointer-events: none; }
+        .view { position: absolute; top: 0; left: 0; width: 100%; height: 100%; overflow-y: auto; padding: 20px; padding-bottom: 100px; transition: transform 0.35s cubic-bezier(0.25, 1, 0.5, 1), opacity 0.35s ease; transform: translateX(100%) translateZ(0); opacity: 0; pointer-events: none; }
         .view.active { transform: translateX(0) translateZ(0); opacity: 1; pointer-events: all; }
         .view.prev { transform: translateX(-30%) translateZ(0); opacity: 0; } 
 
         .dashboard-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 15px; margin-top: 15px; }
-        .module-card { background: var(--card-bg); border-radius: 20px; padding: 20px 15px; text-align: center; border: 1px solid var(--border); box-shadow: 0 10px 25px rgba(0,0,0,0.02); cursor: pointer; transition: 0.2s; }
+        .module-card { background: var(--card-bg); border-radius: 20px; padding: 20px 15px; text-align: center; border: 1px solid var(--border); cursor: pointer; transition: 0.2s; }
         .module-card:active { transform: scale(0.96); }
         .module-icon { width: 50px; height: 50px; border-radius: 16px; display: flex; justify-content: center; align-items: center; font-size: 22px; margin: 0 auto 12px auto; }
         .module-card h4 { margin: 0; font-size: 13px; font-weight: 800; }
 
-        .card { background: var(--card-bg); border-radius: 20px; padding: 20px; margin-bottom: 15px; border: 1px solid var(--border); box-shadow: 0 10px 25px rgba(0,0,0,0.02); }
+        .card { background: var(--card-bg); border-radius: 20px; padding: 20px; margin-bottom: 15px; border: 1px solid var(--border); }
         .stat-box { flex: 1; padding: 15px; border-radius: 16px; text-align: center; color: white; display: flex; flex-direction: column; justify-content: center; }
         .stat-box p { margin: 0; font-size: 10px; font-weight: 800; opacity: 0.8; text-transform: uppercase; }
-        .stat-box h3 { margin: 5px 0 0 0; font-size: 22px; font-weight: 900; }
+        .stat-box h3 { margin: 5px 0 0 0; font-size: 20px; font-weight: 900; }
 
         .input-group { margin-bottom: 15px; text-align: left; }
         .input-group label { display: block; font-size: 11px; font-weight: 800; color: var(--text-muted); margin-bottom: 6px; text-transform: uppercase;}
-        .input-group input, .input-group select, .input-group textarea { width: 100%; padding: 14px; border: 2px solid var(--border); border-radius: 12px; font-size: 14px; background: var(--bg-color); color: var(--text-main); font-family: inherit; font-weight: 600; outline: none; transition: 0.2s; box-sizing: border-box;}
-        
-        /* Arama Motoru ve Kategoriler */
+        .input-group input, .input-group select, .input-group textarea { width: 100%; padding: 14px; border: 2px solid var(--border); border-radius: 12px; font-size: 14px; background: var(--bg-color); color: var(--text-main); font-family: inherit; font-weight: 600; outline: none; transition: 0.2s;}
+        .input-group input:focus, .input-group textarea:focus { border-color: var(--primary); background: var(--card-bg); }
+
         .search-bar { display: flex; align-items: center; background: white; border-radius: 16px; padding: 5px 15px; border: 1px solid var(--border); margin-bottom: 15px; }
         .search-bar i { color: var(--text-muted); margin-right: 10px; }
         .search-bar input { border: none; background: transparent; padding: 10px 0; width: 100%; outline: none; font-family: inherit; font-weight: 600; font-size: 14px; }
@@ -56,26 +56,25 @@
         .cat-chip { padding: 8px 16px; background: white; border: 1px solid var(--border); border-radius: 20px; font-size: 12px; font-weight: 800; white-space: nowrap; cursor: pointer; transition: 0.2s; color: var(--text-muted); }
         .cat-chip.active { background: var(--primary); color: white; border-color: var(--primary); }
 
-        button { border: none; padding: 15px; border-radius: 14px; font-weight: 800; font-size: 14px; cursor: pointer; transition: 0.2s; width: 100%; display: flex; justify-content: center; align-items: center; gap: 8px; font-family: inherit; box-sizing: border-box;}
+        button { border: none; padding: 15px; border-radius: 14px; font-weight: 800; font-size: 14px; cursor: pointer; transition: 0.2s; width: 100%; display: flex; justify-content: center; align-items: center; gap: 8px; font-family: inherit;}
         button:active { transform: scale(0.97); }
         .btn-primary { background: var(--primary); color: white; }
         .btn-success { background: var(--success); color: white; }
         .btn-danger { background: var(--danger); color: white; }
-        .btn-warning { background: var(--warning); color: white; }
         .btn-outline { background: transparent; border: 2px solid var(--primary); color: var(--primary); }
 
         .crm-item { display: flex; justify-content: space-between; align-items: center; padding: 15px; background: var(--card-bg); border-radius: 16px; margin-bottom: 10px; border: 1px solid var(--border); transition: 0.2s;}
         .crm-avatar { width: 40px; height: 40px; border-radius: 12px; background: var(--bg-color); display: flex; justify-content: center; align-items: center; font-size: 18px; color: var(--primary); font-weight: 800; }
 
-        .bottom-nav { position: absolute; bottom: 0; width: 100%; background: var(--glass); backdrop-filter: blur(15px); border-top: 1px solid rgba(255,255,255,0.5); display: flex; padding: 10px 10px 25px 10px; z-index: 30; box-sizing: border-box; }
+        .bottom-nav { position: absolute; bottom: 0; width: 100%; background: var(--glass); backdrop-filter: blur(15px); border-top: 1px solid rgba(255,255,255,0.5); display: flex; padding: 10px 10px 25px 10px; z-index: 30; }
         .nav-item { flex: 1; text-align: center; color: var(--text-muted); font-size: 10px; font-weight: 800; cursor: pointer; padding: 10px 0; border-radius: 16px; transition: 0.3s; display: none; }
         .nav-item i { display: block; font-size: 22px; margin-bottom: 4px; transition: 0.3s; }
         .nav-item.active { color: var(--primary); }
         .nav-item.active i { transform: translateY(-3px); }
 
-        .sheet-overlay { position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: rgba(15, 23, 42, 0.6); backdrop-filter: blur(5px); z-index: 100; opacity: 0; pointer-events: none; transition: 0.3s; display: flex; align-items: flex-end;}
+        .sheet-overlay { position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: rgba(15, 23, 42, 0.6); backdrop-filter: blur(3px); z-index: 100; opacity: 0; pointer-events: none; transition: 0.3s; display: flex; align-items: flex-end;}
         .sheet-overlay.active { opacity: 1; pointer-events: all; }
-        .bottom-sheet { width: 100%; background: var(--card-bg); border-radius: 30px 30px 0 0; padding: 30px 20px; transform: translateY(100%); transition: transform 0.4s; box-sizing:border-box; max-height: 90vh; overflow-y:auto;}
+        .bottom-sheet { width: 100%; background: var(--card-bg); border-radius: 30px 30px 0 0; padding: 30px 20px; transform: translateY(100%); transition: transform 0.4s; max-height: 90vh; overflow-y:auto;}
         .sheet-overlay.active .bottom-sheet { transform: translateY(0); }
         .sheet-handle { width: 40px; height: 5px; background: var(--border); border-radius: 5px; margin: -10px auto 20px auto; }
 
@@ -88,23 +87,28 @@
         .tab { flex: 1; padding: 10px; text-align: center; font-size: 12px; font-weight: 800; color: var(--text-muted); cursor: pointer; border-radius: 8px; transition: 0.3s; }
         .tab.active { background: var(--primary); color: white; }
 
-        .bank-modal { position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: rgba(15, 23, 42, 0.9); backdrop-filter: blur(10px); z-index: 200; display: flex; justify-content: center; align-items: center; opacity: 0; pointer-events: none; transition: 0.3s; }
+        .bank-modal { position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: rgba(15, 23, 42, 0.9); z-index: 200; display: flex; justify-content: center; align-items: center; opacity: 0; pointer-events: none; transition: 0.3s; }
         .bank-modal.active { opacity: 1; pointer-events: all; }
         .bank-card { background: var(--card-bg); width: 85%; border-radius: 30px; padding: 30px 20px; text-align: center; transform: scale(0.9); transition: transform 0.4s; position: relative;}
         .bank-modal.active .bank-card { transform: scale(1); }
-        .bank-amount { font-size: 40px; font-weight: 900; color: var(--success); margin: 15px 0 5px 0; letter-spacing: -1px; }
+        .bank-amount { font-size: 36px; font-weight: 900; color: var(--success); margin: 15px 0 5px 0; letter-spacing: -1px; }
 
         #toast { position: absolute; top: 30px; left: 50%; transform: translateX(-50%) translateY(-20px); background: var(--success); color: white; padding: 14px 24px; border-radius: 30px; font-size: 13px; font-weight: 800; z-index: 1000; opacity: 0; transition: 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); pointer-events: none; text-align: center; width: max-content; max-width: 90%; box-shadow: 0 10px 30px rgba(0,0,0,0.3);}
         #toast.show { transform: translateX(-50%) translateY(0); opacity: 1; }
+
+        /* MOBİL UYUMLU NATIVE GRAFİK BARI (ÇÖKMEYİ ÖNLEYEN YENİ YAPI) */
+        .native-chart-container { width: 100%; height: 18px; background: var(--bg-color); border-radius: 10px; overflow: hidden; display: flex; margin-top: 10px; }
+        .native-chart-bar { height: 100%; transition: width 1s ease-in-out; }
     </style>
 </head>
 <body>
 
     <div class="app-shell">
+        
         <div id="serverLoading">
             <div class="spinner"></div>
-            <h2 style="margin:0; font-weight:900;">KAPINDA V15.1</h2>
-            <p style="font-size:12px; opacity:0.7; margin-top:5px;">Bulut İle Eşitleniyor...</p>
+            <h2 style="margin:0; font-weight:900;">KAPINDA V15.2</h2>
+            <p style="font-size:12px; opacity:0.7; margin-top:5px;">Sistem Stabilize Ediliyor...</p>
         </div>
 
         <div id="toast"><i class="fa-solid fa-cloud"></i> Bulut Senkronizasyonu Aktif</div>
@@ -137,7 +141,7 @@
                 <p style="color:var(--text-muted); font-size:12px; font-weight:800; margin:20px 0 0 0;">ÖDENECEK TUTAR</p>
                 <div class="bank-amount" id="payAmount">0 ₺</div>
                 <input type="hidden" id="payEmail">
-                <button class="btn-success" style="margin-top:25px;" onclick="processPayment()"><i class="fa-solid fa-check"></i> Ödemeyi Tamamla & Sıfırla</button>
+                <button class="btn-success" style="margin-top:25px;" onclick="processPayment()"><i class="fa-solid fa-check"></i> Ödemeyi Tamamla</button>
             </div>
         </div>
 
@@ -149,10 +153,9 @@
                 <div class="card" style="text-align:center; border:2px dashed var(--primary); background:var(--bg-color);">
                     <h2 id="subConfirmName" style="margin:0; color:var(--primary);">Paket Adı</h2>
                     <h1 id="subConfirmPrice" style="margin:10px 0 0 0; color:var(--text-main);">0 ₺</h1>
-                    <p style="margin:5px 0 0 0; font-size:11px; color:var(--success);" id="subConfirmDesc">%0 Komisyon</p>
                 </div>
                 <input type="hidden" id="subTargetPlan">
-                <button class="btn-success" onclick="abonelikSatinAlOnay()"><i class="fa-solid fa-check"></i> Cüzdandan Öde ve Yükselt</button>
+                <button class="btn-success" onclick="abonelikSatinAlOnay()"><i class="fa-solid fa-check"></i> Onayla ve Yükselt</button>
                 <button class="btn-outline" style="margin-top:10px;" onclick="closeSheet('subSheetOverlay')">İptal</button>
             </div>
         </div>
@@ -169,8 +172,8 @@
             <div class="view active" id="authView" style="display:flex; flex-direction:column; justify-content:center;">
                 <div style="text-align:center; margin-bottom:30px;">
                     <div style="width: 80px; height: 80px; background: var(--primary); border-radius: 24px; color: white; display: flex; justify-content: center; align-items: center; font-size: 40px; margin: 0 auto 15px auto; transform: rotate(-10deg);"><i class="fa-solid fa-bolt"></i></div>
-                    <h1 style="margin:0; font-weight:800; font-size:28px;">Kapında V15.1</h1>
-                    <p style="color:var(--text-muted); font-weight:600;"><i class="fa-solid fa-cloud"></i> Firebase Live</p>
+                    <h1 style="margin:0; font-weight:800; font-size:28px;">Kapında V15.2</h1>
+                    <p style="color:var(--text-muted); font-weight:600;">Sıfır Hata, Yüksek Performans</p>
                 </div>
 
                 <div class="tabs" style="margin: 0 20px 15px 20px;">
@@ -182,7 +185,7 @@
                     <p style="font-size:11px; text-align:center; color:var(--text-muted); margin-bottom:15px;">Admin (admin.com) | Esnaf (esnaf@mail.com) | Müşteri (musteri@mail.com) - Şifre: 1</p>
                     <div class="input-group"><label>E-POSTA</label><input type="text" id="loginEmail" value="admin.com"></div>
                     <div class="input-group"><label>ŞİFRE</label><input type="password" id="loginPass" value="1"></div>
-                    <button class="btn-primary" onclick="girisYap(false)" style="margin-top:10px;">SİSTEME GİRİŞ YAP</button>
+                    <button class="btn-primary" onclick="girisYap(false)" style="margin-top:10px;">GİRİŞ YAP</button>
                 </div>
 
                 <div class="card" id="registerForm" style="margin: 0 20px; display:none;">
@@ -197,7 +200,7 @@
             <div class="view" id="homeView">
                 <div class="search-bar">
                     <i class="fa-solid fa-magnifying-glass"></i>
-                    <input type="text" id="aramaKutusu" placeholder="Vitrin içinde ürün ara..." onkeyup="vitrinCiz()">
+                    <input type="text" id="aramaKutusu" placeholder="Ürün ara..." onkeyup="vitrinCiz()">
                 </div>
                 <div class="category-scroll">
                     <div class="cat-chip active" onclick="kategoriSec(this, 'Tümü')">Tümü</div>
@@ -212,8 +215,8 @@
                 <h3 style="margin-bottom:20px;"><i class="fa-solid fa-bag-shopping" style="color:var(--primary);"></i> Alışveriş Sepeti</h3>
                 <div id="cartItemsContainer"></div>
                 <div class="card" style="margin-top:20px; border: 1px solid var(--primary);">
-                    <h4 style="margin:0 0 10px 0; font-size:13px;"><i class="fa-solid fa-truck-fast"></i> Teslimat Bilgileri</h4>
-                    <div class="input-group"><textarea id="siparisAdresi" rows="2" placeholder="Açık adresiniz..."></textarea></div>
+                    <h4 style="margin:0 0 10px 0; font-size:13px;"><i class="fa-solid fa-truck-fast"></i> Teslimat Adresi</h4>
+                    <div class="input-group"><textarea id="siparisAdresi" rows="2" placeholder="Adresinizi yazınız..."></textarea></div>
                 </div>
                 <div class="card" style="border: 2px solid var(--primary);">
                     <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:15px;"><span style="font-weight:800; color:var(--text-muted);">TOPLAM TUTAR</span><span id="cartTotal" style="font-size:24px; font-weight:800; color:var(--primary);">0 ₺</span></div>
@@ -222,23 +225,25 @@
             </div>
 
             <div class="view" id="storeView">
-                <div class="stat-box" style="background: var(--primary); margin-bottom:15px; border-radius:20px;"><p>SİSTEMDEN ALACAĞIM</p><h3 id="esnafBakiye">0 ₺</h3></div>
+                <div style="display:flex; gap:10px; margin-bottom:15px;">
+                    <div class="stat-box" style="background: var(--primary);"><p>SİSTEMDEN ALACAĞIM</p><h3 id="esnafBakiye">0 ₺</h3></div>
+                </div>
                 
                 <div class="card" style="border:2px solid var(--success);">
-                    <h4 style="margin:0 0 10px 0; color:var(--success); text-align:center;"><i class="fa-solid fa-qrcode"></i> KOD BOZDURMA KASASI</h4>
+                    <h4 style="margin:0 0 10px 0; color:var(--success); text-align:center;"><i class="fa-solid fa-qrcode"></i> KOD BOZDURMA</h4>
                     <div class="input-group"><input type="text" id="bozdurulacakKod" placeholder="Örn: KPN-1234" style="font-size:20px; font-weight:900; letter-spacing:3px; text-align:center;"></div>
                     <button class="btn-success" onclick="koduBozdur()">Kodu Onayla</button>
                 </div>
 
                 <div class="card">
-                    <h4 style="margin:0 0 15px 0; color:var(--primary);"><i class="fa-solid fa-camera"></i> Kendi Vitrinime Ürün Yükle</h4>
+                    <h4 style="margin:0 0 15px 0; color:var(--primary);"><i class="fa-solid fa-camera"></i> Ürün Yükle</h4>
                     <div class="input-group"><label>Ürün Adı</label><input type="text" id="esnafUrunAd"></div>
                     <div class="input-group"><label>Fiyat (₺)</label><input type="number" id="esnafUrunFiyat"></div>
                     <div class="input-group"><label>Kategori</label>
                         <select id="esnafUrunKategori"><option value="Elektronik">Elektronik</option><option value="Gıda">Gıda</option><option value="Giyim">Giyim</option></select>
                     </div>
                     <div class="input-group">
-                        <label>Ürün Görseli Seç / Çek</label>
+                        <label>Ürün Görseli</label>
                         <input type="file" id="esnafResimSec" accept="image/*" onchange="resimCevir(this, 'esnafResimBase64')" style="padding:10px; background:white;">
                         <input type="hidden" id="esnafResimBase64">
                     </div>
@@ -253,47 +258,60 @@
                 </div>
                 
                 <div style="display:flex; gap:10px; margin-top:15px;">
-                    <div class="stat-box" style="background: var(--success); padding:10px;"><p>CİRO</p><h3 id="dashCiro" style="font-size:18px;">0 ₺</h3></div>
-                    <div class="stat-box" style="background: var(--primary); padding:10px;"><p>KÂR</p><h3 id="dashKar" style="font-size:18px;">0 ₺</h3></div>
+                    <div class="stat-box" style="background: var(--primary); padding:10px;"><p>TOPLAM CİRO</p><h3 id="dashCiro" style="font-size:18px;">0 ₺</h3></div>
                 </div>
 
-                <div class="card" style="margin-top:15px; padding:10px;">
-                    <p style="font-size:11px; font-weight:800; color:var(--text-muted); text-align:center; margin-bottom:10px;">SİSTEM BÜYÜME GRAFİĞİ</p>
-                    <canvas id="adminFinanceChart" style="width:100%; height:150px;"></canvas>
+                <div class="card" style="margin-top:15px;">
+                    <p style="font-size:11px; font-weight:800; color:var(--text-muted); margin-bottom:10px;">FİNANSAL DAĞILIM (CİRO ÜZERİNDEN)</p>
+                    
+                    <div class="native-chart-container">
+                        <div id="barEsnaf" class="native-chart-bar" style="background: var(--danger); width: 0%;"></div>
+                        <div id="barKomisyon" class="native-chart-bar" style="background: var(--warning); width: 0%;"></div>
+                        <div id="barKar" class="native-chart-bar" style="background: var(--success); width: 0%;"></div>
+                    </div>
+                    
+                    <div style="display:flex; justify-content:space-between; margin-top:10px; font-size:10px; font-weight:bold;">
+                        <span style="color:var(--danger);">■ Esnaf Payı</span>
+                        <span style="color:var(--warning);">■ Komisyon</span>
+                        <span style="color:var(--success);">■ Net Kâr</span>
+                    </div>
                 </div>
 
                 <div class="dashboard-grid">
-                    <div class="module-card" onclick="switchView('financeView')"><div class="module-icon" style="background:#dcfce7; color:#10b981;"><i class="fa-solid fa-chart-pie"></i></div><h4>Finans İşlemleri</h4></div>
+                    <div class="module-card" onclick="switchView('financeView')"><div class="module-icon" style="background:#dcfce7; color:#10b981;"><i class="fa-solid fa-chart-pie"></i></div><h4>Finans Yönetimi</h4></div>
                     <div class="module-card" onclick="switchView('crmView')"><div class="module-icon" style="background:#e0e7ff; color:#4f46e5;"><i class="fa-solid fa-users-gear"></i></div><h4>Üyeler</h4></div>
+                    <div class="module-card" onclick="switchView('ecommerceView')"><div class="module-icon" style="background:#fef3c7; color:#f59e0b;"><i class="fa-solid fa-box-open"></i></div><h4>Ürün Ekle</h4></div>
+                    <div class="module-card" onclick="sistemdenCikis()"><div class="module-icon" style="background:#fee2e2; color:#ef4444;"><i class="fa-solid fa-power-off"></i></div><h4>Çıkış</h4></div>
                 </div>
-            </div>
-
-            <div class="view" id="crmView">
-                <div style="display:flex; align-items:center; gap:15px; margin-bottom:20px;"><div class="header-action" onclick="switchView('adminView')"><i class="fa-solid fa-arrow-left"></i></div><h3 style="margin:0;">Üyeler</h3></div>
-                <div class="input-group"><input type="text" placeholder="Üye ara..." onkeyup="adminUyeleriCiz(this.value)" style="background:white;"></div>
-                <div id="adminUyeListesi"></div>
             </div>
 
             <div class="view" id="financeView">
-                <div style="display:flex; align-items:center; gap:15px; margin-bottom:20px;"><div class="header-action" onclick="switchView('adminView')"><i class="fa-solid fa-arrow-left"></i></div><h3 style="margin:0;">Kasa & Ödeme</h3></div>
+                <div style="display:flex; align-items:center; gap:15px; margin-bottom:20px;"><div class="header-action" onclick="switchView('adminView')"><i class="fa-solid fa-arrow-left"></i></div><h3 style="margin:0;">Finans Merkezi</h3></div>
+                
                 <div style="display:flex; gap:10px; margin-bottom:15px;">
-                    <div class="stat-box" style="background: var(--secondary);"><p>TOPLAM CİRO</p><h3 id="finansToplamCiro">0 ₺</h3></div>
                     <div class="stat-box" style="background: var(--success);"><p>NET SİSTEM KÂRI</p><h3 id="finansNetKar">0 ₺</h3></div>
                 </div>
-                <div class="card" style="text-align:center; padding:15px; border:2px dashed var(--warning); background:var(--bg-color);">
-                    <p style="margin:0; font-size:11px; font-weight:800; color:var(--text-muted);">ABONELİK SATIŞ GELİRİ</p>
-                    <h3 style="margin:5px 0 0 0; font-size:24px; color:var(--warning);" id="finansAbonelikGeliri">0 ₺</h3>
-                </div>
                 
-                <h4 style="margin:25px 0 10px 0;"><i class="fa-solid fa-store" style="color:var(--text-muted);"></i> Esnaf Alacakları</h4>
+                <div style="display:flex; gap:10px; margin-bottom:20px;">
+                    <div class="card" style="flex:1; text-align:center; padding:15px; margin:0; border:1px solid var(--border);">
+                        <p style="margin:0; font-size:10px; font-weight:800; color:var(--text-muted);">ABONELİK GELİRİ</p>
+                        <h3 style="margin:5px 0 0 0; font-size:16px; color:var(--primary);" id="finansAbonelikGeliri">0 ₺</h3>
+                    </div>
+                    <div class="card" style="flex:1; text-align:center; padding:15px; margin:0; border:1px solid var(--border);">
+                        <p style="margin:0; font-size:10px; font-weight:800; color:var(--text-muted);">DAĞITILAN KOMİSYON</p>
+                        <h3 style="margin:5px 0 0 0; font-size:16px; color:var(--warning);" id="finansKomisyon">0 ₺</h3>
+                    </div>
+                </div>
+
+                <h4 style="margin:20px 0 10px 0;"><i class="fa-solid fa-store" style="color:var(--text-muted);"></i> Esnaf Alacakları</h4>
                 <div id="finansEsnafListesi"></div>
                 
-                <h4 style="margin:25px 0 10px 0;"><i class="fa-solid fa-sitemap" style="color:var(--primary);"></i> Temsilci Komisyon Hak Edişleri</h4>
+                <h4 style="margin:25px 0 10px 0;"><i class="fa-solid fa-sitemap" style="color:var(--primary);"></i> Temsilci Hak Edişleri</h4>
                 <div id="finansSaticiListesi"></div>
             </div>
 
             <div class="view" id="ecommerceView">
-                <div style="display:flex; align-items:center; gap:15px; margin-bottom:20px;"><div class="header-action" onclick="switchView('adminView')"><i class="fa-solid fa-arrow-left"></i></div><h3 style="margin:0;">Genel E-Ticaret</h3></div>
+                <div style="display:flex; align-items:center; gap:15px; margin-bottom:20px;"><div class="header-action" onclick="switchView('adminView')"><i class="fa-solid fa-arrow-left"></i></div><h3 style="margin:0;">Sistem Ürünleri</h3></div>
                 <div class="card">
                     <h4 style="margin:0 0 15px 0; color:var(--primary);"><i class="fa-solid fa-plus-circle"></i> Sistem Adına Ürün Ekle</h4>
                     <div class="input-group"><label>Ürün Adı</label><input type="text" id="adminYeniUrunAd"></div>
@@ -302,73 +320,51 @@
                         <select id="adminYeniUrunKategori"><option value="Elektronik">Elektronik</option><option value="Gıda">Gıda</option><option value="Giyim">Giyim</option></select>
                     </div>
                     <div class="input-group">
-                        <label>Ürün Görseli Seç / Çek</label>
+                        <label>Ürün Görseli Seç</label>
                         <input type="file" id="adminResimSec" accept="image/*" onchange="resimCevir(this, 'adminResimBase64')" style="padding:10px; background:white;">
                         <input type="hidden" id="adminResimBase64">
                     </div>
                     <button class="btn-primary" onclick="adminUrunEkle()"><i class="fa-solid fa-cloud-arrow-up"></i> Buluta Yükle</button>
                 </div>
-                <h4 style="margin:20px 0 10px 0;">Sistemdeki Tüm Ürünler</h4>
+                <h4 style="margin:20px 0 10px 0;">Vitrin Listesi</h4>
                 <div id="adminUrunListesi"></div>
             </div>
 
+            <div class="view" id="crmView"><div style="display:flex; align-items:center; gap:15px; margin-bottom:20px;"><div class="header-action" onclick="switchView('adminView')"><i class="fa-solid fa-arrow-left"></i></div><h3 style="margin:0;">Üyeler</h3></div><div class="input-group"><input type="text" placeholder="Üye ara..." onkeyup="adminUyeleriCiz(this.value)"></div><div id="adminUyeListesi"></div></div>
             <div class="view" id="ordersView"><h3 style="margin-bottom:20px;"><i class="fa-solid fa-box" style="color:var(--primary);"></i> Siparişlerim</h3><div id="musteriSiparisListesi"></div></div>
             <div class="view" id="storeOrdersView"><div class="stat-box" style="background: var(--warning); margin-bottom:15px; border-radius:20px;"><p style="color:#854d0e;">BEKLEYEN SİPARİŞ</p><h3 id="esnafBekleyenSiparisSayisi" style="color:#854d0e;">0</h3></div><div id="esnafSiparisListesi"></div></div>
-            <div class="view" id="walletView"><div class="card" style="background:var(--secondary); color:white; text-align:center;"><p style="margin:0; font-size:12px; font-weight:800; opacity:0.8;">BAKİYEM</p><h1 style="margin:10px 0 0 0; font-size:36px; color:var(--success);" id="temsilciBakiye">0 ₺</h1></div><div class="card"><h4 style="margin:0 0 15px 0;">Esnaftan Nakit Çek</h4><div class="input-group"><input type="number" id="cekimMiktari" placeholder="Örn: 500" style="text-align:center;"></div><button class="btn-primary" onclick="nakitKoduUret()">Kod Üret</button><div id="uretilenKodKutusu" style="font-family:monospace; font-size:32px; font-weight:900; letter-spacing:5px; color:var(--primary); background:var(--bg-color); padding:20px; border-radius:16px; border:2px dashed var(--primary); margin:20px 0; text-align:center; display:none;">KPN-0000</div></div></div>
-            <div class="view" id="networkView"><div style="display:flex; gap:10px; margin-bottom:15px;"><div class="stat-box" style="background: var(--primary);"><p>AĞIMDAKİ KİŞİ</p><h3 id="networkKisiSayisi">0</h3></div><div class="stat-box" style="background: var(--success);"><p>KAZANÇ</p><h3 id="networkToplamKazanc">0 ₺</h3></div></div><div class="card" style="text-align:center; border:2px dashed var(--primary); background:var(--bg-color);"><p style="margin:0; font-size:11px; font-weight:800; color:var(--text-muted);">SPONSOR KODUN</p><h2 style="margin:10px 0 0 0; font-size:28px; letter-spacing:3px; color:var(--primary);" id="benimSponsorKodum">YÜKLENİYOR</h2></div><div id="altEkipListesi"></div></div>
+            <div class="view" id="walletView"><div class="card" style="background:var(--secondary); color:white; text-align:center;"><p style="margin:0; font-size:12px; font-weight:800; opacity:0.8;">BAKİYEM</p><h1 style="margin:10px 0 0 0; font-size:36px; color:var(--success);" id="temsilciBakiye">0 ₺</h1></div><div class="card"><h4 style="margin:0 0 15px 0;">Nakit Çek</h4><div class="input-group"><input type="number" id="cekimMiktari" placeholder="Tutar"></div><button class="btn-primary" onclick="nakitKoduUret()">Kod Üret</button><div id="uretilenKodKutusu" style="font-family:monospace; font-size:32px; font-weight:900; letter-spacing:5px; color:var(--primary); background:var(--bg-color); padding:20px; border-radius:16px; border:2px dashed var(--primary); margin:20px 0; text-align:center; display:none;"></div></div></div>
+            <div class="view" id="networkView"><div style="display:flex; gap:10px; margin-bottom:15px;"><div class="stat-box" style="background: var(--primary);"><p>KİŞİ</p><h3 id="networkKisiSayisi">0</h3></div><div class="stat-box" style="background: var(--success);"><p>KAZANÇ</p><h3 id="networkToplamKazanc">0 ₺</h3></div></div><div class="card" style="text-align:center; border:2px dashed var(--primary); background:var(--bg-color);"><p style="margin:0; font-size:11px; font-weight:800;">SPONSOR KODUN</p><h2 style="margin:10px 0 0 0; font-size:28px; color:var(--primary);" id="benimSponsorKodum"></h2></div><div id="altEkipListesi"></div></div>
             <div class="view" id="subscriptionView"><h3 style="margin:20px 0 10px 0;">VIP Abonelik</h3><div id="abonelikPaketleriListesi"></div></div>
         </div>
 
         <div class="bottom-nav" id="appNav" style="display:none;">
             <div class="nav-item nav-customer nav-seller" id="nav-home" onclick="switchView('homeView'); navAktif(this);"><i class="fa-solid fa-layer-group"></i><span>Vitrin</span></div>
-            <div class="nav-item nav-customer" id="nav-orders" onclick="switchView('ordersView'); navAktif(this);"><i class="fa-solid fa-box"></i><span>Siparişler</span></div>
+            <div class="nav-item nav-customer" id="nav-orders" onclick="switchView('ordersView'); navAktif(this);"><i class="fa-solid fa-box"></i><span>Sipariş</span></div>
             <div class="nav-item nav-customer nav-seller" id="nav-sub" onclick="switchView('subscriptionView'); navAktif(this);"><i class="fa-solid fa-crown"></i><span>VIP</span></div>
             <div class="nav-item nav-seller" id="nav-network" onclick="switchView('networkView'); navAktif(this);"><i class="fa-solid fa-sitemap"></i><span>Ağım</span></div>
             <div class="nav-item nav-seller" id="nav-wallet" onclick="switchView('walletView'); navAktif(this);"><i class="fa-solid fa-wallet"></i><span>Cüzdan</span></div>
-            <div class="nav-item nav-store" id="nav-storeOrders" onclick="switchView('storeOrdersView'); navAktif(this);"><i class="fa-solid fa-boxes-packing"></i><span>Siparişler</span></div>
-            <div class="nav-item nav-store" id="nav-store" onclick="switchView('storeView'); navAktif(this);"><i class="fa-solid fa-store"></i><span>POS & Ürün</span></div>
+            <div class="nav-item nav-store" id="nav-storeOrders" onclick="switchView('storeOrdersView'); navAktif(this);"><i class="fa-solid fa-boxes-packing"></i><span>Sipariş</span></div>
+            <div class="nav-item nav-store" id="nav-store" onclick="switchView('storeView'); navAktif(this);"><i class="fa-solid fa-store"></i><span>Mağaza</span></div>
             <div class="nav-item nav-admin" id="nav-admin" onclick="switchView('adminView'); navAktif(this);"><i class="fa-solid fa-grip"></i><span>Yönetim</span></div>
             <div class="nav-item nav-all" onclick="sistemdenCikis()"><i class="fa-solid fa-power-off" style="color:var(--danger);"></i><span>Çıkış</span></div>
         </div>
     </div>
 
     <script>
-        // --- 1. FIREBASE BAĞLANTISI VE YAPILANDIRMASI ---
-        const firebaseConfig = {
-            apiKey: "AIzaSyBWSlha9fD_q3zHXaRJ3ocJdtALqkrW-LU",
-            authDomain: "kapinda-8d3ef.firebaseapp.com",
-            projectId: "kapinda-8d3ef",
-            storageBucket: "kapinda-8d3ef.firebasestorage.app",
-            messagingSenderId: "246456710881",
-            appId: "1:246456710881:web:c2a7bdb5e3b9065d1829a0"
-        };
-        firebase.initializeApp(firebaseConfig);
-        const db = firebase.firestore();
+        const firebaseConfig = { apiKey: "AIzaSyBWSlha9fD_q3zHXaRJ3ocJdtALqkrW-LU", authDomain: "kapinda-8d3ef.firebaseapp.com", projectId: "kapinda-8d3ef", storageBucket: "kapinda-8d3ef.firebasestorage.app", messagingSenderId: "246456710881", appId: "1:246456710881:web:c2a7bdb5e3b9065d1829a0" };
+        firebase.initializeApp(firebaseConfig); const db = firebase.firestore();
 
-        // --- 2. GLOBAL DEĞİŞKENLER (HAFIZA) ---
         let appData = { users: {}, products: [], stats: {}, codes: {}, orders: [], plans: {} };
-        let aktifKullaniciEmail = null;
-        let sepet = [];
-        let currentView = 'authView';
-        let seciliKategori = 'Tümü';
-        let adminChartInstance = null;
+        let aktifKullaniciEmail = null; let sepet = []; let currentView = 'authView'; let seciliKategori = 'Tümü'; 
+        let oldStats = null; let oldOrdersCount = 0; let oldBakiye = -1;
 
-        // Bildirim Sistemi Referansları
-        let oldStats = null;
-        let oldOrdersCount = 0;
-        let oldBakiye = -1;
-
-        // --- 3. SİSTEMİ BAŞLATMA (İLK YÜKLEME) ---
         window.onload = async () => {
             try {
                 const initCheck = await db.collection('kapinda').doc('stats').get();
-                if (!initCheck.exists) {
-                    await setupFirebaseDatabase();
-                }
+                if (!initCheck.exists) await setupFirebaseDatabase();
                 listenToCloud();
-            } catch (err) {
-                document.getElementById('serverLoading').innerHTML = "<h3 style='color:red;'>Bağlantı Hatası!</h3><p>Lütfen Firebase Rules ayarlarınızı kontrol edin.</p>";
-            }
+            } catch (err) { document.getElementById('serverLoading').innerHTML = "<h3 style='color:red;'>Bağlantı Hatası</h3>"; }
         };
 
         async function setupFirebaseDatabase() {
@@ -376,36 +372,26 @@
                 'admin.com': { rol: 'admin', isim: 'Süper Admin', sifre: '1', bakiye: 0, seviye: 'free', refKod: 'ADMIN' },
                 'esnaf@mail.com': { rol: 'store', isim: 'Arena Store', sifre: '1', bakiye: 0, seviye: 'free', refKod: 'STORE1' },
                 'satici@mail.com': { rol: 'seller', isim: 'Ali Temsilci', sifre: '1', bakiye: 1500, seviye: 'pro', refKod: 'ALI123', agKazanci: 0 },
-                'musteri@mail.com': { rol: 'customer', isim: 'Canan Müşteri', sifre: '1', bakiye: 5000, seviye: 'free', sponsor: 'ALI123' }
+                'musteri@mail.com': { rol: 'customer', isim: 'Canan', sifre: '1', bakiye: 5000, seviye: 'free', sponsor: 'ALI123' }
             });
             await db.collection('kapinda').doc('products').set({ list: [
-                {id: 1, ad: 'Arena Mouse', fiyat: 1000, saticiMail: 'esnaf@mail.com', kategori: 'Elektronik', resim: 'https://images.unsplash.com/photo-1527443224154-c4a3942d3acf?w=300'},
-                {id: 2, ad: 'Mekanik Klavye', fiyat: 2000, saticiMail: 'esnaf@mail.com', kategori: 'Elektronik', resim: 'https://images.unsplash.com/photo-1595225476474-87563907a212?w=300'}
+                {id: 1, ad: 'Arena Mouse', fiyat: 1000, saticiMail: 'esnaf@mail.com', kategori: 'Elektronik', resim: 'https://images.unsplash.com/photo-1527443224154-c4a3942d3acf?w=300'}
             ]});
             await db.collection('kapinda').doc('plans').set({
-                free: { id: 'free', ad: 'Standart', fiyat: 0, oran: 0.05, desc: 'Ağından %5 komisyon.' },
-                pro: { id: 'pro', ad: 'Pro', fiyat: 100, oran: 0.10, desc: 'Ağından %10 komisyon.' },
-                elite: { id: 'elite', ad: 'Elite VIP', fiyat: 500, oran: 0.20, desc: 'Ağından %20 komisyon.' }
+                free: { id: 'free', ad: 'Standart', fiyat: 0, oran: 0.05, desc: '%5 komisyon.' }, pro: { id: 'pro', ad: 'Pro', fiyat: 100, oran: 0.10, desc: '%10 komisyon.' }, elite: { id: 'elite', ad: 'Elite VIP', fiyat: 500, oran: 0.20, desc: '%20 komisyon.' }
             });
             await db.collection('kapinda').doc('stats').set({ ciro: 0, netKar: 0, toplamKomisyon: 0, abonelikGeliri: 0 });
-            await db.collection('kapinda').doc('orders').set({ list: [] });
-            await db.collection('kapinda').doc('codes').set({});
+            await db.collection('kapinda').doc('orders').set({ list: [] }); await db.collection('kapinda').doc('codes').set({});
         }
 
-        // --- 4. BULUTU DİNLE (CANLI YAYIN - REALTIME SYNC) ---
         function listenToCloud() {
             let isFirstLoad = true;
-            
             ['users', 'stats', 'codes', 'plans'].forEach(col => {
                 db.collection('kapinda').doc(col).onSnapshot(doc => { 
                     if(doc.exists) appData[col] = doc.data(); 
-                    
-                    // CANLI BİLDİRİM (Cüzdana Para Gelişi - Push Notification)
                     if(!isFirstLoad && col === 'users' && aktifKullaniciEmail && appData.users[aktifKullaniciEmail]) {
                         let yeniBakiye = appData.users[aktifKullaniciEmail].bakiye;
-                        if(oldBakiye !== -1 && yeniBakiye > oldBakiye) {
-                            showToast(`🔔 Cüzdanınıza para eklendi: +${yeniBakiye - oldBakiye} ₺`, false);
-                        }
+                        if(oldBakiye !== -1 && yeniBakiye > oldBakiye) showToast(`Cüzdanınıza para eklendi: +${yeniBakiye - oldBakiye} ₺`, false);
                         oldBakiye = yeniBakiye;
                     }
                     reRenderCurrentView(); 
@@ -415,15 +401,11 @@
             ['products', 'orders'].forEach(col => {
                 db.collection('kapinda').doc(col).onSnapshot(doc => { 
                     if(doc.exists) appData[col] = doc.data().list || []; 
-                    
-                    // CANLI BİLDİRİM (Esnafa veya Admine Yeni Sipariş Gelişi)
                     if(!isFirstLoad && col === 'orders' && aktifKullaniciEmail) {
                         let yeniSiparisSayisi = appData.orders.length;
                         if(yeniSiparisSayisi > oldOrdersCount) {
                             let sonSiparis = appData.orders[0];
-                            if(sonSiparis.esnafMail === aktifKullaniciEmail || aktifKullaniciEmail === 'admin.com') {
-                                showToast(`🔔 Yeni Sipariş Geldi: ${sonSiparis.toplam} ₺`, false);
-                            }
+                            if(sonSiparis.esnafMail === aktifKullaniciEmail || aktifKullaniciEmail === 'admin.com') showToast(`🔔 Yeni Sipariş Geldi!`, false);
                         }
                         oldOrdersCount = yeniSiparisSayisi;
                     }
@@ -431,700 +413,152 @@
                 });
             });
 
-            // İlk Yüklemeyi Tamamla ve Oto-Girişi Başlat
             setTimeout(() => { 
                 document.getElementById('serverLoading').style.opacity = '0'; 
                 setTimeout(() => document.getElementById('serverLoading').style.display = 'none', 500); 
                 isFirstLoad = false;
-                
-                // OTO-GİRİŞ SİSTEMİ (Beni Hatırla)
                 let savedUser = localStorage.getItem('kapinda_session');
-                if(savedUser && appData.users[savedUser]) {
-                    document.getElementById('loginEmail').value = savedUser;
-                    document.getElementById('loginPass').value = appData.users[savedUser].sifre;
-                    girisYap(true); // Şifre sormadan otomatik içeri al
-                }
+                if(savedUser && appData.users[savedUser]) { document.getElementById('loginEmail').value = savedUser; document.getElementById('loginPass').value = appData.users[savedUser].sifre; girisYap(true); }
             }, 1000);
         }
 
-        // --- 5. YARDIMCI FONKSİYONLAR (GET/SET/UI) ---
-        function dbGet(key) { 
-            return appData[key.replace('kapinda_', '')]; 
+        function dbGet(k) { return appData[k.replace('kapinda_', '')]; }
+        function dbSet(k, v) { let col = k.replace('kapinda_', ''); if(col==='products' || col==='orders') db.collection('kapinda').doc(col).set({ list: v }); else db.collection('kapinda').doc(col).set(v); }
+        function showToast(msg, isErr=false) { const t = document.getElementById('toast'); t.innerHTML = isErr ? `<i class="fa-solid fa-triangle-exclamation"></i> ${msg}` : `<i class="fa-solid fa-check-circle"></i> ${msg}`; t.style.background = isErr ? "var(--danger)" : "var(--success)"; t.classList.add('show'); setTimeout(() => t.classList.remove('show'), 3000); }
+        function authTab(tab) { document.querySelectorAll('#authView .tab').forEach(t=>t.classList.remove('active')); document.getElementById('tab'+tab.charAt(0).toUpperCase()+tab.slice(1)).classList.add('active'); document.getElementById('loginForm').style.display = tab==='login'?'block':'none'; document.getElementById('registerForm').style.display = tab==='register'?'block':'none'; }
+
+        function girisYap(isAuto = false) {
+            const email = document.getElementById('loginEmail').value.trim(); const pass = document.getElementById('loginPass').value.trim(); const users = dbGet('kapinda_users');
+            if (users[email] && users[email].sifre === pass) {
+                aktifKullaniciEmail = email; const u = users[email]; oldBakiye = u.bakiye; oldOrdersCount = appData.orders.length; 
+                localStorage.setItem('kapinda_session', email);
+                document.getElementById('appHeader').style.display = 'flex'; document.getElementById('appNav').style.display = 'flex';
+                document.querySelectorAll('.nav-item').forEach(nav => nav.style.display = 'none'); document.querySelectorAll('.nav-all').forEach(nav => nav.style.display = 'block');
+                
+                let tar = 'homeView'; let nId = 'nav-home';
+                if(u.rol === 'admin') { document.getElementById('nav-admin').style.display = 'block'; document.getElementById('adminMailYazisi').innerText = u.isim; tar = 'adminView'; nId = 'nav-admin'; }
+                else if(u.rol === 'seller') { document.querySelectorAll('.nav-seller').forEach(n=>n.style.display='block'); tar = 'networkView'; nId = 'nav-network'; }
+                else if(u.rol === 'store') { document.querySelectorAll('.nav-store').forEach(n=>n.style.display='block'); tar = 'storeOrdersView'; nId = 'nav-storeOrders'; }
+                else { document.querySelectorAll('.nav-customer').forEach(n=>n.style.display='block'); }
+                
+                switchView(tar); navAktif(document.getElementById(nId)); 
+                if(!isAuto) showToast(`Hoş Geldin, ${u.isim}`);
+            } else { if(!isAuto) showToast("Hatalı Giriş!", true); }
         }
 
-        function dbSet(key, value) { 
-            let col = key.replace('kapinda_', ''); 
-            if(col === 'products' || col === 'orders') {
-                db.collection('kapinda').doc(col).set({ list: value }); 
-            } else {
-                db.collection('kapinda').doc(col).set(value);
-            }
-        }
+        function sistemdenCikis() { localStorage.removeItem('kapinda_session'); location.reload(); }
 
-        function showToast(message, isError = false) { 
-            const toastEl = document.getElementById('toast'); 
-            toastEl.innerHTML = isError ? `<i class="fa-solid fa-triangle-exclamation"></i> ${message}` : `<i class="fa-solid fa-cloud-arrow-up"></i> ${message}`; 
-            toastEl.style.background = isError ? "var(--danger)" : "var(--success)"; 
-            toastEl.classList.add('show'); 
-            setTimeout(() => { toastEl.classList.remove('show'); }, 3000); 
+        function switchView(tId) {
+            if(tId === currentView) return;
+            document.getElementById(currentView).classList.add('prev'); document.getElementById(tId).classList.add('active');
+            document.querySelectorAll('.view').forEach(v => { if(v.id!==tId && v.id!==currentView) {v.classList.remove('active'); v.classList.remove('prev');}});
+            currentView = tId; reRenderCurrentView();
+            document.getElementById('cartIconBox').style.display = (tId==='homeView' || tId==='cartView') ? 'flex' : 'none';
         }
-
-        function authTab(tabName) { 
-            document.querySelectorAll('#authView .tab').forEach(t => t.classList.remove('active')); 
-            document.getElementById('tab' + tabName.charAt(0).toUpperCase() + tabName.slice(1)).classList.add('active'); 
-            document.getElementById('loginForm').style.display = tabName === 'login' ? 'block' : 'none'; 
-            document.getElementById('registerForm').style.display = tabName === 'register' ? 'block' : 'none'; 
-        }
-
-        // Görseli Base64'e Çevirme Fonksiyonu (Hem Admin Hem Esnaf Kullanır)
-        function resimCevir(inputElement, targetId) {
-            let file = inputElement.files[0];
-            if(file) {
-                // Performans için 1MB sınırı
-                if(file.size > 1048576) {
-                    showToast("Resim çok büyük! (Maksimum 1MB).", true);
-                    inputElement.value = ''; 
-                    return;
-                }
-                let reader = new FileReader();
-                reader.onloadend = function() { 
-                    document.getElementById(targetId).value = reader.result; 
-                }
-                reader.readAsDataURL(file);
-                showToast("Görsel buluta gönderilmeye hazır.");
-            }
-        }
-
-        // --- 6. NAVİGASYON VE EKRAN YENİLEME ---
-        function switchView(targetId) {
-            if (targetId === currentView) return;
-            
-            const currentEl = document.getElementById(currentView); 
-            const targetEl = document.getElementById(targetId);
-            
-            document.querySelectorAll('.view').forEach(v => { 
-                if (v.id !== targetId && v.id !== currentView) { 
-                    v.classList.remove('active'); 
-                    v.classList.remove('prev'); 
-                } 
-            });
-            
-            currentEl.classList.add('prev'); 
-            currentEl.classList.remove('active'); 
-            targetEl.classList.add('active'); 
-            targetEl.classList.remove('prev');
-            
-            currentView = targetId; 
-            reRenderCurrentView();
-            
-            const titles = { 
-                'homeView': 'Kapında Vitrin', 'cartView': 'Sepetim', 'adminView': 'Yönetim Paneli', 
-                'crmView': 'Üye Yönetimi', 'financeView': 'Finans Merkezi', 'ecommerceView': 'Genel E-Ticaret', 
-                'walletView': 'Temsilci Cüzdanı', 'storeView': 'Esnaf Kasası', 'subscriptionView': 'VIP Abonelik', 
-                'networkView': 'Ağım & Ekibim', 'ordersView': 'Geçmiş Siparişlerim', 'storeOrdersView': 'Gelen Siparişler' 
-            };
-            
-            document.getElementById('headerTitle').innerText = titles[targetId] || 'Kapında';
-            document.getElementById('cartIconBox').style.display = (targetId === 'homeView' || targetId === 'cartView') ? 'flex' : 'none';
-        }
-
-        function navAktif(element) { 
-            document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active')); 
-            element.classList.add('active'); 
-        }
+        function navAktif(el) { document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active')); el.classList.add('active'); }
 
         function reRenderCurrentView() {
-            if (currentView === 'homeView') vitrinCiz(); 
-            if (currentView === 'adminView') dashboardCiz(); 
-            if (currentView === 'financeView') finansCiz();
-            if (currentView === 'crmView') adminUyeleriCiz(); 
-            if (currentView === 'ecommerceView') adminUrunCiz();
-            if (currentView === 'storeOrdersView') esnafSiparisCiz(); 
-            if (currentView === 'ordersView') musteriSiparisCiz();
-            if (currentView === 'walletView') cüzdanCiz(); 
-            if (currentView === 'storeView') posCiz(); 
-            if (currentView === 'networkView') networkCiz(); 
-            if (currentView === 'subscriptionView') abonelikCiz();
+            if(currentView==='homeView') vitrinCiz(); if(currentView==='adminView') dashboardCiz(); if(currentView==='financeView') finansCiz();
+            if(currentView==='crmView') adminUyeleriCiz(); if(currentView==='ecommerceView') adminUrunCiz();
+            if(currentView==='storeOrdersView') esnafSiparisCiz(); if(currentView==='ordersView') musteriSiparisCiz();
+            if(currentView==='walletView') cüzdanCiz(); if(currentView==='storeView') posCiz(); if(currentView==='networkView') networkCiz(); if(currentView==='subscriptionView') abonelikCiz();
         }
 
-        // --- 7. KULLANICI GİRİŞİ VE ÇIKIŞI ---
-        function girisYap(isAutoLogin = false) {
-            const email = document.getElementById('loginEmail').value.trim(); 
-            const pass = document.getElementById('loginPass').value.trim(); 
-            const users = dbGet('kapinda_users');
-            
-            if (users[email] && users[email].sifre === pass) {
-                aktifKullaniciEmail = email; 
-                const user = users[email];
-                
-                // Bildirimler için mevcut durumu kaydet
-                oldBakiye = user.bakiye; 
-                oldOrdersCount = appData.orders.length; 
-                
-                // Oturum kaydet (Beni Hatırla)
-                localStorage.setItem('kapinda_session', email);
-
-                document.getElementById('appHeader').style.display = 'flex'; 
-                document.getElementById('appNav').style.display = 'flex';
-                document.querySelectorAll('.nav-item').forEach(nav => nav.style.display = 'none'); 
-                document.querySelectorAll('.nav-all').forEach(nav => nav.style.display = 'block');
-                
-                let targetView = 'homeView'; 
-                let navId = 'nav-home';
-                
-                if (user.rol === 'admin') { 
-                    document.getElementById('nav-admin').style.display = 'block'; 
-                    document.getElementById('adminMailYazisi').innerText = user.isim; 
-                    targetView = 'adminView'; 
-                    navId = 'nav-admin'; 
-                }
-                else if (user.rol === 'seller') { 
-                    document.querySelectorAll('.nav-seller').forEach(n => n.style.display = 'block'); 
-                    targetView = 'networkView'; 
-                    navId = 'nav-network'; 
-                }
-                else if (user.rol === 'store') { 
-                    document.querySelectorAll('.nav-store').forEach(n => n.style.display = 'block'); 
-                    targetView = 'storeOrdersView'; 
-                    navId = 'nav-storeOrders'; 
-                }
-                else { 
-                    document.querySelectorAll('.nav-customer').forEach(n => n.style.display = 'block'); 
-                }
-                
-                switchView(targetView); 
-                navAktif(document.getElementById(navId)); 
-                
-                if (!isAutoLogin) showToast(`Sisteme Giriş Yapıldı, Hoş Geldin ${user.isim.split(' ')[0]}`);
-            } else { 
-                if (!isAutoLogin) showToast("Hatalı E-Posta veya Şifre!", true); 
-            }
-        }
-
-        function sistemdenCikis() {
-            localStorage.removeItem('kapinda_session');
-            location.reload();
-        }
-
-        function kayitOl() {
-            const ad = document.getElementById('regName').value.trim(); 
-            const email = document.getElementById('regEmail').value.trim();
-            const pass = document.getElementById('regPass').value.trim(); 
-            const sponsorCode = document.getElementById('regSponsor').value.trim().toUpperCase();
-            
-            if (!ad || !email || !pass) return showToast("Zorunlu alanları doldurun.", true);
-            
-            const users = dbGet('kapinda_users');
-            if (users[email]) return showToast("Bu e-posta zaten kayıtlı!", true);
-            
-            let sponsorMail = null;
-            if (sponsorCode) { 
-                for (let e in users) { 
-                    if (users[e].refKod === sponsorCode) { sponsorMail = e; break; } 
-                } 
-                if (!sponsorMail) return showToast("Geçersiz sponsor kodu!", true); 
-            }
-            
-            const refKod = "REF" + Math.floor(1000 + Math.random() * 9000);
-            users[email] = { rol: 'customer', isim: ad, sifre: pass, bakiye: 0, seviye: 'free', refKod: refKod, sponsor: sponsorMail, agKazanci: 0 };
-            
-            dbSet('kapinda_users', users);
-            
-            document.getElementById('loginEmail').value = email; 
-            document.getElementById('loginPass').value = pass;
-            authTab('login'); 
-            showToast("Buluta Kaydedildi! Sisteme giriş yapılıyor..."); 
-            girisYap();
-        }
-
-        // --- 8. KATEGORİ VE VİTRİN İŞLEMLERİ ---
-        function kategoriSec(element, kategoriIsmi) {
-            document.querySelectorAll('.cat-chip').forEach(c => c.classList.remove('active'));
-            element.classList.add('active');
-            seciliKategori = kategoriIsmi;
-            vitrinCiz();
-        }
+        function kategoriSec(el, kat) { document.querySelectorAll('.cat-chip').forEach(c => c.classList.remove('active')); el.classList.add('active'); seciliKategori = kat; vitrinCiz(); }
+        function resimCevir(input, target) { let file = input.files[0]; if(file) { if(file.size > 1048576) { showToast("1MB altı resim seçin.", true); input.value = ''; return; } let reader = new FileReader(); reader.onloadend = function() { document.getElementById(target).value = reader.result; }; reader.readAsDataURL(file); } }
 
         function vitrinCiz() {
-            const products = dbGet('kapinda_products'); 
-            const aramaKelimesi = document.getElementById('aramaKutusu').value.toLowerCase();
-            let html = '';
-            
-            products.forEach(product => { 
-                // Filtreleme Algoritması
-                let isMatch = true;
-                if (seciliKategori !== 'Tümü' && product.kategori !== seciliKategori) isMatch = false;
-                if (aramaKelimesi && !product.ad.toLowerCase().includes(aramaKelimesi)) isMatch = false;
-
-                if (isMatch) {
-                    let resimUrl = product.resim || 'https://images.unsplash.com/photo-1505740420928-5e560c06d30e?w=300';
-                    html += `
-                    <div class="card" style="padding:0; overflow:hidden;">
-                        <div style="height:120px; background:url('${resimUrl}') center/cover;"></div>
-                        <div style="padding:15px;">
-                            <h4 style="margin:0; font-size:13px;">${product.ad}</h4>
-                            <p style="color:var(--primary); font-weight:900; font-size:18px; margin:8px 0;">${product.fiyat} ₺</p>
-                            <button class="btn-primary" style="padding:10px; font-size:11px;" onclick="sepeteEkle('${product.ad}', ${product.fiyat}, '${product.saticiMail}')">Sepete Ekle</button>
-                        </div>
-                    </div>`; 
-                }
-            });
-            
-            document.getElementById('productGrid').innerHTML = html || '<p style="grid-column: span 2; text-align:center; color:var(--text-muted); font-size:12px;">Ürün bulunamadı.</p>';
+            const p = dbGet('kapinda_products'); const arama = document.getElementById('aramaKutusu').value.toLowerCase(); let h = '';
+            p.forEach(x => { 
+                let m = true; if(seciliKategori !== 'Tümü' && x.kategori !== seciliKategori) m = false; if(arama && !x.ad.toLowerCase().includes(arama)) m = false;
+                if(m) { let r = x.resim || 'https://images.unsplash.com/photo-1505740420928-5e560c06d30e?w=300'; h += `<div class="card" style="padding:0; overflow:hidden;"><div style="height:120px; background:url('${r}') center/cover;"></div><div style="padding:15px;"><h4 style="margin:0; font-size:13px;">${x.ad}</h4><p style="color:var(--primary); font-weight:900; font-size:18px; margin:8px 0;">${x.fiyat} ₺</p><button class="btn-primary" style="padding:10px; font-size:11px;" onclick="sepeteEkle('${x.ad}', ${x.fiyat}, '${x.saticiMail}')">Sepete Ekle</button></div></div>`; }
+            }); document.getElementById('productGrid').innerHTML = h || '<p style="grid-column: span 2; text-align:center;">Ürün bulunamadı.</p>';
         }
 
-        // --- 9. SEPET VE DİNAMİK KOMİSYON (SİPARİŞ) SİSTEMİ ---
-        function sepeteEkle(ad, fiyat, saticiMail) { 
-            sepet.push({ad: ad, fiyat: fiyat, saticiMail: saticiMail}); 
-            document.getElementById('cartCount').innerText = sepet.length; 
-            
-            let html = ''; 
-            let total = 0; 
-            
-            sepet.forEach(item => { 
-                total += item.fiyat; 
-                html += `<div class="crm-item" style="cursor:default; padding:10px 15px;"><b>${item.ad}</b><b style="color:var(--primary);">${item.fiyat} ₺</b></div>`; 
-            }); 
-            
-            document.getElementById('cartItemsContainer').innerHTML = html; 
-            document.getElementById('cartTotal').innerText = total + " ₺"; 
-            showToast("Ürün sepete eklendi!"); 
+        function esnafUrunEkle() {
+            const ad = document.getElementById('esnafUrunAd').value.trim(); const f = parseInt(document.getElementById('esnafUrunFiyat').value); const kat = document.getElementById('esnafUrunKategori').value; const r = document.getElementById('esnafResimBase64').value;
+            if(!ad || !f) return showToast("Hata", true); const p = dbGet('kapinda_products'); p.push({id:Date.now(), ad:ad, fiyat:f, saticiMail:aktifKullaniciEmail, kategori: kat, resim: r || 'https://images.unsplash.com/photo-1505740420928-5e560c06d30e?w=300'}); dbSet('kapinda_products', p); 
+            document.getElementById('esnafUrunAd').value=''; document.getElementById('esnafUrunFiyat').value=''; document.getElementById('esnafResimBase64').value=''; document.getElementById('esnafResimSec').value=''; showToast("Ürün Yüklendi!");
         }
 
+        // SEPET
+        function sepeteEkle(ad, f, sMail) { sepet.push({ad, fiyat:f, saticiMail: sMail}); document.getElementById('cartCount').innerText = sepet.length; let h = ''; let t = 0; sepet.forEach(x => { t += x.fiyat; h += `<div class="crm-item" style="padding:10px;"><b>${x.ad}</b><b style="color:var(--primary);">${x.fiyat} ₺</b></div>`; }); document.getElementById('cartItemsContainer').innerHTML = h; document.getElementById('cartTotal').innerText = t + " ₺"; showToast("Eklendi"); }
         function odemeTamamla() {
-            if (sepet.length === 0) return showToast("Sepetiniz boş!", true);
-            
-            const adres = document.getElementById('siparisAdresi').value.trim(); 
-            if (!adres) return showToast("Lütfen teslimat adresinizi girin!", true);
-            
-            const stats = dbGet('kapinda_stats'); 
-            const users = dbGet('kapinda_users'); 
-            const plans = dbGet('kapinda_plans'); 
-            const orders = dbGet('kapinda_orders'); 
-            const aliciEmail = aktifKullaniciEmail;
-            
-            const newOrder = { 
-                id: 'ORD-' + Math.floor(10000 + Math.random() * 90000), 
-                tarih: new Date().toLocaleDateString(), 
-                musteri: users[aliciEmail].isim, 
-                musteriMail: aliciEmail, 
-                adres: adres, 
-                items: [...sepet], 
-                toplam: 0, 
-                durum: 'bekliyor', 
-                esnafMail: sepet[0].saticiMail 
-            };
-
+            if (sepet.length === 0) return showToast("Sepet boş!", true); const adres = document.getElementById('siparisAdresi').value.trim(); if (!adres) return showToast("Adres girin!", true);
+            const stats = dbGet('kapinda_stats'); const users = dbGet('kapinda_users'); const plans = dbGet('kapinda_plans'); const orders = dbGet('kapinda_orders'); const aliciEmail = aktifKullaniciEmail;
+            const newOrder = { id: 'ORD-' + Math.floor(10000 + Math.random() * 90000), tarih: new Date().toLocaleDateString(), musteri: users[aliciEmail].isim, musteriMail: aliciEmail, adres: adres, items: [...sepet], toplam: 0, durum: 'bekliyor', esnafMail: sepet[0].saticiMail };
             sepet.forEach(item => {
-                newOrder.toplam += item.fiyat; 
-                stats.ciro += item.fiyat;
-                
-                // %80 Esnafa Ödeme
-                if (users[item.saticiMail]) {
-                    users[item.saticiMail].bakiye += (item.fiyat * 0.80); 
-                } else {
-                    users['esnaf@mail.com'].bakiye += (item.fiyat * 0.80);
-                }
-                
-                // Dinamik Komisyon Dağıtımı
-                let sponsorMail = users[aliciEmail].sponsor; 
-                let komisyonOrani = 0;
-                
-                if (sponsorMail && users[sponsorMail]) { 
-                    komisyonOrani = plans[users[sponsorMail].seviye].oran; 
-                    let temsilciPayi = item.fiyat * komisyonOrani; 
-                    
-                    users[sponsorMail].bakiye += temsilciPayi; 
-                    if (!users[sponsorMail].agKazanci) users[sponsorMail].agKazanci = 0; 
-                    users[sponsorMail].agKazanci += temsilciPayi; 
-                    
-                    stats.toplamKomisyon += temsilciPayi; 
-                }
-                
-                // Kalan Para Sisteme (Admin)
+                newOrder.toplam += item.fiyat; stats.ciro += item.fiyat;
+                if (users[item.saticiMail]) users[item.saticiMail].bakiye += (item.fiyat * 0.80); else users['esnaf@mail.com'].bakiye += (item.fiyat * 0.80);
+                let sponsorMail = users[aliciEmail].sponsor; let komisyonOrani = 0;
+                if (sponsorMail && users[sponsorMail]) { komisyonOrani = plans[users[sponsorMail].seviye].oran; let temsilciPayi = item.fiyat * komisyonOrani; users[sponsorMail].bakiye += temsilciPayi; if(!users[sponsorMail].agKazanci) users[sponsorMail].agKazanci = 0; users[sponsorMail].agKazanci += temsilciPayi; stats.toplamKomisyon += temsilciPayi; }
                 stats.netKar += ((item.fiyat * 0.20) - (item.fiyat * komisyonOrani));
             });
-            
-            orders.unshift(newOrder); 
-            
-            dbSet('kapinda_stats', stats); 
-            dbSet('kapinda_users', users); 
-            dbSet('kapinda_orders', orders);
-            
-            sepet = []; 
-            document.getElementById('cartCount').innerText = "0"; 
-            document.getElementById('cartItemsContainer').innerHTML = ''; 
-            document.getElementById('cartTotal').innerText = "0 ₺"; 
-            document.getElementById('siparisAdresi').value = '';
-            
-            switchView('ordersView'); 
-            showToast("Sipariş Buluta İletildi, İşlem Başarılı!");
+            orders.unshift(newOrder); dbSet('kapinda_stats', stats); dbSet('kapinda_users', users); dbSet('kapinda_orders', orders);
+            sepet = []; document.getElementById('cartCount').innerText = "0"; document.getElementById('cartItemsContainer').innerHTML = ''; document.getElementById('cartTotal').innerText = "0 ₺"; document.getElementById('siparisAdresi').value = ''; switchView('ordersView'); showToast("Sipariş Verildi!");
         }
 
-        // --- 10. ESNAF VE MÜŞTERİ LOJİSTİK (SİPARİŞLER) ---
-        function musteriSiparisCiz() { 
-            const orders = dbGet('kapinda_orders'); 
-            let html = ''; 
-            
-            orders.forEach(order => { 
-                if (order.musteriMail === aktifKullaniciEmail) { 
-                    let badge = order.durum === 'bekliyor' ? '<span class="badge" style="background:var(--warning); color:white;">Hazırlanıyor</span>' : '<span class="badge" style="background:var(--success); color:white;">Kargolandı</span>'; 
-                    html += `
-                    <div class="card">
-                        <div style="display:flex; justify-content:space-between; margin-bottom:10px;">
-                            <b style="color:var(--primary); font-size:12px;">#${order.id}</b> ${badge}
-                        </div>
-                        <p style="font-size:13px; font-weight:bold; margin:0;">Tutar: ${order.toplam} ₺</p>
-                        <p style="font-size:11px; color:var(--text-muted); margin:5px 0 0 0;">${order.tarih}</p>
-                    </div>`; 
-                } 
-            }); 
-            
-            document.getElementById('musteriSiparisListesi').innerHTML = html || '<p style="text-align:center; font-size:12px; color:var(--text-muted);">Geçmiş siparişiniz bulunmamaktadır.</p>'; 
-        }
+        function musteriSiparisCiz() { const orders = dbGet('kapinda_orders'); let html = ''; orders.forEach(o => { if(o.musteriMail === aktifKullaniciEmail) { let badge = o.durum === 'bekliyor' ? '<span class="badge" style="background:var(--warning); color:white;">Hazırlanıyor</span>' : '<span class="badge" style="background:var(--success); color:white;">Kargolandı</span>'; html += `<div class="card"><div style="display:flex; justify-content:space-between; margin-bottom:10px;"><b style="color:var(--primary); font-size:12px;">#${o.id}</b> ${badge}</div><p style="font-size:13px; font-weight:bold; margin:0;">Tutar: ${o.toplam} ₺</p></div>`; } }); document.getElementById('musteriSiparisListesi').innerHTML = html || '<p style="text-align:center;">Sipariş yok.</p>'; }
+        function esnafSiparisCiz() { const orders = dbGet('kapinda_orders'); let html = ''; let count = 0; orders.forEach(o => { if(o.esnafMail === aktifKullaniciEmail || aktifKullaniciEmail === 'admin.com') { if(o.durum === 'bekliyor') count++; html += `<div class="card" style="border:1px solid ${o.durum === 'bekliyor' ? 'var(--warning)' : 'var(--border)'};"><div style="display:flex; justify-content:space-between; margin-bottom:10px;"><b>#${o.id}</b> <b style="color:var(--success);">${o.toplam} ₺</b></div><p style="font-size:11px; background:var(--bg-color); padding:8px;">${o.adres}</p>${o.durum === 'bekliyor' ? `<button class="btn-success" style="padding:10px; font-size:12px;" onclick="kargola('${o.id}')">Kargoya Ver</button>` : `<p style="color:var(--success); text-align:center; font-weight:bold; font-size:11px;">Gönderildi</p>`}</div>`; } }); document.getElementById('esnafSiparisListesi').innerHTML = html || '<p style="text-align:center;">Sipariş yok.</p>'; document.getElementById('esnafBekleyenSiparisSayisi').innerText = count; }
+        function kargola(orderId) { const orders = dbGet('kapinda_orders'); orders.forEach(o => { if(o.id === orderId) o.durum = 'kargolandi'; }); dbSet('kapinda_orders', orders); showToast("Güncellendi."); }
 
-        function esnafSiparisCiz() { 
-            const orders = dbGet('kapinda_orders'); 
-            let html = ''; 
-            let count = 0; 
-            
-            orders.forEach(order => { 
-                if (order.esnafMail === aktifKullaniciEmail || aktifKullaniciEmail === 'admin.com') { 
-                    if (order.durum === 'bekliyor') count++; 
-                    html += `
-                    <div class="card" style="border:1px solid ${order.durum === 'bekliyor' ? 'var(--warning)' : 'var(--border)'};">
-                        <div style="display:flex; justify-content:space-between; margin-bottom:10px;">
-                            <b style="color:var(--text-main); font-size:13px;">#${order.id}</b> <b style="color:var(--success);">${order.toplam} ₺</b>
-                        </div>
-                        <p style="font-size:12px; margin:5px 0;"><b>Alıcı:</b> ${order.musteri}</p>
-                        <p style="font-size:11px; color:var(--text-muted); margin:5px 0; background:var(--bg-color); padding:8px; border-radius:8px;">${order.adres}</p>
-                        ${order.durum === 'bekliyor' ? `<button class="btn-success" style="padding:10px; font-size:12px; margin-top:10px;" onclick="kargola('${order.id}')"><i class="fa-solid fa-truck"></i> Kargoya Verildi</button>` : `<p style="font-size:11px; color:var(--success); text-align:center; font-weight:bold; margin-top:10px;"><i class="fa-solid fa-check-circle"></i> Ürün Gönderildi</p>`}
-                    </div>`; 
-                } 
-            }); 
-            
-            document.getElementById('esnafSiparisListesi').innerHTML = html || '<p style="text-align:center; font-size:12px; color:var(--text-muted);">Size gelen bir sipariş bulunmuyor.</p>'; 
-            document.getElementById('esnafBekleyenSiparisSayisi').innerText = count; 
-        }
+        function cüzdanCiz() { document.getElementById('temsilciBakiye').innerText = dbGet('kapinda_users')[aktifKullaniciEmail].bakiye + " ₺"; document.getElementById('uretilenKodKutusu').style.display='none'; }
+        function nakitKoduUret() { let m = parseInt(document.getElementById('cekimMiktari').value); let u = dbGet('kapinda_users')[aktifKullaniciEmail]; if(!m || m<=0 || m>u.bakiye) return showToast("Hata", true); let k = "KPN-" + Math.floor(1000 + Math.random() * 9000); let c = dbGet('kapinda_codes'); c[k] = { miktar: m, sahip: aktifKullaniciEmail, durum: 'aktif' }; dbSet('kapinda_codes', c); document.getElementById('uretilenKodKutusu').innerText = k; document.getElementById('uretilenKodKutusu').style.display='block'; document.getElementById('cekimMiktari').value=''; showToast("Kod Üretildi"); }
+        function posCiz() { document.getElementById('esnafBakiye').innerText = dbGet('kapinda_users')[aktifKullaniciEmail].bakiye + " ₺"; }
+        function koduBozdur() { let k = document.getElementById('bozdurulacakKod').value.trim().toUpperCase(); let c = dbGet('kapinda_codes'); let u = dbGet('kapinda_users'); if(c[k] && c[k].durum === 'aktif') { u[c[k].sahip].bakiye -= c[k].miktar; u[aktifKullaniciEmail].bakiye += c[k].miktar; c[k].durum = 'kullanildi'; dbSet('kapinda_users', u); dbSet('kapinda_codes', c); document.getElementById('bozdurulacakKod').value=''; showToast("Başarılı"); } else showToast("Hata!", true); }
 
-        function kargola(orderId) { 
-            const orders = dbGet('kapinda_orders'); 
-            orders.forEach(order => { if (order.id === orderId) order.durum = 'kargolandi'; }); 
-            dbSet('kapinda_orders', orders); 
-            showToast("Sipariş durumu güncellendi (Kargolandı)."); 
-        }
+        function abonelikCiz() { const user = dbGet('kapinda_users')[aktifKullaniciEmail]; const plans = dbGet('kapinda_plans'); document.getElementById('mevcutPaketAd').className = `badge ${user.seviye}`; document.getElementById('mevcutPaketAd').innerText = plans[user.seviye].ad; let html = ''; for(let key in plans) { const p = plans[key]; const isCurrent = user.seviye === key; const bColor = key === 'elite' ? 'var(--warning)' : (key === 'pro' ? 'var(--primary)' : 'var(--text-muted)'); html += `<div class="card" style="border: 2px solid ${isCurrent ? 'var(--success)' : 'var(--border)'};"><div style="display:flex; justify-content:space-between;"><div><h4 style="margin:0; color:${bColor};">${p.ad}</h4></div><h2 style="margin:0;">${p.fiyat} ₺</h2></div>${!isCurrent ? `<button class="btn-primary" style="margin-top:15px; padding:10px; font-size:12px; background:${bColor};" onclick="abonelikModalAc('${key}')">Geç</button>` : `<button class="btn-success" style="margin-top:15px; padding:10px; font-size:12px;" disabled>Mevcut Paket</button>`}</div>`; } document.getElementById('abonelikPaketleriListesi').innerHTML = html; }
+        function abonelikModalAc(planId) { const p = dbGet('kapinda_plans')[planId]; document.getElementById('subConfirmName').innerText = p.ad; document.getElementById('subConfirmPrice').innerText = p.fiyat + " ₺"; document.getElementById('subTargetPlan').value = planId; document.getElementById('subSheetOverlay').classList.add('active'); }
+        function abonelikSatinAlOnay() { const planId = document.getElementById('subTargetPlan').value; const users = dbGet('kapinda_users'); const plans = dbGet('kapinda_plans'); const stats = dbGet('kapinda_stats'); const user = users[aktifKullaniciEmail]; const plan = plans[planId]; if(user.bakiye < plan.fiyat) return showToast("Bakiye yetersiz!", true); user.bakiye -= plan.fiyat; user.seviye = planId; if(user.rol === 'customer' && planId !== 'free') user.rol = 'seller'; stats.ciro += plan.fiyat; stats.netKar += plan.fiyat; stats.abonelikGeliri = (stats.abonelikGeliri||0) + plan.fiyat; dbSet('kapinda_users', users); dbSet('kapinda_stats', stats); closeSheet('subSheetOverlay'); if(user.rol === 'seller') document.querySelectorAll('.nav-seller').forEach(n => n.style.display = 'block'); showToast("Abonelik İşlendi."); }
+        function networkCiz() { const users = dbGet('kapinda_users'); const me = users[aktifKullaniciEmail]; document.getElementById('benimSponsorKodum').innerText = me.refKod || 'YOK'; document.getElementById('networkToplamKazanc').innerText = (me.agKazanci||0) +" ₺"; let count = 0; let html = ''; for(let email in users) { if(users[email].sponsor === aktifKullaniciEmail) { count++; const u = users[email]; html += `<div class="crm-item" style="padding:10px;"><div><h4 style="margin:0;">${u.isim}</h4></div></div>`; } } document.getElementById('networkKisiSayisi').innerText = count; document.getElementById('altEkipListesi').innerHTML = html || '<p style="text-align:center;">Kimse yok.</p>'; }
 
-        // --- 11. TEMSİLCİ CÜZDANI & ESNAF POS KASASI (MİKRO EKONOMİ) ---
-        function cüzdanCiz() { 
-            const user = dbGet('kapinda_users')[aktifKullaniciEmail];
-            document.getElementById('temsilciBakiye').innerText = user.bakiye.toLocaleString('tr-TR') + " ₺"; 
-            document.getElementById('uretilenKodKutusu').style.display = 'none'; 
-        }
-
-        function nakitKoduUret() { 
-            const miktar = parseInt(document.getElementById('cekimMiktari').value); 
-            const user = dbGet('kapinda_users')[aktifKullaniciEmail]; 
-            
-            if (!miktar || miktar <= 0) return showToast("Lütfen geçerli bir tutar girin.", true); 
-            if (miktar > user.bakiye) return showToast("Cüzdan bakiyeniz yetersiz!", true); 
-            
-            const kod = "KPN-" + Math.floor(1000 + Math.random() * 9000); 
-            const codes = dbGet('kapinda_codes'); 
-            
-            codes[kod] = { miktar: miktar, sahip: aktifKullaniciEmail, durum: 'aktif' }; 
-            dbSet('kapinda_codes', codes); 
-            
-            document.getElementById('uretilenKodKutusu').innerText = kod; 
-            document.getElementById('uretilenKodKutusu').style.display = 'block'; 
-            document.getElementById('cekimMiktari').value = ''; 
-            showToast("Nakit çekim kodu üretildi!"); 
-        }
-
-        function posCiz() { 
-            const user = dbGet('kapinda_users')[aktifKullaniciEmail];
-            document.getElementById('esnafBakiye').innerText = user.bakiye.toLocaleString('tr-TR') + " ₺"; 
-        }
-
-        function koduBozdur() { 
-            const girilenKod = document.getElementById('bozdurulacakKod').value.trim().toUpperCase(); 
-            const codes = dbGet('kapinda_codes'); 
-            const users = dbGet('kapinda_users'); 
-            
-            if (!girilenKod) return showToast("Kodu giriniz.", true);
-            
-            if (codes[girilenKod] && codes[girilenKod].durum === 'aktif') { 
-                const islemMiktari = codes[girilenKod].miktar;
-                const kodSahibi = codes[girilenKod].sahip;
-                
-                users[kodSahibi].bakiye -= islemMiktari; 
-                users[aktifKullaniciEmail].bakiye += islemMiktari; 
-                codes[girilenKod].durum = 'kullanildi'; 
-                
-                dbSet('kapinda_users', users); 
-                dbSet('kapinda_codes', codes); 
-                
-                document.getElementById('bozdurulacakKod').value = ''; 
-                showToast(`İşlem Başarılı! Kasaya ${islemMiktari} TL Eklendi.`); 
-            } else { 
-                showToast("Geçersiz veya kullanılmış kod girdiniz!", true); 
-            } 
-        }
-
-        // Esnaf Ürün Ekleme
-        function esnafUrunEkle() {
-            const ad = document.getElementById('esnafUrunAd').value.trim(); 
-            const fiyat = parseInt(document.getElementById('esnafUrunFiyat').value);
-            const kategori = document.getElementById('esnafUrunKategori').value; 
-            const resimBase64 = document.getElementById('esnafResimBase64').value;
-            
-            if (!ad || !fiyat) return showToast("Ürün adı ve fiyat zorunlu!", true);
-            
-            const products = dbGet('kapinda_products'); 
-            products.push({
-                id: Date.now(), 
-                ad: ad, 
-                fiyat: fiyat, 
-                saticiMail: aktifKullaniciEmail, 
-                kategori: kategori, 
-                resim: resimBase64 || 'https://images.unsplash.com/photo-1505740420928-5e560c06d30e?w=300'
-            }); 
-            
-            dbSet('kapinda_products', products); 
-            
-            document.getElementById('esnafUrunAd').value = ''; 
-            document.getElementById('esnafUrunFiyat').value = ''; 
-            document.getElementById('esnafResimBase64').value = ''; 
-            document.getElementById('esnafResimSec').value = '';
-            showToast("Ürününüz vitrine eklendi!");
-        }
-
-        // --- 12. ABONELİK VE NETWORK (AĞIM) SİSTEMİ ---
-        function abonelikCiz() { 
-            const user = dbGet('kapinda_users')[aktifKullaniciEmail]; 
-            const plans = dbGet('kapinda_plans'); 
-            
-            document.getElementById('mevcutPaketAd').className = `badge ${user.seviye}`; 
-            document.getElementById('mevcutPaketAd').innerText = plans[user.seviye].ad; 
-            
-            let html = ''; 
-            for (let key in plans) { 
-                const plan = plans[key]; 
-                const isCurrent = user.seviye === key; 
-                const borderColor = key === 'elite' ? 'var(--warning)' : (key === 'pro' ? 'var(--primary)' : 'var(--text-muted)'); 
-                
-                html += `
-                <div class="card" style="border: 2px solid ${isCurrent ? 'var(--success)' : 'var(--border)'};">
-                    <div style="display:flex; justify-content:space-between; align-items:flex-start;">
-                        <div>
-                            <h4 style="margin:0; color:${borderColor};">${plan.ad}</h4>
-                            <p style="font-size:11px; color:var(--text-muted); margin:5px 0 0 0;">${plan.desc}</p>
-                        </div>
-                        <h2 style="margin:0;">${plan.fiyat} ₺</h2>
-                    </div>
-                    ${!isCurrent ? `<button class="btn-primary" style="margin-top:15px; padding:10px; font-size:12px; background:${borderColor};" onclick="abonelikModalAc('${key}')">Bu Pakete Geç</button>` : `<button class="btn-success" style="margin-top:15px; padding:10px; font-size:12px;" disabled><i class="fa-solid fa-check"></i> Mevcut Paket</button>`}
-                </div>`; 
-            } 
-            document.getElementById('abonelikPaketleriListesi').innerHTML = html; 
-        }
-
-        function abonelikModalAc(planId) { 
-            const plan = dbGet('kapinda_plans')[planId]; 
-            document.getElementById('subConfirmName').innerText = plan.ad; 
-            document.getElementById('subConfirmPrice').innerText = plan.fiyat + " ₺"; 
-            document.getElementById('subConfirmDesc').innerText = "Ağ kazancınız: %" + (plan.oran * 100) + " olacaktır.";
-            document.getElementById('subTargetPlan').value = planId; 
-            document.getElementById('subSheetOverlay').classList.add('active'); 
-        }
-
-        function abonelikSatinAlOnay() { 
-            const planId = document.getElementById('subTargetPlan').value; 
-            const users = dbGet('kapinda_users'); 
-            const plans = dbGet('kapinda_plans'); 
-            const stats = dbGet('kapinda_stats'); 
-            
-            const user = users[aktifKullaniciEmail]; 
-            const plan = plans[planId]; 
-            
-            if (user.bakiye < plan.fiyat) return showToast("Cüzdan bakiyeniz yetersiz!", true); 
-            
-            user.bakiye -= plan.fiyat; 
-            user.seviye = planId; 
-            
-            if (user.rol === 'customer' && planId !== 'free') user.rol = 'seller'; 
-            
-            stats.ciro += plan.fiyat; 
-            stats.netKar += plan.fiyat; 
-            stats.abonelikGeliri = (stats.abonelikGeliri || 0) + plan.fiyat;
-            
-            dbSet('kapinda_users', users); 
-            dbSet('kapinda_stats', stats); 
-            
-            closeSheet('subSheetOverlay'); 
-            
-            if (user.rol === 'seller') document.querySelectorAll('.nav-seller').forEach(n => n.style.display = 'block'); 
-            showToast("Ödeme alındı, paketiniz yükseltildi."); 
-        }
-
-        function networkCiz() { 
-            const users = dbGet('kapinda_users'); 
-            const me = users[aktifKullaniciEmail]; 
-            
-            document.getElementById('benimSponsorKodum').innerText = me.refKod || 'YOK'; 
-            document.getElementById('networkToplamKazanc').innerText = (me.agKazanci || 0).toLocaleString('tr-TR') + " ₺";
-            
-            let count = 0; 
-            let html = ''; 
-            
-            for (let email in users) { 
-                if (users[email].sponsor === aktifKullaniciEmail) { 
-                    count++; 
-                    const user = users[email]; 
-                    html += `
-                    <div class="crm-item" style="cursor:default; padding:10px 15px;">
-                        <div style="display:flex; gap:10px; align-items:center;">
-                            <div class="crm-avatar" style="width:30px; height:30px; font-size:14px;">${user.isim.charAt(0)}</div>
-                            <div>
-                                <h4 style="margin:0; font-size:13px;">${user.isim}</h4>
-                                <p style="margin:2px 0 0 0; font-size:10px; color:var(--text-muted);">Seviye: ${user.seviye.toUpperCase()}</p>
-                            </div>
-                        </div>
-                    </div>`; 
-                } 
-            } 
-            
-            document.getElementById('networkKisiSayisi').innerText = count; 
-            document.getElementById('altEkipListesi').innerHTML = html || '<p style="text-align:center; font-size:12px; color:var(--text-muted);">Ağınıza henüz kimse katılmamış.</p>'; 
-        }
-
-        // --- 13. ADMIN YÖNETİM MERKEZİ ---
+        // --- YENİ NATIVE MOBİL GRAFİK SİSTEMİ (ÇÖKMEYİ ENGELLEYEN YAPI) ---
         function dashboardCiz() { 
-            const stats = dbGet('kapinda_stats'); 
-            document.getElementById('dashCiro').innerText = stats.ciro.toLocaleString('tr-TR') + " ₺"; 
-            document.getElementById('dashKar').innerText = stats.netKar.toLocaleString('tr-TR') + " ₺"; 
+            const s = dbGet('kapinda_stats'); 
+            document.getElementById('dashCiro').innerText = s.ciro + " ₺"; 
+            document.getElementById('dashKar').innerText = s.netKar + " ₺"; 
             
-            // Grafik Çizimi (Chart.js)
-            const ctx = document.getElementById('adminFinanceChart');
-            if (adminChartInstance) adminChartInstance.destroy(); 
+            // Esnaf payı, Komisyon ve Net Karın oranlarını hesapla
+            let esnafPayi = s.ciro - s.netKar - s.toplamKomisyon; // Basit hesap
+            if (esnafPayi < 0) esnafPayi = 0;
             
-            adminChartInstance = new Chart(ctx, {
-                type: 'bar',
-                data: {
-                    labels: ['Brüt Ciro', 'Net Kâr', 'Dağıtılan Komisyon'],
-                    datasets: [{
-                        label: 'Finansal Durum (₺)',
-                        data: [stats.ciro, stats.netKar, stats.toplamKomisyon],
-                        backgroundColor: ['#4f46e5', '#10b981', '#f59e0b'],
-                        borderRadius: 8
-                    }]
-                },
-                options: {
-                    responsive: true, maintainAspectRatio: false,
-                    plugins: { legend: { display: false } },
-                    scales: { y: { beginAtZero: true, display: false }, x: { grid: { display: false } } }
-                }
-            });
+            let esnafYuzde = 0; let komisyonYuzde = 0; let karYuzde = 0;
+            
+            if (s.ciro > 0) {
+                esnafYuzde = (esnafPayi / s.ciro) * 100;
+                komisyonYuzde = (s.toplamKomisyon / s.ciro) * 100;
+                karYuzde = (s.netKar / s.ciro) * 100;
+            }
+
+            // CSS Barlarına genişlik ver (Animasyonlu)
+            setTimeout(() => {
+                document.getElementById('barEsnaf').style.width = esnafYuzde + '%';
+                document.getElementById('barKomisyon').style.width = komisyonYuzde + '%';
+                document.getElementById('barKar').style.width = karYuzde + '%';
+            }, 100);
         }
 
-        function adminUyeleriCiz(filterWord = '') { 
-            const users = dbGet('kapinda_users'); 
-            let html = ''; 
-            
-            for (let email in users) { 
-                const user = users[email];
-                if (email.includes(filterWord) || user.isim.toLowerCase().includes(filterWord.toLowerCase())) {
-                    html += `
-                    <div class="crm-item" onclick="openSheet('${email}')">
-                        <div style="display:flex; gap:10px; align-items:center;">
-                            <div class="crm-avatar">${user.isim.charAt(0)}</div>
-                            <div>
-                                <h4 style="margin:0; font-size:13px; color:var(--text-main);">${user.isim} <span style="font-size:9px; color:var(--primary);">[${user.rol}]</span></h4>
-                                <p style="margin:3px 0 0 0; font-size:10px; color:var(--text-muted);">${email}</p>
-                            </div>
-                        </div>
-                        <div style="text-align:right;">
-                            <b style="color:var(--success); font-size:16px;">${user.bakiye} ₺</b>
-                        </div>
-                    </div>`; 
-                } 
-            } 
-            document.getElementById('adminUyeListesi').innerHTML = html; 
-        }
+        function adminUyeleriCiz(f='') { const u = dbGet('kapinda_users'); let h = ''; for(let e in u) { if(e.includes(f)||u[e].isim.toLowerCase().includes(f.toLowerCase())) h += `<div class="crm-item" onclick="openSheet('${e}')"><div><h4 style="margin:0;">${u[e].isim} <span style="font-size:9px;">[${u[e].rol}]</span></h4><p style="margin:0; font-size:10px;">${e}</p></div><b style="color:var(--success);">${u[e].bakiye} ₺</b></div>`; } document.getElementById('adminUyeListesi').innerHTML = h; }
+        function openSheet(e) { const u = dbGet('kapinda_users')[e]; document.getElementById('editEmail').value=e; document.getElementById('editName').value=u.isim; document.getElementById('editBalance').value=u.bakiye; document.getElementById('editRole').value=u.rol; document.getElementById('editSeviye').value=u.seviye; document.getElementById('editPass').value=u.sifre; document.getElementById('crmSheetOverlay').classList.add('active'); }
+        function closeSheet(id) { document.getElementById(id).classList.remove('active'); }
+        function adminUyeKaydet() { const e=document.getElementById('editEmail').value; const u=dbGet('kapinda_users'); u[e].isim=document.getElementById('editName').value; u[e].bakiye=parseFloat(document.getElementById('editBalance').value); u[e].rol=document.getElementById('editRole').value; u[e].seviye=document.getElementById('editSeviye').value; u[e].sifre=document.getElementById('editPass').value; dbSet('kapinda_users', u); closeSheet('crmSheetOverlay'); showToast("Kaydedildi"); }
 
-        function openSheet(email) { 
-            const user = dbGet('kapinda_users')[email]; 
-            document.getElementById('editEmail').value = email; 
-            document.getElementById('editName').value = user.isim; 
-            document.getElementById('editBalance').value = user.bakiye; 
-            document.getElementById('editRole').value = user.rol; 
-            document.getElementById('editSeviye').value = user.seviye; 
-            document.getElementById('editPass').value = user.sifre; 
-            document.getElementById('crmSheetOverlay').classList.add('active'); 
+        function finansCiz() {
+            const s = dbGet('kapinda_stats'); const u = dbGet('kapinda_users');
+            document.getElementById('finansToplamCiro').innerText=s.ciro+" ₺"; document.getElementById('finansNetKar').innerText=s.netKar+" ₺"; document.getElementById('finansAbonelikGeliri').innerText=(s.abonelikGeliri||0)+" ₺"; document.getElementById('finansKomisyon').innerText=s.toplamKomisyon+" ₺";
+            let eH = ''; let sH = '';
+            for(let e in u) {
+                if(u[e].rol==='store' && u[e].bakiye>0) eH += `<div class="crm-item" onclick="openPaymentModal('${e}')"><div><b style="display:block;">${u[e].isim}</b></div><div style="text-align:right;"><b style="color:var(--danger);">${u[e].bakiye} ₺</b></div></div>`;
+                if(u[e].rol==='seller' && u[e].bakiye>0) sH += `<div class="crm-item" onclick="openPaymentModal('${e}')"><div><b style="display:block;">${u[e].isim}</b></div><div style="text-align:right;"><b style="color:var(--warning);">${u[e].bakiye} ₺</b></div></div>`;
+            }
+            document.getElementById('finansEsnafListesi').innerHTML = eH || '<p style="text-align:center; font-size:12px;">Borç yok.</p>'; document.getElementById('finansSaticiListesi').innerHTML = sH || '<p style="text-align:center; font-size:12px;">Borç yok.</p>';
         }
+        function openPaymentModal(e) { const u = dbGet('kapinda_users')[e]; document.getElementById('payEmail').value = e; document.getElementById('payAmount').innerText = u.bakiye+" ₺"; document.getElementById('paymentModal').classList.add('active'); }
+        function processPayment() { const e = document.getElementById('payEmail').value; const u = dbGet('kapinda_users'); u[e].bakiye = 0; dbSet('kapinda_users', u); document.getElementById('paymentModal').classList.remove('active'); showToast("Ödendi"); }
 
-        function closeSheet(id) { 
-            document.getElementById(id).classList.remove('active'); 
-        }
-
-        function adminUyeKaydet() { 
-            const email = document.getElementById('editEmail').value; 
-            const users = dbGet('kapinda_users'); 
-            
-            users[email].isim = document.getElementById('editName').value; 
-            users[email].bakiye = parseFloat(document.getElementById('editBalance').value); 
-            users[email].rol = document.getElementById('editRole').value; 
-            users[email].seviye = document.getElementById('editSeviye').value; 
-            users[email].sifre = document.getElementById('editPass').value; 
-            
-            dbSet('kapinda_users', users); 
-            closeSheet('crmSheetOverlay'); 
-            showToast("Üye bilgileri buluta kaydedildi."); 
-        }
-
-        // FİNANS (GELİŞTİRİLDİ VE TÜM LİSTELER AÇILDI)
-        function finansCiz() { 
-            const stats = dbGet('kapinda_stats'); 
-            const users = dbGet('kapinda_users'); 
-            
-            document.getElementById('finansToplamCiro').innerText = stats.ciro.toLocaleString('tr-TR') + " ₺"; 
-            document.getElementById('finansNetKar').innerText = stats.netKar.toLocaleString('tr-TR') + " ₺"; 
-            document.getElementById('finansAbonelikGeliri').innerText = (stats.abonelikGeliri || 0).toLocaleString('tr-TR') + " ₺"; 
-            document.getElementById('finansKomisyon').innerText = stats.toplamKomisyon.toLocaleString('tr-TR') + " ₺"; 
-            
-            let esnafHtml = ''; 
-            let saticiHtml = ''; 
-            
-            for (let email in users) { 
-                let user = users[email];
-                
-                // ESNAF ÖDEMELERİ
-                if (user.rol === 'store' && user.bakiye > 0) {
-                    esnafHtml += `
-                    <div class="crm-item" onclick="openPaymentModal('${email}')">
-                        <div>
-                            <b style="display:block; font-size:14px; color:var(--text-main);">${user.isim}</b>
-                            <span style="font-size:11px; color:var(--text-muted);">Ürün Satış Hak Edişi</span>
-                        </div>
-                        <div style="text-align:right;">
-                            <b style="color:var(--danger); font-size:18px;">${user.bakiye} ₺</b>
-                            <div style="font-size:10px; font-weight:bold; color:var(--primary); margin-top:4px;">ÖDEME YAP <i class="fa-solid fa-chevron-right"></i></div>
-                        </div>
-                    </div>`; 
-                }
-                
-                // TEMSİLCİ ÖDEMELERİ (YENİDEN EKLENDİ)
-                if (user.rol === 'seller' && user.bakiye > 0) {
-                    saticiHtml += `
-                    <div class="crm-item" onclick="openPaymentModal('${email}')">
-                        <div>
-                            <b style="display:block; font-size:14px; color:var(--text-main);">${user.isim}</b>
-                            <span style="font-size:11px; color:var(--text-muted);">Ağ Komisyonu</span>
-                        </div>
-                        <div style="text-align:right;">
-                            <b style="color:var(--warning); font-size:18px;">${user.bakiye} ₺</b>
-                            <div style="font-size:10px; font-weight:bold; color:var(--primary); margin-top:4px;">ÖDEME YAP <i class="fa-solid fa-chevron-right"></i></div>
-                        </div>
-                    </div>`; 
-                }
-            } 
-            
-            document.getElementById('finansEsnafListesi').innerHTML = esnaf
+        function adminUrunCiz() { const p = dbGet('kapinda_products'); let h = ''; p.forEach((x, i) => { h += `<div class="crm-item"><div><h4 style="margin:0;">${x.ad}</h4></div><button class="btn-danger" style="width:auto; padding:8px 15px;" onclick="adminUrunSil(${i})"><i class="fa-solid fa-trash"></i></button></div>`; }); document.getElementById('adminUrunListesi').innerHTML = h; }
+        function adminUrunEkle() { let ad = document.getElementById('adminYeniUrunAd').value; let f = parseInt(document.getElementById('adminYeniUrunFiyat').value); let kat = document.getElementById('adminYeniUrunKategori').value; let r = document.getElementById('adminResimBase64').value; if(!ad || !f) return; const p = dbGet('kapinda_products'); p.push({id:Date.now(), ad:ad, fiyat:f, saticiMail:'esnaf@mail.com', kategori: kat, resim: r || 'https://images.unsplash.com/photo-1505740420928-5e560c06d30e?w=300'}); dbSet('kapinda_products', p); document.getElementById('adminYeniUrunAd').value=''; document.getElementById('adminYeniUrunFiyat').value=''; document.getElementById('adminResimBase64').value=''; showToast("Eklendi"); }
+        function adminUrunSil(i) { const p = dbGet('kapinda_products'); p.splice(i,1); dbSet('kapinda_products', p); showToast("Silindi"); }
+    </script>
+</body>
+</html>
