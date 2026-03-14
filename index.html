@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-    <title>Kapında V16.2 - Dynamic Settings</title>
+    <title>Kapında V16.3 - Flawless Fintech</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     
     <script src="https://www.gstatic.com/firebasejs/10.8.1/firebase-app-compat.js"></script>
@@ -108,7 +108,7 @@
         
         <div id="serverLoading">
             <div class="spinner"></div>
-            <h2 style="margin:0; font-weight:900;">KAPINDA V16.2</h2>
+            <h2 style="margin:0; font-weight:900;">KAPINDA V16.3</h2>
             <p style="font-size:12px; opacity:0.7; margin-top:5px;">Bağlantı Kuruluyor...</p>
         </div>
 
@@ -173,7 +173,7 @@
             <div class="view active" id="authView" style="display:flex; flex-direction:column; justify-content:center;">
                 <div style="text-align:center; margin-bottom:30px;">
                     <div style="width: 80px; height: 80px; background: var(--primary); border-radius: 24px; color: white; display: flex; justify-content: center; align-items: center; font-size: 40px; margin: 0 auto 15px auto; transform: rotate(-10deg);"><i class="fa-solid fa-bolt"></i></div>
-                    <h1 style="margin:0; font-weight:800; font-size:28px;">Kapında V16.2</h1>
+                    <h1 style="margin:0; font-weight:800; font-size:28px;">Kapında V16.3</h1>
                     <p style="color:var(--text-muted); font-weight:600;">Dinamik Yönetim Ekosistemi</p>
                 </div>
 
@@ -194,7 +194,7 @@
                     <div class="input-group"><label>E-POSTA</label><input type="email" id="regEmail"></div>
                     <div class="input-group"><label>ŞİFRE</label><input type="password" id="regPass"></div>
                     <div class="input-group"><label>SPONSOR KODU</label><input type="text" id="regSponsor" placeholder="Zorunlu Değil"></div>
-                    <button class="btn-success" onclick="kayitOl()" style="margin-top:10px;">AĞA KATIL</button>
+                    <button class="btn-success" onclick="kayitOl()" style="margin-top:10px;">AĞA KATIL VE KAYIT OL</button>
                 </div>
             </div>
 
@@ -399,6 +399,7 @@
     </div>
 
     <script>
+        // 1. FIREBASE BAĞLANTISI VE YAPILANDIRMASI
         const firebaseConfig = { 
             apiKey: "AIzaSyBWSlha9fD_q3zHXaRJ3ocJdtALqkrW-LU", 
             authDomain: "kapinda-8d3ef.firebaseapp.com", 
@@ -410,6 +411,7 @@
         firebase.initializeApp(firebaseConfig); 
         const db = firebase.firestore();
 
+        // 2. GLOBAL DEĞİŞKENLER
         let appData = { users: {}, products: [], stats: {}, codes: {}, orders: [], plans: {}, deposits: [] };
         let aktifKullaniciEmail = null; 
         let sepet = []; 
@@ -421,6 +423,7 @@
         let oldBakiye = -1; 
         let oldDepositCount = 0;
 
+        // 3. SİSTEM BAŞLATMA
         window.onload = async () => {
             try {
                 const initCheck = await db.collection('kapinda').doc('stats').get();
@@ -448,7 +451,6 @@
                 pro: { id: 'pro', ad: 'Pro', fiyat: 100, oran: 0.10, desc: '%10 komisyon.' }, 
                 elite: { id: 'elite', ad: 'Elite VIP', fiyat: 500, oran: 0.20, desc: '%20 komisyon.' }
             });
-            // YENİ: shopierLink veritabanına eklendi
             await db.collection('kapinda').doc('stats').set({ 
                 ciro: 0, netKar: 0, toplamKomisyon: 0, abonelikGeliri: 0, shopierLink: 'https://shopier.com/' 
             });
@@ -483,6 +485,7 @@
                         appData[col] = doc.data().list || []; 
                     }
                     
+                    // Yeni Sipariş Bildirimi
                     if(!isFirstLoad && col === 'orders' && aktifKullaniciEmail) {
                         let yeniSiparisSayisi = appData.orders.length;
                         if(yeniSiparisSayisi > oldOrdersCount) {
@@ -494,6 +497,7 @@
                         oldOrdersCount = yeniSiparisSayisi;
                     }
 
+                    // Yeni Bakiye Talebi Bildirimi (Admin İçin)
                     if(!isFirstLoad && col === 'deposits' && aktifKullaniciEmail === 'admin.com') {
                         let bekleyenler = appData.deposits.filter(d => d.durum === 'bekliyor').length;
                         if(bekleyenler > 0) {
@@ -512,6 +516,7 @@
                 });
             });
 
+            // İlk Yükleme Sonrası Gecikmeli İşlemler (Oto-Giriş)
             setTimeout(() => { 
                 document.getElementById('serverLoading').style.opacity = '0'; 
                 setTimeout(() => document.getElementById('serverLoading').style.display = 'none', 500); 
@@ -527,6 +532,7 @@
             }, 1000);
         }
 
+        // --- 4. VERİTABANI ERİŞİM VE YARDIMCI FONKSİYONLAR ---
         function dbGet(k) { 
             return appData[k.replace('kapinda_', '')]; 
         }
@@ -561,6 +567,7 @@
             }
         }
 
+        // --- 5. EKRAN GEÇİŞLERİ VE GİRİŞ SİSTEMİ ---
         function switchView(tId) {
             if(tId === currentView) return;
             
@@ -589,6 +596,38 @@
         function navAktif(el) { 
             document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active')); 
             el.classList.add('active'); 
+        }
+
+        // BU KISMI DÜZELTTİM (YENİ KAYIT MANTIĞI EKLENDİ)
+        function kayitOl() {
+            const ad = document.getElementById('regName').value.trim();
+            const email = document.getElementById('regEmail').value.trim();
+            const pass = document.getElementById('regPass').value.trim();
+            const sponsorCode = document.getElementById('regSponsor').value.trim().toUpperCase();
+
+            if(!ad || !email || !pass) return showToast("Zorunlu alanları doldurun.", true);
+
+            const users = dbGet('kapinda_users');
+            if(users[email]) return showToast("Bu e-posta zaten kayıtlı!", true);
+
+            let sponsorMail = null;
+            if(sponsorCode) {
+                for(let e in users) {
+                    if(users[e].refKod === sponsorCode) { sponsorMail = e; break; }
+                }
+                if(!sponsorMail) return showToast("Geçersiz sponsor kodu!", true);
+            }
+
+            const refKod = "REF" + Math.floor(1000 + Math.random() * 9000);
+            users[email] = { rol: 'customer', isim: ad, sifre: pass, bakiye: 0, seviye: 'free', refKod: refKod, sponsor: sponsorMail, agKazanci: 0 };
+
+            dbSet('kapinda_users', users);
+
+            document.getElementById('loginEmail').value = email;
+            document.getElementById('loginPass').value = pass;
+            authTab('login');
+            showToast("Kayıt Başarılı! Sisteme giriliyor...");
+            setTimeout(() => girisYap(false), 500); 
         }
 
         function girisYap(isAuto = false) {
@@ -662,8 +701,10 @@
             if(currentView === 'subscriptionView') abonelikCiz(); 
             if(currentView === 'addBalanceView') musteriBakiyeCiz(); 
             if(currentView === 'depositAdminView') adminBakiyeTalepleriCiz();
-            if(currentView === 'settingsView') ayarlariCiz(); // YENİ
+            if(currentView === 'settingsView') ayarlariCiz(); 
         }
+
+        // --- 6. İŞLEVSEL FONKSİYONLAR ---
 
         function kategoriSec(el, kat) { 
             document.querySelectorAll('.cat-chip').forEach(c => c.classList.remove('active')); 
@@ -688,7 +729,7 @@
             } 
         }
 
-        // --- AYARLAR VE SHOPIER KÖPRÜSÜ (YENİ) ---
+        // --- MÜŞTERİ CÜZDAN KÖPRÜSÜ (SHOPIER) ---
         function ayarlariCiz() {
             const stats = dbGet('kapinda_stats');
             document.getElementById('adminShopierLink').value = stats.shopierLink || 'https://shopier.com/';
@@ -748,7 +789,6 @@
             });
             dbSet('kapinda_deposits', deposits);
 
-            // DİNAMİK SHOPIER LİNKİ
             const shopierLink = stats.shopierLink || "https://shopier.com/"; 
             window.open(shopierLink, '_blank');
             
@@ -756,6 +796,7 @@
             musteriBakiyeCiz();
         }
 
+        // --- ADMİN BAKİYE ONAY (SHOPIER) ---
         function adminBakiyeTalepleriCiz() {
             const deposits = dbGet('kapinda_deposits');
             let html = '';
@@ -1193,144 +1234,4 @@
                                 <p style="margin:0; font-size:10px; color:var(--text-muted);">${e}</p>
                             </div>
                         </div>
-                        <b style="color:var(--success); font-size:16px;">${u[e].bakiye} ₺</b>
-                    </div>`; 
-                } 
-            } 
-            document.getElementById('adminUyeListesi').innerHTML = html; 
-        }
-
-        function openSheet(e) { 
-            const u = dbGet('kapinda_users')[e]; 
-            document.getElementById('editEmail').value=e; 
-            document.getElementById('editName').value=u.isim; 
-            document.getElementById('editBalance').value=u.bakiye; 
-            document.getElementById('editRole').value=u.rol; 
-            document.getElementById('editSeviye').value=u.seviye; 
-            document.getElementById('editPass').value=u.sifre; 
-            document.getElementById('crmSheetOverlay').classList.add('active'); 
-        }
-        
-        function closeSheet(id) { 
-            document.getElementById(id).classList.remove('active'); 
-        }
-        
-        function adminUyeKaydet() { 
-            const e=document.getElementById('editEmail').value; 
-            const u=dbGet('kapinda_users'); 
-            u[e].isim=document.getElementById('editName').value; 
-            u[e].bakiye=parseFloat(document.getElementById('editBalance').value); 
-            u[e].rol=document.getElementById('editRole').value; 
-            u[e].seviye=document.getElementById('editSeviye').value; 
-            u[e].sifre=document.getElementById('editPass').value; 
-            dbSet('kapinda_users', u); 
-            closeSheet('crmSheetOverlay'); 
-            showToast("Kaydedildi"); 
-        }
-
-        function finansCiz() {
-            const s = dbGet('kapinda_stats'); 
-            const u = dbGet('kapinda_users'); 
-            
-            document.getElementById('finansToplamCiro').innerText=s.ciro+" ₺"; 
-            document.getElementById('finansNetKar').innerText=s.netKar+" ₺"; 
-            document.getElementById('finansAbonelikGeliri').innerText=(s.abonelikGeliri||0)+" ₺"; 
-            document.getElementById('finansKomisyon').innerText=s.toplamKomisyon+" ₺";
-            
-            let eH = ''; let sH = '';
-            for(let e in u) {
-                if(u[e].rol==='store' && u[e].bakiye>0) { 
-                    eH += `
-                    <div class="crm-item" onclick="openPaymentModal('${e}')">
-                        <div>
-                            <b style="display:block;">${u[e].isim}</b>
-                            <span style="font-size:10px; color:var(--text-muted);">Esnaf Alacağı</span>
-                        </div>
-                        <div style="text-align:right;">
-                            <b style="color:var(--danger); font-size:16px;">${u[e].bakiye} ₺</b>
-                            <div style="font-size:10px; font-weight:bold; color:var(--primary);">ÖDEME YAP</div>
-                        </div>
-                    </div>`; 
-                }
-                if(u[e].rol==='seller' && u[e].bakiye>0) { 
-                    sH += `
-                    <div class="crm-item" onclick="openPaymentModal('${e}')">
-                        <div>
-                            <b style="display:block;">${u[e].isim}</b>
-                            <span style="font-size:10px; color:var(--text-muted);">Ağ Komisyonu</span>
-                        </div>
-                        <div style="text-align:right;">
-                            <b style="color:var(--warning); font-size:16px;">${u[e].bakiye} ₺</b>
-                            <div style="font-size:10px; font-weight:bold; color:var(--primary);">ÖDEME YAP</div>
-                        </div>
-                    </div>`; 
-                }
-            }
-            document.getElementById('finansEsnafListesi').innerHTML = eH || '<p style="text-align:center; font-size:12px;">Borç yok.</p>'; 
-            document.getElementById('finansSaticiListesi').innerHTML = sH || '<p style="text-align:center; font-size:12px;">Borç yok.</p>';
-        }
-
-        function openPaymentModal(e) { 
-            const u = dbGet('kapinda_users')[e]; 
-            document.getElementById('payEmail').value = e; 
-            document.getElementById('payAmount').innerText = u.bakiye+" ₺"; 
-            document.getElementById('paymentModal').classList.add('active'); 
-        }
-
-        function processPayment() { 
-            const e = document.getElementById('payEmail').value; 
-            const u = dbGet('kapinda_users'); 
-            u[e].bakiye = 0; 
-            dbSet('kapinda_users', u); 
-            document.getElementById('paymentModal').classList.remove('active'); 
-            showToast("Ödendi"); 
-        }
-
-        function adminUrunCiz() { 
-            const p = dbGet('kapinda_products'); 
-            let h = ''; 
-            p.forEach((x, i) => { 
-                h += `
-                <div class="crm-item">
-                    <div>
-                        <h4 style="margin:0;">${x.ad}</h4>
-                        <b style="color:var(--primary); font-size:16px;">${x.fiyat} ₺</b>
-                    </div>
-                    <button class="btn-danger" style="width:auto; padding:8px 15px;" onclick="adminUrunSil(${i})"><i class="fa-solid fa-trash"></i></button>
-                </div>`; 
-            }); 
-            document.getElementById('adminUrunListesi').innerHTML = h || '<p style="text-align:center; font-size:12px;">Ürün Yok.</p>'; 
-        }
-
-        function adminUrunEkle() { 
-            let ad = document.getElementById('adminYeniUrunAd').value.trim(); 
-            let f = parseInt(document.getElementById('adminYeniUrunFiyat').value); 
-            let kat = document.getElementById('adminYeniUrunKategori').value; 
-            let r = document.getElementById('adminResimBase64').value; 
-            
-            if(!ad || !f) return showToast("Alanları doldurun!", true); 
-            
-            const p = dbGet('kapinda_products'); 
-            p.push({
-                id: Date.now(), ad: ad, fiyat: f, 
-                saticiMail: 'esnaf@mail.com', kategori: kat, 
-                resim: r || 'https://images.unsplash.com/photo-1505740420928-5e560c06d30e?w=300'
-            }); 
-            dbSet('kapinda_products', p); 
-            
-            document.getElementById('adminYeniUrunAd').value=''; 
-            document.getElementById('adminYeniUrunFiyat').value=''; 
-            document.getElementById('adminResimBase64').value=''; 
-            document.getElementById('adminResimSec').value=''; 
-            showToast("Eklendi"); 
-        }
-
-        function adminUrunSil(i) { 
-            const p = dbGet('kapinda_products'); 
-            p.splice(i,1); 
-            dbSet('kapinda_products', p); 
-            showToast("Silindi"); 
-        }
-    </script>
-</body>
-</html>
+                        <b style="color:var(--success); font-size:16px;">${u
