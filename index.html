@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-    <title>Kapında V16.1 - The Stable Fintech</title>
+    <title>Kapında V16.2 - Dynamic Settings</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     
     <script src="https://www.gstatic.com/firebasejs/10.8.1/firebase-app-compat.js"></script>
@@ -108,7 +108,7 @@
         
         <div id="serverLoading">
             <div class="spinner"></div>
-            <h2 style="margin:0; font-weight:900;">KAPINDA V16.1</h2>
+            <h2 style="margin:0; font-weight:900;">KAPINDA V16.2</h2>
             <p style="font-size:12px; opacity:0.7; margin-top:5px;">Bağlantı Kuruluyor...</p>
         </div>
 
@@ -173,8 +173,8 @@
             <div class="view active" id="authView" style="display:flex; flex-direction:column; justify-content:center;">
                 <div style="text-align:center; margin-bottom:30px;">
                     <div style="width: 80px; height: 80px; background: var(--primary); border-radius: 24px; color: white; display: flex; justify-content: center; align-items: center; font-size: 40px; margin: 0 auto 15px auto; transform: rotate(-10deg);"><i class="fa-solid fa-bolt"></i></div>
-                    <h1 style="margin:0; font-weight:800; font-size:28px;">Kapında V16.1</h1>
-                    <p style="color:var(--text-muted); font-weight:600;">Fintech Bridge & Stabilite</p>
+                    <h1 style="margin:0; font-weight:800; font-size:28px;">Kapında V16.2</h1>
+                    <p style="color:var(--text-muted); font-weight:600;">Dinamik Yönetim Ekosistemi</p>
                 </div>
 
                 <div class="tabs" style="margin: 0 20px 15px 20px;">
@@ -253,7 +253,7 @@
                         <input type="number" id="yuklenecekMiktar" placeholder="Örn: 250" style="text-align:center; font-size:18px; font-weight:bold;">
                     </div>
                     
-                    <button class="btn-success" onclick="shopierIleYukle()"><i class="fa-solid fa-lock"></i> Shopier İle Güvenli Öde</button>
+                    <button class="btn-success" onclick="shopierIleYukle()"><i class="fa-solid fa-lock"></i> Güvenli Öde</button>
                 </div>
                 
                 <h4 style="margin:20px 0 10px 0; font-size:13px;">Bekleyen Bakiye Taleplerim</h4>
@@ -315,8 +315,24 @@
                         <div class="module-icon" style="background:#dcfce7; color:#10b981;"><i class="fa-solid fa-money-bill-wave"></i></div><h4>Bakiye Onay</h4>
                     </div>
                     <div class="module-card" onclick="switchView('financeView')"><div class="module-icon" style="background:#fee2e2; color:#ef4444;"><i class="fa-solid fa-chart-pie"></i></div><h4>Kasa & Ödeme</h4></div>
-                    <div class="module-card" onclick="switchView('crmView')"><div class="module-icon" style="background:#e0e7ff; color:#4f46e5;"><i class="fa-solid fa-users-gear"></i></div><h4>Üyeler</h4></div>
+                    
+                    <div class="module-card" onclick="switchView('settingsView')"><div class="module-icon" style="background:#f3e8ff; color:#9333ea;"><i class="fa-solid fa-gear"></i></div><h4>Ayarlar</h4></div>
+                    
                     <div class="module-card" onclick="switchView('ecommerceView')"><div class="module-icon" style="background:#fef3c7; color:#f59e0b;"><i class="fa-solid fa-box-open"></i></div><h4>Vitrin Yönetimi</h4></div>
+                    <div class="module-card" onclick="switchView('crmView')"><div class="module-icon" style="background:#e0e7ff; color:#4f46e5;"><i class="fa-solid fa-users-gear"></i></div><h4>Üyeler</h4></div>
+                </div>
+            </div>
+
+            <div class="view" id="settingsView">
+                <div style="display:flex; align-items:center; gap:15px; margin-bottom:20px;"><div class="header-action" onclick="switchView('adminView')"><i class="fa-solid fa-arrow-left"></i></div><h3 style="margin:0;">Sistem Ayarları</h3></div>
+                
+                <div class="card">
+                    <h4 style="margin:0 0 15px 0; color:var(--primary);"><i class="fa-solid fa-link"></i> Shopier Ödeme Linki</h4>
+                    <p style="font-size:11px; color:var(--text-muted); margin-top:-10px; margin-bottom:15px;">Müşteriler bakiye yüklerken otomatik olarak bu linke yönlendirilir.</p>
+                    <div class="input-group">
+                        <input type="url" id="adminShopierLink" placeholder="https://shopier.com/SizinDukkaniniz" style="font-weight:normal;">
+                    </div>
+                    <button class="btn-primary" onclick="ayarlariKaydet()"><i class="fa-solid fa-cloud-arrow-up"></i> Linki Kaydet</button>
                 </div>
             </div>
 
@@ -383,7 +399,6 @@
     </div>
 
     <script>
-        // 1. FIREBASE BAĞLANTISI VE YAPILANDIRMASI
         const firebaseConfig = { 
             apiKey: "AIzaSyBWSlha9fD_q3zHXaRJ3ocJdtALqkrW-LU", 
             authDomain: "kapinda-8d3ef.firebaseapp.com", 
@@ -395,7 +410,6 @@
         firebase.initializeApp(firebaseConfig); 
         const db = firebase.firestore();
 
-        // 2. GLOBAL DEĞİŞKENLER
         let appData = { users: {}, products: [], stats: {}, codes: {}, orders: [], plans: {}, deposits: [] };
         let aktifKullaniciEmail = null; 
         let sepet = []; 
@@ -407,7 +421,6 @@
         let oldBakiye = -1; 
         let oldDepositCount = 0;
 
-        // 3. SİSTEM BAŞLATMA
         window.onload = async () => {
             try {
                 const initCheck = await db.collection('kapinda').doc('stats').get();
@@ -435,7 +448,10 @@
                 pro: { id: 'pro', ad: 'Pro', fiyat: 100, oran: 0.10, desc: '%10 komisyon.' }, 
                 elite: { id: 'elite', ad: 'Elite VIP', fiyat: 500, oran: 0.20, desc: '%20 komisyon.' }
             });
-            await db.collection('kapinda').doc('stats').set({ ciro: 0, netKar: 0, toplamKomisyon: 0, abonelikGeliri: 0 });
+            // YENİ: shopierLink veritabanına eklendi
+            await db.collection('kapinda').doc('stats').set({ 
+                ciro: 0, netKar: 0, toplamKomisyon: 0, abonelikGeliri: 0, shopierLink: 'https://shopier.com/' 
+            });
             await db.collection('kapinda').doc('orders').set({ list: [] }); 
             await db.collection('kapinda').doc('codes').set({});
             await db.collection('kapinda').doc('deposits').set({ list: [] }); 
@@ -467,7 +483,6 @@
                         appData[col] = doc.data().list || []; 
                     }
                     
-                    // Yeni Sipariş Bildirimi
                     if(!isFirstLoad && col === 'orders' && aktifKullaniciEmail) {
                         let yeniSiparisSayisi = appData.orders.length;
                         if(yeniSiparisSayisi > oldOrdersCount) {
@@ -479,7 +494,6 @@
                         oldOrdersCount = yeniSiparisSayisi;
                     }
 
-                    // Yeni Bakiye Talebi Bildirimi (Admin İçin)
                     if(!isFirstLoad && col === 'deposits' && aktifKullaniciEmail === 'admin.com') {
                         let bekleyenler = appData.deposits.filter(d => d.durum === 'bekliyor').length;
                         if(bekleyenler > 0) {
@@ -498,7 +512,6 @@
                 });
             });
 
-            // İlk Yükleme Sonrası Gecikmeli İşlemler (Oto-Giriş)
             setTimeout(() => { 
                 document.getElementById('serverLoading').style.opacity = '0'; 
                 setTimeout(() => document.getElementById('serverLoading').style.display = 'none', 500); 
@@ -514,7 +527,6 @@
             }, 1000);
         }
 
-        // --- 4. VERİTABANI ERİŞİM VE YARDIMCI FONKSİYONLAR ---
         function dbGet(k) { 
             return appData[k.replace('kapinda_', '')]; 
         }
@@ -549,14 +561,12 @@
             }
         }
 
-        // --- 5. EKRAN GEÇİŞLERİ VE GİRİŞ SİSTEMİ (DÜZELTİLEN YER) ---
         function switchView(tId) {
             if(tId === currentView) return;
             
             const currentEl = document.getElementById(currentView);
             const targetEl = document.getElementById(tId);
             
-            // Sınıf çakışmalarını kökünden çözen güvenli geçiş mantığı
             currentEl.classList.remove('active');
             currentEl.classList.add('prev');
             
@@ -652,9 +662,8 @@
             if(currentView === 'subscriptionView') abonelikCiz(); 
             if(currentView === 'addBalanceView') musteriBakiyeCiz(); 
             if(currentView === 'depositAdminView') adminBakiyeTalepleriCiz();
+            if(currentView === 'settingsView') ayarlariCiz(); // YENİ
         }
-
-        // --- 6. İŞLEVSEL FONKSİYONLAR (AÇIK YAZILDI) ---
 
         function kategoriSec(el, kat) { 
             document.querySelectorAll('.cat-chip').forEach(c => c.classList.remove('active')); 
@@ -679,7 +688,22 @@
             } 
         }
 
-        // --- MÜŞTERİ CÜZDAN KÖPRÜSÜ (SHOPIER) ---
+        // --- AYARLAR VE SHOPIER KÖPRÜSÜ (YENİ) ---
+        function ayarlariCiz() {
+            const stats = dbGet('kapinda_stats');
+            document.getElementById('adminShopierLink').value = stats.shopierLink || 'https://shopier.com/';
+        }
+
+        function ayarlariKaydet() {
+            const link = document.getElementById('adminShopierLink').value.trim();
+            if(!link) return showToast("Shopier linki boş bırakılamaz!", true);
+            
+            const stats = dbGet('kapinda_stats');
+            stats.shopierLink = link;
+            dbSet('kapinda_stats', stats);
+            showToast("Shopier yönlendirme linki başarıyla kaydedildi.");
+        }
+
         function musteriBakiyeCiz() {
             const user = dbGet('kapinda_users')[aktifKullaniciEmail];
             document.getElementById('musteriGuncelBakiye').innerText = user.bakiye.toLocaleString('tr-TR') + " ₺";
@@ -712,6 +736,7 @@
 
             const user = dbGet('kapinda_users')[aktifKullaniciEmail];
             const deposits = dbGet('kapinda_deposits');
+            const stats = dbGet('kapinda_stats');
             
             deposits.unshift({
                 id: 'DEP-' + Math.floor(1000 + Math.random() * 9000),
@@ -723,15 +748,14 @@
             });
             dbSet('kapinda_deposits', deposits);
 
-            // GÜNCEL SHOPIER LİNKİ
-            const shopierLink = "https://shopier.com/"; 
+            // DİNAMİK SHOPIER LİNKİ
+            const shopierLink = stats.shopierLink || "https://shopier.com/"; 
             window.open(shopierLink, '_blank');
             
             showToast("Shopier'e yönlendiriliyorsunuz. Ödeme sonrası admin onaylayacaktır.");
             musteriBakiyeCiz();
         }
 
-        // --- ADMİN BAKİYE ONAY (SHOPIER) ---
         function adminBakiyeTalepleriCiz() {
             const deposits = dbGet('kapinda_deposits');
             let html = '';
@@ -851,7 +875,9 @@
             document.getElementById('cartTotal').innerText = total + " ₺";
             
             const user = dbGet('kapinda_users')[aktifKullaniciEmail];
-            document.getElementById('sepetBakiyeGoster').innerText = user.bakiye.toLocaleString('tr-TR') + " ₺";
+            if(document.getElementById('sepetBakiyeGoster')) {
+                document.getElementById('sepetBakiyeGoster').innerText = user.bakiye.toLocaleString('tr-TR') + " ₺";
+            }
             
             showToast("Eklendi"); 
         }
@@ -872,14 +898,12 @@
             let toplamTutar = 0;
             sepet.forEach(i => toplamTutar += i.fiyat);
 
-            // Bakiye Kontrolü
             if (alici.bakiye < toplamTutar) {
                 showToast("Bakiyeniz Yetersiz! Lütfen bakiye yükleyin.", true);
                 switchView('addBalanceView');
                 return;
             }
 
-            // Parayı alıcıdan düş
             alici.bakiye -= toplamTutar;
 
             const newOrder = { 
@@ -1131,7 +1155,7 @@
             document.getElementById('altEkipListesi').innerHTML = html || '<p style="text-align:center;">Kimse yok.</p>'; 
         }
 
-        // --- ADMIN PANELİ (Hatasız Listeler) ---
+        // --- ADMIN PANELİ ---
         function dashboardCiz() { 
             const s = dbGet('kapinda_stats'); 
             document.getElementById('dashCiro').innerText = s.ciro + " ₺"; 
