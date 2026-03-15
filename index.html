@@ -3,11 +3,13 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-    <title>Kapında V16.5 - Bypass Edition</title>
+    <title>Kapında V16.5 - Shopier Entegreli</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     
     <script src="https://www.gstatic.com/firebasejs/10.8.1/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.8.1/firebase-firestore-compat.js"></script>
+    
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/4.1.1/crypto-js.min.js"></script>
 
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;800;900&display=swap');
@@ -89,12 +91,6 @@
         .tab { flex: 1; padding: 10px; text-align: center; font-size: 12px; font-weight: 800; color: var(--text-muted); cursor: pointer; border-radius: 8px; transition: 0.3s; }
         .tab.active { background: var(--primary); color: white; }
 
-        .bank-modal { position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: rgba(15, 23, 42, 0.9); z-index: 200; display: flex; justify-content: center; align-items: center; opacity: 0; pointer-events: none; transition: 0.3s; }
-        .bank-modal.active { opacity: 1; pointer-events: all; }
-        .bank-card { background: var(--card-bg); width: 85%; border-radius: 30px; padding: 30px 20px; text-align: center; transform: scale(0.9); transition: transform 0.4s; position: relative;}
-        .bank-modal.active .bank-card { transform: scale(1); }
-        .bank-amount { font-size: 36px; font-weight: 900; color: var(--success); margin: 15px 0 5px 0; letter-spacing: -1px; }
-
         #toast { position: absolute; top: 30px; left: 50%; transform: translateX(-50%) translateY(-20px); background: var(--success); color: white; padding: 14px 24px; border-radius: 30px; font-size: 13px; font-weight: 800; z-index: 1000; opacity: 0; transition: 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); pointer-events: none; text-align: center; width: max-content; max-width: 90%; box-shadow: 0 10px 30px rgba(0,0,0,0.3);}
         #toast.show { transform: translateX(-50%) translateY(0); opacity: 1; }
 
@@ -138,28 +134,17 @@
             </div>
         </div>
 
-        <div class="bank-modal" id="paymentModal">
-            <div class="bank-card">
-                <div style="position:absolute; top:20px; right:20px; width:30px; height:30px; background:var(--bg-color); border-radius:50%; display:flex; justify-content:center; align-items:center; cursor:pointer;" onclick="document.getElementById('paymentModal').classList.remove('active')"><i class="fa-solid fa-xmark"></i></div>
-                <div style="width: 60px; height: 60px; background: #dcfce7; color: var(--success); border-radius: 20px; display: flex; justify-content: center; align-items: center; font-size: 24px; margin: 0 auto;"><i class="fa-solid fa-money-bill-transfer"></i></div>
-                <p style="color:var(--text-muted); font-size:12px; font-weight:800; margin:20px 0 0 0;">ÖDENECEK TUTAR</p>
-                <div class="bank-amount" id="payAmount">0 ₺</div>
-                <input type="hidden" id="payEmail">
-                <button class="btn-success" style="margin-top:25px;" onclick="processPayment()"><i class="fa-solid fa-check"></i> Ödemeyi Tamamla</button>
-            </div>
-        </div>
-
         <div class="sheet-overlay" id="subSheetOverlay">
             <div class="bottom-sheet">
                 <div class="sheet-handle"></div>
                 <h3 style="margin: 0 0 5px 0; font-weight: 800; text-align:center;">Ödeme Onayı</h3>
-                <p style="text-align:center; font-size:12px; color:var(--text-muted); margin-bottom:20px;">Abonelik bedeli cüzdanınızdan düşülecektir.</p>
+                <p style="text-align:center; font-size:12px; color:var(--text-muted); margin-bottom:20px;">Sistem sizi Shopier Güvenli Ödeme sayfasına yönlendirecektir.</p>
                 <div class="card" style="text-align:center; border:2px dashed var(--primary); background:var(--bg-color);">
                     <h2 id="subConfirmName" style="margin:0; color:var(--primary);">Paket Adı</h2>
                     <h1 id="subConfirmPrice" style="margin:10px 0 0 0; color:var(--text-main);">0 ₺</h1>
                 </div>
                 <input type="hidden" id="subTargetPlan">
-                <button class="btn-success" onclick="abonelikSatinAlOnay()"><i class="fa-solid fa-check"></i> Onayla ve Yükselt</button>
+                <button class="btn-success" onclick="abonelikSatinAlOnay()"><i class="fa-solid fa-lock"></i> Kredi Kartı ile Öde</button>
                 <button class="btn-outline" style="margin-top:10px;" onclick="closeSheet('subSheetOverlay')">İptal</button>
             </div>
         </div>
@@ -177,7 +162,7 @@
                 <div style="text-align:center; margin-bottom:30px;">
                     <div style="width: 80px; height: 80px; background: var(--primary); border-radius: 24px; color: white; display: flex; justify-content: center; align-items: center; font-size: 40px; margin: 0 auto 15px auto; transform: rotate(-10deg);"><i class="fa-solid fa-bolt"></i></div>
                     <h1 style="margin:0; font-weight:800; font-size:28px;">Kapında V16.5</h1>
-                    <p style="color:var(--text-muted); font-weight:600;">Bypass Edition</p>
+                    <p style="color:var(--text-muted); font-weight:600;">Shopier Entegreli Sürüm</p>
                 </div>
 
                 <div class="tabs" style="margin: 0 20px 15px 20px;">
@@ -318,22 +303,8 @@
                         <div class="module-icon" style="background:#dcfce7; color:#10b981;"><i class="fa-solid fa-money-bill-wave"></i></div><h4>Bakiye Onay</h4>
                     </div>
                     <div class="module-card" onclick="switchView('financeView')"><div class="module-icon" style="background:#fee2e2; color:#ef4444;"><i class="fa-solid fa-chart-pie"></i></div><h4>Kasa & Ödeme</h4></div>
-                    <div class="module-card" onclick="switchView('settingsView')"><div class="module-icon" style="background:#f3e8ff; color:#9333ea;"><i class="fa-solid fa-gear"></i></div><h4>Ayarlar</h4></div>
                     <div class="module-card" onclick="switchView('ecommerceView')"><div class="module-icon" style="background:#fef3c7; color:#f59e0b;"><i class="fa-solid fa-box-open"></i></div><h4>Vitrin Yönetimi</h4></div>
                     <div class="module-card" onclick="switchView('crmView')"><div class="module-icon" style="background:#e0e7ff; color:#4f46e5;"><i class="fa-solid fa-users-gear"></i></div><h4>Üyeler</h4></div>
-                </div>
-            </div>
-
-            <div class="view" id="settingsView">
-                <div style="display:flex; align-items:center; gap:15px; margin-bottom:20px;"><div class="header-action" onclick="switchView('adminView')"><i class="fa-solid fa-arrow-left"></i></div><h3 style="margin:0;">Sistem Ayarları</h3></div>
-                
-                <div class="card">
-                    <h4 style="margin:0 0 15px 0; color:var(--primary);"><i class="fa-solid fa-link"></i> Backend API Linki</h4>
-                    <p style="font-size:11px; color:var(--text-muted); margin-top:-10px; margin-bottom:15px;">Shopier entegrasyonu sağlayan PHP sunucunuzun ana adresi (Ödeme Linkiniz).</p>
-                    <div class="input-group">
-                        <input type="url" id="adminShopierLink" placeholder="https://seninsunucun.com/shopier_odeme.php" style="font-weight:normal;">
-                    </div>
-                    <button class="btn-primary" onclick="ayarlariKaydet()"><i class="fa-solid fa-cloud-arrow-up"></i> Linki Kaydet</button>
                 </div>
             </div>
 
@@ -465,7 +436,7 @@
                 elite: { id: 'elite', ad: 'Elite VIP', fiyat: 500, oran: 0.20, desc: '%20 komisyon.' }
             });
             await db.collection('kapinda').doc('stats').set({ 
-                ciro: 0, netKar: 0, toplamKomisyon: 0, abonelikGeliri: 0, shopierLink: 'https://seninsunucun.com/shopier_odeme.php' 
+                ciro: 0, netKar: 0, toplamKomisyon: 0, abonelikGeliri: 0
             });
             await db.collection('kapinda').doc('orders').set({ list: [] }); 
             await db.collection('kapinda').doc('codes').set({});
@@ -666,14 +637,169 @@
             if(currentView === 'storeOrdersView') esnafSiparisCiz(); if(currentView === 'ordersView') musteriSiparisCiz();
             if(currentView === 'walletView') cüzdanCiz(); if(currentView === 'storeView') posCiz(); if(currentView === 'networkView') networkCiz(); 
             if(currentView === 'subscriptionView') abonelikCiz(); if(currentView === 'addBalanceView') musteriBakiyeCiz(); 
-            if(currentView === 'depositAdminView') adminBakiyeTalepleriCiz(); if(currentView === 'settingsView') ayarlariCiz(); 
+            if(currentView === 'depositAdminView') adminBakiyeTalepleriCiz(); 
         }
+
+        // ==========================================
+        // YENİ: TEK SAYFA SHOPIER KÖPRÜSÜ (JS İLE)
+        // ==========================================
+        function shopierOdemeyeGit(tutar, urunAdi, siparisNo) {
+            // Şifrelerin burada! Canlıda sunucuya (PHP) taşımalısın.
+            const apiKey = 'e8618ce60720650b882c703cf6232869'; 
+            const apiSecret = 'c47c33737a3d99dfa1ec89d1a17300003f162429ac1d62e27aac6715f318a16a';
+
+            // Müşteri bilgilerini topla
+            const users = dbGet('kapinda_users');
+            const user = users[aktifKullaniciEmail] || {isim: "Misafir Müşteri"};
+            let adSoyad = user.isim.split(" ");
+            let ad = adSoyad[0];
+            let soyad = adSoyad.slice(1).join(" ") || "Müşteri";
+            let email = aktifKullaniciEmail || "musteri@ornek.com";
+            let telefon = "05555555555";
+            
+            const currency = 0; // 0 = TL
+            const random_nr = Math.floor(Math.random() * 900000) + 100000; // Rastgele sayı
+            const module_version = '1.0.4';
+
+            // CryptoJS ile HMAC SHA256 Şifreleme (PHP'nin yaptığı işi JS ile yapıyoruz)
+            const hashString = siparisNo + tutar + currency + urunAdi + ad + soyad + email + telefon + random_nr;
+            const hash = CryptoJS.HmacSHA256(hashString, apiSecret);
+            const signature = CryptoJS.enc.Base64.stringify(hash);
+
+            // Görünmez HTML Formunu Oluştur ve Gönder
+            let form = document.createElement("form");
+            form.method = "POST";
+            form.action = "https://www.shopier.com/ShowProduct/api_pay4.php";
+            form.target = "_blank"; // Yeni sekmede ödeme açılsın
+
+            let data = {
+                API_key: apiKey,
+                website_index: 1,
+                platform_order_id: siparisNo,
+                product_name: urunAdi,
+                product_type: 1,
+                buyer_name: ad,
+                buyer_surname: soyad,
+                buyer_email: email,
+                buyer_account_age: 0,
+                buyer_id_nr: 0,
+                buyer_phone: telefon,
+                billing_address: "Sistem Kayitli Adresi",
+                billing_city: "Istanbul",
+                billing_country: "Turkey",
+                billing_postcode: "34000",
+                shipping_address: "Sistem Kayitli Adresi",
+                shipping_city: "Istanbul",
+                shipping_country: "Turkey",
+                shipping_postcode: "34000",
+                total_order_value: tutar,
+                currency: currency,
+                platform: 0,
+                is_in_frame: 0,
+                current_language: "tr-TR",
+                modul_version: module_version,
+                random_nr: random_nr,
+                signature: signature
+            };
+
+            for (let key in data) {
+                let input = document.createElement("input");
+                input.type = "hidden";
+                input.name = key;
+                input.value = data[key];
+                form.appendChild(input);
+            }
+
+            document.body.appendChild(form);
+            form.submit(); // Shopier kredi kartı ekranına zıpla
+            document.body.removeChild(form);
+        }
+
+        // --- GÜNCELLENEN BUTON TETİKLEYİCİLERİ ---
+
+        function odemeTamamla() {
+            if (sepet.length === 0) return showToast("Sepet boş!", true); 
+            const adres = document.getElementById('siparisAdresi').value.trim(); 
+            if (!adres) return showToast("Lütfen teslimat adresi girin!", true);
+
+            const alici = dbGet('kapinda_users')[aktifKullaniciEmail];
+            let toplamTutar = 0; 
+            let urunIsimleriDizisi = [];
+            
+            sepet.forEach(i => {
+                toplamTutar += i.fiyat;
+                urunIsimleriDizisi.push(i.ad);
+            });
+            
+            let kisaUrunIsmi = urunIsimleriDizisi.join(", ");
+            if (kisaUrunIsmi.length > 40) kisaUrunIsmi = kisaUrunIsmi.substring(0, 40) + "...";
+            
+            const siparisNo = 'ORD-' + Math.floor(10000 + Math.random() * 90000);
+
+            // Firebase'e "Ödeme Bekliyor" olarak kaydet
+            const orders = dbGet('kapinda_orders');
+            orders.unshift({ 
+                id: siparisNo, 
+                tarih: new Date().toLocaleDateString(), 
+                musteri: alici.isim, 
+                musteriMail: aktifKullaniciEmail, 
+                adres: adres, 
+                items: [...sepet], 
+                toplam: toplamTutar, 
+                durum: 'odeme_bekliyor',
+                esnafMail: sepet[0].saticiMail 
+            }); 
+            dbSet('kapinda_orders', orders);
+
+            // JS ile Şifreli Formu Shopier'e Gönder
+            shopierOdemeyeGit(toplamTutar, kisaUrunIsmi, siparisNo);
+
+            // Arayüzü temizle
+            sepet = []; 
+            document.getElementById('cartCount').innerText = "0"; 
+            document.getElementById('cartItemsContainer').innerHTML = ''; 
+            document.getElementById('cartTotal').innerText = "0 ₺"; 
+            document.getElementById('siparisAdresi').value = ''; 
+            
+            switchView('ordersView'); 
+            showToast("Güvenli Ödeme Ekranına Yönlendiriliyorsunuz...");
+        }
+
+        function shopierIleYukle() {
+            const miktar = parseInt(document.getElementById('yuklenecekMiktar').value);
+            if(!miktar || miktar <= 0) return showToast("Geçerli bir tutar giriniz.", true);
+            
+            const siparisNo = 'DEP-' + Math.floor(1000 + Math.random() * 9000);
+            
+            const user = dbGet('kapinda_users')[aktifKullaniciEmail]; 
+            const deposits = dbGet('kapinda_deposits');
+            
+            deposits.unshift({ id: siparisNo, userEmail: aktifKullaniciEmail, userName: user.isim, amount: miktar, durum: 'bekliyor', date: new Date().toLocaleDateString() + " " + new Date().toLocaleTimeString() });
+            dbSet('kapinda_deposits', deposits);
+            
+            // Tek sayfalık JS Shopier Köprüsünü tetikle
+            shopierOdemeyeGit(miktar, "Bakiye Yukleme", siparisNo);
+            
+            showToast("Shopier Ödeme Ekranına Yönlendiriliyorsunuz..."); 
+            musteriBakiyeCiz();
+        }
+
+        function abonelikSatinAlOnay() { 
+            const planId = document.getElementById('subTargetPlan').value; 
+            const plan = dbGet('kapinda_plans')[planId];
+            const siparisNo = 'SUB-' + Math.floor(1000 + Math.random() * 9000);
+
+            // Tek sayfalık JS Shopier Köprüsünü tetikle
+            shopierOdemeyeGit(plan.fiyat, plan.ad + " Paketi", siparisNo);
+            
+            document.getElementById('subSheetOverlay').classList.remove('active');
+            showToast("Shopier Güvenli Ödeme Ekranına Yönlendiriliyorsunuz..."); 
+        }
+
+        // ==========================================
 
         function kategoriSec(el, kat) { document.querySelectorAll('.cat-chip').forEach(c => c.classList.remove('active')); el.classList.add('active'); seciliKategori = kat; vitrinCiz(); }
         function resimCevir(input, target) { let file = input.files[0]; if(file) { if(file.size > 1048576) { showToast("1MB altı resim seçin.", true); input.value = ''; return; } let reader = new FileReader(); reader.onloadend = function() { document.getElementById(target).value = reader.result; }; reader.readAsDataURL(file); } }
-
-        function ayarlariCiz() { const stats = dbGet('kapinda_stats'); document.getElementById('adminShopierLink').value = stats.shopierLink || 'https://seninsunucun.com/shopier_odeme.php'; }
-        function ayarlariKaydet() { const link = document.getElementById('adminShopierLink').value.trim(); if(!link) return showToast("Shopier linki boş bırakılamaz!", true); const stats = dbGet('kapinda_stats'); stats.shopierLink = link; dbSet('kapinda_stats', stats); showToast("Shopier yönlendirme linki başarıyla kaydedildi."); }
 
         function musteriBakiyeCiz() {
             const user = dbGet('kapinda_users')[aktifKullaniciEmail];
@@ -688,16 +814,6 @@
                 }
             });
             document.getElementById('musteriBekleyenTalepler').innerHTML = html || '<p style="text-align:center; font-size:12px; color:var(--text-muted);">Talebiniz bulunmuyor.</p>';
-        }
-
-        function shopierIleYukle() {
-            const miktar = parseInt(document.getElementById('yuklenecekMiktar').value);
-            if(!miktar || miktar <= 0) return showToast("Geçerli bir tutar giriniz.", true);
-            const user = dbGet('kapinda_users')[aktifKullaniciEmail]; const deposits = dbGet('kapinda_deposits'); const stats = dbGet('kapinda_stats');
-            deposits.unshift({ id: 'DEP-' + Math.floor(1000 + Math.random() * 9000), userEmail: aktifKullaniciEmail, userName: user.isim, amount: miktar, durum: 'bekliyor', date: new Date().toLocaleDateString() + " " + new Date().toLocaleTimeString() });
-            dbSet('kapinda_deposits', deposits);
-            const shopierLink = stats.shopierLink || "https://shopier.com/"; window.open(shopierLink, '_blank');
-            showToast("Shopier'e yönlendiriliyorsunuz. Ödeme sonrası admin onaylayacaktır."); musteriBakiyeCiz();
         }
 
         function adminBakiyeTalepleriCiz() {
@@ -747,93 +863,6 @@
             showToast("Eklendi"); 
         }
 
-        // --- YENİ SHOPİER ENTEGRASYONLU ÖDEME FONKSİYONU ---
-        function odemeTamamla() {
-            if (sepet.length === 0) return showToast("Sepet boş!", true); 
-            const adres = document.getElementById('siparisAdresi').value.trim(); 
-            if (!adres) return showToast("Lütfen teslimat adresi girin!", true);
-
-            const users = dbGet('kapinda_users'); 
-            const aliciEmail = aktifKullaniciEmail; 
-            const alici = users[aliciEmail];
-
-            // Sepet tutarını ve ürün isimlerini topla
-            let toplamTutar = 0; 
-            let urunIsimleriDizisi = [];
-            sepet.forEach(i => {
-                toplamTutar += i.fiyat;
-                urunIsimleriDizisi.push(i.ad);
-            });
-            
-            // Shopier ürün isminde çok uzun metin istemez, ilk 40 karakteri alalım
-            let kisaUrunIsmi = urunIsimleriDizisi.join(", ");
-            if (kisaUrunIsmi.length > 40) kisaUrunIsmi = kisaUrunIsmi.substring(0, 40) + "...";
-            
-            const siparisNo = 'ORD-' + Math.floor(10000 + Math.random() * 90000);
-
-            // 1. AŞAMA: Siparişi veritabanına (Firebase'e) "odeme_bekliyor" durumu ile kaydet
-            const orders = dbGet('kapinda_orders');
-            const newOrder = { 
-                id: siparisNo, 
-                tarih: new Date().toLocaleDateString(), 
-                musteri: alici.isim, 
-                musteriMail: aliciEmail, 
-                adres: adres, 
-                items: [...sepet], 
-                toplam: toplamTutar, 
-                durum: 'odeme_bekliyor', // Henüz parayı almadık, Shopier'e gönderiyoruz!
-                esnafMail: sepet[0].saticiMail 
-            };
-            orders.unshift(newOrder); 
-            dbSet('kapinda_orders', orders);
-
-            // 2. AŞAMA: Müşteriyi Shopier Kredi Kartı Ekranına Gönder
-            const stats = dbGet('kapinda_stats');
-            const apiBase = stats.shopierLink || "https://seninsunucun.com/shopier_odeme.php";
-
-            // Dinamik HTML Formu
-            let form = document.createElement("form");
-            form.method = "POST";
-            form.action = apiBase; 
-            form.target = "_blank"; 
-
-            let adSoyad = alici.isim.split(" ");
-            let ad = adSoyad[0];
-            let soyad = adSoyad.slice(1).join(" ") || "Müşteri";
-
-            let data = {
-                siparis_no: siparisNo,
-                tutar: toplamTutar,
-                urun_adi: kisaUrunIsmi,
-                ad: ad,
-                soyad: soyad,
-                email: aliciEmail,
-                telefon: "05555555555"
-            };
-
-            for (let key in data) {
-                let input = document.createElement("input");
-                input.type = "hidden";
-                input.name = key;
-                input.value = data[key];
-                form.appendChild(input);
-            }
-
-            document.body.appendChild(form);
-            form.submit(); // Shopier PHP köprüsüne fırlat
-            document.body.removeChild(form);
-
-            // 3. AŞAMA: Sepeti Temizle ve Yönlendir
-            sepet = []; 
-            document.getElementById('cartCount').innerText = "0"; 
-            document.getElementById('cartItemsContainer').innerHTML = ''; 
-            document.getElementById('cartTotal').innerText = "0 ₺"; 
-            document.getElementById('siparisAdresi').value = ''; 
-            
-            switchView('ordersView'); 
-            showToast("Güvenli Ödeme Sayfasına Yönlendiriliyorsunuz...");
-        }
-
         function musteriSiparisCiz() { const orders = dbGet('kapinda_orders'); let html = ''; orders.forEach(o => { if(o.musteriMail === aktifKullaniciEmail) { let badge = o.durum === 'bekliyor' ? '<span class="badge" style="background:var(--warning); color:white;">Hazırlanıyor</span>' : (o.durum === 'odeme_bekliyor' ? '<span class="badge" style="background:var(--text-muted); color:white;">Ödeme Bekliyor</span>' : '<span class="badge" style="background:var(--success); color:white;">Kargolandı</span>'); html += `<div class="card"><div style="display:flex; justify-content:space-between; margin-bottom:10px;"><b style="color:var(--primary); font-size:12px;">#${o.id}</b> ${badge}</div><p style="font-size:13px; font-weight:bold; margin:0;">Tutar: ${o.toplam} ₺</p></div>`; } }); document.getElementById('musteriSiparisListesi').innerHTML = html || '<p style="text-align:center;">Sipariş yok.</p>'; }
         function esnafSiparisCiz() { const orders = dbGet('kapinda_orders'); let html = ''; let count = 0; orders.forEach(o => { if(o.esnafMail === aktifKullaniciEmail || aktifKullaniciEmail === 'admin.com') { if(o.durum === 'bekliyor') count++; html += `<div class="card" style="border:1px solid ${o.durum === 'bekliyor' ? 'var(--warning)' : 'var(--border)'};"><div style="display:flex; justify-content:space-between; margin-bottom:10px;"><b>#${o.id}</b> <b style="color:var(--success);">${o.toplam} ₺</b></div><p style="font-size:11px; background:var(--bg-color); padding:8px;">${o.adres}</p>${o.durum === 'bekliyor' ? `<button class="btn-success" style="padding:10px; font-size:12px;" onclick="kargola('${o.id}')">Kargoya Ver</button>` : `<p style="color:var(--success); text-align:center; font-weight:bold; font-size:11px;">Gönderildi</p>`}</div>`; } }); document.getElementById('esnafSiparisListesi').innerHTML = html || '<p style="text-align:center;">Sipariş yok.</p>'; document.getElementById('esnafBekleyenSiparisSayisi').innerText = count; }
         function kargola(orderId) { const orders = dbGet('kapinda_orders'); orders.forEach(o => { if(o.id === orderId) o.durum = 'kargolandi'; }); dbSet('kapinda_orders', orders); showToast("Kargolandı olarak güncellendi."); esnafSiparisCiz(); }
@@ -845,7 +874,7 @@
 
         function abonelikCiz() { const user = dbGet('kapinda_users')[aktifKullaniciEmail]; const plans = dbGet('kapinda_plans'); document.getElementById('mevcutPaketAd').className = `badge ${user.seviye}`; document.getElementById('mevcutPaketAd').innerText = plans[user.seviye].ad; let html = ''; for(let key in plans) { const p = plans[key]; const isCurrent = user.seviye === key; const bColor = key === 'elite' ? 'var(--warning)' : (key === 'pro' ? 'var(--primary)' : 'var(--text-muted)'); html += `<div class="card" style="border: 2px solid ${isCurrent ? 'var(--success)' : 'var(--border)'};"><div style="display:flex; justify-content:space-between;"><div><h4 style="margin:0; color:${bColor};">${p.ad}</h4></div><h2 style="margin:0;">${p.fiyat} ₺</h2></div>${!isCurrent ? `<button class="btn-primary" style="margin-top:15px; padding:10px; font-size:12px; background:${bColor};" onclick="abonelikModalAc('${key}')">Geç</button>` : `<button class="btn-success" style="margin-top:15px; padding:10px; font-size:12px;" disabled>Mevcut Paket</button>`}</div>`; } document.getElementById('abonelikPaketleriListesi').innerHTML = html; }
         function abonelikModalAc(planId) { const p = dbGet('kapinda_plans')[planId]; document.getElementById('subConfirmName').innerText = p.ad; document.getElementById('subConfirmPrice').innerText = p.fiyat + " ₺"; document.getElementById('subTargetPlan').value = planId; document.getElementById('subSheetOverlay').classList.add('active'); }
-        function abonelikSatinAlOnay() { const planId = document.getElementById('subTargetPlan').value; const users = dbGet('kapinda_users'); const plans = dbGet('kapinda_plans'); const stats = dbGet('kapinda_stats'); const user = users[aktifKullaniciEmail]; const plan = plans[planId]; if(user.bakiye < plan.fiyat) { showToast("Bakiye yetersiz! Lütfen Cüzdan menüsünden para yükleyin.", true); closeSheet('subSheetOverlay'); switchView('addBalanceView'); return; } user.bakiye -= plan.fiyat; user.seviye = planId; if(user.rol === 'customer' && planId !== 'free') user.rol = 'seller'; stats.ciro += plan.fiyat; stats.netKar += plan.fiyat; stats.abonelikGeliri = (stats.abonelikGeliri||0) + plan.fiyat; dbSet('kapinda_users', users); dbSet('kapinda_stats', stats); document.getElementById('subSheetOverlay').classList.remove('active'); if(user.rol === 'seller') document.querySelectorAll('.nav-seller').forEach(n => n.style.display = 'block'); showToast("Abonelik İşlendi."); }
+        
         function networkCiz() { const users = dbGet('kapinda_users'); const me = users[aktifKullaniciEmail]; document.getElementById('benimSponsorKodum').innerText = me.refKod || 'YOK'; document.getElementById('networkToplamKazanc').innerText = (me.agKazanci||0) +" ₺"; let count = 0; let html = ''; for(let email in users) { if(users[email].sponsor === aktifKullaniciEmail) { count++; const u = users[email]; html += `<div class="crm-item" style="padding:10px;"><div><h4 style="margin:0;">${u.isim}</h4><p style="margin:0; font-size:10px; color:var(--text-muted);">${u.seviye.toUpperCase()}</p></div></div>`; } } document.getElementById('networkKisiSayisi').innerText = count; document.getElementById('altEkipListesi').innerHTML = html || '<p style="text-align:center;">Kimse yok.</p>'; }
 
         function dashboardCiz() { const s = dbGet('kapinda_stats'); document.getElementById('dashCiro').innerText = s.ciro + " ₺"; let esnafPayi = s.ciro - s.netKar - s.toplamKomisyon; if (esnafPayi < 0) esnafPayi = 0; let eYuzde = 0; let kYuzde = 0; let karYuzde = 0; if (s.ciro > 0) { eYuzde = (esnafPayi / s.ciro) * 100; kYuzde = (s.toplamKomisyon / s.ciro) * 100; karYuzde = (s.netKar / s.ciro) * 100; } setTimeout(() => { document.getElementById('barEsnaf').style.width = eYuzde + '%'; document.getElementById('barKomisyon').style.width = kYuzde + '%'; document.getElementById('barKar').style.width = karYuzde + '%'; }, 100); }
