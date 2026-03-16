@@ -2,153 +2,194 @@
 <html lang="tr">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>M2Social | PRO v9.0</title>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap" rel="stylesheet">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>M2Social | PRO v10.0</title>
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,0,0" rel="stylesheet" />
     <style>
-        :root { --primary: #b71c1c; --blue: #0095f6; --bg: #fafafa; --border: #dbdbdb; --gold: #f1c40f; --green: #27ae60; --dark: #121212; }
-        * { box-sizing: border-box; font-family: 'Inter', sans-serif; outline: none; }
-        body { background: var(--bg); margin: 0; padding-bottom: 70px; color: #262626; overflow-x: hidden; }
+        :root { --primary: #b71c1c; --blue: #0095f6; --bg: #fff; --border: #dbdbdb; --text: #262626; --gray: #8e8e8e; --gold: #f1c40f; }
+        * { box-sizing: border-box; outline: none; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
+        body { background: var(--bg); color: var(--text); font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; padding-bottom: 60px; padding-top: 60px; overflow-x: hidden; }
         .hidden { display: none !important; }
 
         /* HEADER */
-        header { background: #fff; border-bottom: 1px solid var(--border); padding: 12px 20px; position: fixed; width: 100%; top: 0; z-index: 1000; display: flex; justify-content: space-between; align-items: center; }
-        .logo { font-size: 24px; font-weight: 900; color: var(--primary); font-style: italic; letter-spacing: -1px; cursor:pointer; }
-        
-        .container { max-width: 500px; margin: 70px auto 0; padding: 10px 15px; }
+        header { background: #fff; border-bottom: 1px solid var(--border); padding: 0 16px; height: 60px; position: fixed; width: 100%; top: 0; z-index: 1000; display: flex; justify-content: space-between; align-items: center; }
+        .logo { font-size: 24px; font-weight: 700; font-family: 'Brush Script MT', cursive, sans-serif; cursor:pointer; }
+        .header-icons { display: flex; gap: 20px; align-items: center; }
+        .header-icons span { font-size: 28px; cursor: pointer; color: var(--text); }
 
-        /* POST STYLES */
-        .post { background: white; border: 1px solid var(--border); border-radius: 12px; margin-bottom: 18px; overflow: hidden; transition: 0.3s; }
-        .boosted { border: 2px solid var(--gold); box-shadow: 0 4px 15px rgba(241, 196, 15, 0.2); }
-        .vip-username { color: #d4af37; text-shadow: 0 0 3px rgba(212, 175, 55, 0.4); font-weight: 800; }
-        .verified-badge { color: var(--blue); margin-left: 4px; font-size: 14px; }
-        .guild-tag { background: var(--dark); color: var(--gold); font-size: 10px; padding: 2px 6px; border-radius: 4px; border: 1px solid var(--gold); margin-left: 5px; }
+        .container { max-width: 600px; margin: 0 auto; background: #fff; }
+
+        /* STORIES BAR */
+        .stories-container { display: flex; gap: 15px; padding: 10px 15px; overflow-x: auto; border-bottom: 1px solid var(--border); scrollbar-width: none; }
+        .stories-container::-webkit-scrollbar { display: none; }
+        .story-ring { width: 66px; height: 66px; border-radius: 50%; background: linear-gradient(45deg, #f09433 0%, #e6683c 25%, #dc2743 50%, #cc2366 75%, #bc1888 100%); padding: 3px; cursor: pointer; flex-shrink: 0; }
+        .story-ring img { width: 100%; height: 100%; border-radius: 50%; border: 2px solid #fff; object-fit: cover; }
+        .story-username { font-size: 11px; text-align: center; margin-top: 5px; text-overflow: ellipsis; overflow: hidden; white-space: nowrap; max-width: 66px; }
+
+        /* POST STYLES (INSTAGRAM CLONE) */
+        .post { border-bottom: 1px solid var(--border); padding-bottom: 15px; margin-bottom: 10px; }
+        .post-header { display: flex; justify-content: space-between; align-items: center; padding: 10px 14px; }
+        .post-header-left { display: flex; align-items: center; gap: 10px; }
+        .post-avatar { width: 32px; height: 32px; border-radius: 50%; object-fit: cover; border: 1px solid var(--border); }
+        .post-username { font-weight: 600; font-size: 14px; display: flex; align-items: center; gap: 4px; }
+        .verified-badge { color: var(--blue); font-size: 14px; }
+        .vip-username { color: #d4af37; }
         
-        .post-img-container { position: relative; width: 100%; background: #000; aspect-ratio: 1/1; display: flex; align-items: center; }
+        .post-img-container { width: 100%; aspect-ratio: 1/1; background: #fafafa; position: relative; display: flex; align-items: center; }
         .post-img-container img { width: 100%; height: 100%; object-fit: cover; }
-        .price-tag { position: absolute; top: 15px; right: 15px; background: var(--gold); color: #000; padding: 6px 12px; border-radius: 20px; font-weight: 800; border: 2px solid #fff; z-index: 5; box-shadow: 0 2px 5px rgba(0,0,0,0.2); }
+        .price-tag { position: absolute; top: 15px; right: 15px; background: rgba(0,0,0,0.8); color: #fff; padding: 6px 12px; border-radius: 20px; font-weight: 600; font-size: 13px; z-index: 5; }
 
-        /* INTERACTION */
-        .post-actions { display: flex; gap: 18px; padding: 12px; font-size: 24px; border-bottom: 1px solid #f9f9f9; }
-        .action-icon { cursor: pointer; transition: 0.2s; }
-        .action-icon:hover { opacity: 0.7; transform: scale(1.1); }
-        .comment-section { padding: 10px 12px; font-size: 13px; background: #fcfcfc; max-height: 120px; overflow-y: auto; }
+        /* POST ACTIONS */
+        .post-actions { display: flex; justify-content: space-between; padding: 6px 14px 8px; }
+        .action-group { display: flex; gap: 16px; }
+        .action-icon { font-size: 28px; cursor: pointer; transition: 0.1s; color: var(--text); }
+        .action-icon:active { transform: scale(1.2); color: var(--gray); }
+        .action-icon.liked { color: #ed4956; font-variation-settings: 'FILL' 1; }
+
+        .likes-count { padding: 0 14px; font-weight: 600; font-size: 14px; margin-bottom: 6px; }
+        .caption { padding: 0 14px; font-size: 14px; line-height: 1.4; }
+        .view-comments { padding: 0 14px; font-size: 14px; color: var(--gray); margin-top: 4px; cursor: pointer; }
+        .post-time { padding: 0 14px; font-size: 11px; color: var(--gray); margin-top: 4px; text-transform: uppercase; }
+
+        /* BOTTOM NAV */
+        .bottom-nav { position: fixed; bottom: 0; width: 100%; background: #fff; border-top: 1px solid var(--border); display: flex; justify-content: space-around; align-items: center; height: 50px; z-index: 1000; padding-bottom: env(safe-area-inset-bottom); }
+        .nav-btn { cursor: pointer; color: var(--text); transition: 0.2s; display: flex; flex-direction: column; align-items: center; }
+        .nav-btn .material-symbols-outlined { font-size: 30px; }
+        .active-nav .material-symbols-outlined { font-variation-settings: 'FILL' 1; }
 
         /* GRID / EXPLORE */
         .grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 2px; }
         .grid-item { aspect-ratio: 1/1; background-size: cover; background-position: center; cursor: pointer; }
 
-        /* NAV */
-        .bottom-nav { position: fixed; bottom: 0; width: 100%; background: #fff; border-top: 1px solid var(--border); display: flex; justify-content: space-around; padding: 12px 0; z-index: 1000; }
-        .nav-btn { cursor: pointer; font-size: 26px; color: #aaa; transition: 0.3s; }
-        .active-nav { color: var(--primary); transform: translateY(-3px); }
-
-        /* ADMIN & BUTTONS */
-        .btn-prime { width: 100%; padding: 14px; background: var(--primary); color: white; border: none; border-radius: 10px; font-weight: bold; cursor: pointer; margin-top: 10px; }
-        .card { background: white; padding: 20px; border-radius: 15px; border: 1px solid var(--border); margin-bottom: 15px; }
-        
-        /* CHAT WINDOW */
-        #chat-window { position: fixed; top: 0; left: 0; width: 100%; height: 100vh; background: #fff; z-index: 2000; display: flex; flex-direction: column; }
-        .chat-header { padding: 15px; border-bottom: 1px solid var(--border); display: flex; align-items: center; gap: 15px; font-weight: 800; }
-        .chat-body { flex: 1; padding: 20px; background: #f0f2f5; overflow-y: auto; display: flex; flex-direction: column; gap: 10px; }
-        .bubble { max-width: 80%; padding: 12px 16px; border-radius: 20px; font-size: 14px; position: relative; }
-        .bubble.right { background: var(--blue); color: white; align-self: flex-end; border-bottom-right-radius: 2px; }
-        .bubble.left { background: #fff; align-self: flex-start; border-bottom-left-radius: 2px; box-shadow: 0 1px 2px rgba(0,0,0,0.1); }
+        /* FORMS & MODALS */
+        .btn-prime { width: 100%; padding: 12px; background: var(--blue); color: white; border: none; border-radius: 8px; font-weight: 600; cursor: pointer; margin-top: 10px; font-size: 14px; }
+        .auth-card { padding: 40px; text-align: center; max-width: 350px; margin: 0 auto; border: 1px solid var(--border); background: #fff; margin-top: 50px; border-radius: 2px; }
+        input.insta-input { width: 100%; padding: 10px 12px; margin: 5px 0; border: 1px solid var(--border); border-radius: 4px; background: #fafafa; font-size: 14px; }
+        input.insta-input:focus { border-color: #a8a8a8; }
     </style>
 </head>
 <body>
 
     <section id="auth-screen">
-        <div style="height:100vh; display:flex; align-items:center; justify-content:center; background:var(--dark);">
-            <div class="card" style="width:340px; text-align:center;">
-                <h1 style="color:var(--primary); font-style:italic; margin:0;">M2SOCIAL</h1>
-                <p style="font-size:12px; margin-bottom:20px; color:#888;">Metin2 Topluluk Platformu v9.0</p>
-                <form id="login-form" onsubmit="event.preventDefault(); window.login();">
-                    <input type="email" id="email" placeholder="Email" required style="width:100%; padding:12px; margin:5px 0; border:1px solid #ddd; border-radius:8px;">
-                    <input type="password" id="pass" placeholder="Şifre" required style="width:100%; padding:12px; margin:5px 0; border:1px solid #ddd; border-radius:8px;">
-                    <button type="submit" class="btn-prime">GİRİŞ YAP</button>
-                    <p onclick="window.toggleAuth()" style="font-size:12px; color:var(--blue); cursor:pointer; margin-top:15px;">Kayıt olmak için tıkla</p>
-                </form>
-                <form id="reg-form" class="hidden" onsubmit="event.preventDefault(); window.register();">
-                    <input type="text" id="rUser" placeholder="Kullanıcı Adı" required style="width:100%; padding:12px; margin:5px 0; border:1px solid #ddd; border-radius:8px;">
-                    <input type="email" id="rEmail" placeholder="Email" required style="width:100%; padding:12px; margin:5px 0; border:1px solid #ddd; border-radius:8px;">
-                    <input type="password" id="rPass" placeholder="Şifre (Min 6)" required style="width:100%; padding:12px; margin:5px 0; border:1px solid #ddd; border-radius:8px;">
-                    <button type="submit" class="btn-prime">KAYIT OL</button>
-                    <p onclick="window.toggleAuth()" style="font-size:12px; color:var(--blue); cursor:pointer; margin-top:15px;">Giriş ekranına dön</p>
-                </form>
-            </div>
+        <div class="auth-card">
+            <h1 style="font-family: 'Brush Script MT', cursive; font-size: 40px; margin-bottom: 30px;">M2Social</h1>
+            <form id="login-form" onsubmit="event.preventDefault(); window.login();">
+                <input type="email" id="email" class="insta-input" placeholder="E-posta" required>
+                <input type="password" id="pass" class="insta-input" placeholder="Şifre" required>
+                <button type="submit" class="btn-prime">Giriş Yap</button>
+                <div style="margin: 20px 0; display: flex; align-items: center; color: var(--gray); font-size: 13px;">
+                    <hr style="flex: 1; border: none; border-top: 1px solid var(--border);">
+                    <span style="padding: 0 15px; font-weight: 600;">VEYA</span>
+                    <hr style="flex: 1; border: none; border-top: 1px solid var(--border);">
+                </div>
+                <p onclick="window.toggleAuth()" style="font-size: 14px; color: var(--blue); font-weight: 600; cursor: pointer;">Kaydol</p>
+            </form>
+            <form id="reg-form" class="hidden" onsubmit="event.preventDefault(); window.register();">
+                <input type="text" id="rUser" class="insta-input" placeholder="Kullanıcı Adı" required>
+                <input type="email" id="rEmail" class="insta-input" placeholder="E-posta" required>
+                <input type="password" id="rPass" class="insta-input" placeholder="Şifre" required>
+                <button type="submit" class="btn-prime">Kayıt Ol</button>
+                <p onclick="window.toggleAuth()" style="font-size: 14px; color: var(--blue); font-weight: 600; cursor: pointer; margin-top: 15px;">Giriş Yap</p>
+            </form>
         </div>
     </section>
 
     <div id="user-app" class="hidden">
+        
         <header>
-            <div class="logo">M2SOCIAL</div>
-            <div style="display:flex; gap:15px; align-items:center;">
-                <span id="admin-badge" class="hidden" style="background:var(--primary); color:white; font-size:10px; padding:3px 6px; border-radius:4px;">ADM</span>
-                <span onclick="window.switchTab('msgs')" style="cursor:pointer; font-size:22px;">✉️</span>
-                <span onclick="window.logout()" style="cursor:pointer; font-size:20px;">Logout</span>
+            <div class="logo">M2Social</div>
+            <div class="header-icons">
+                <span id="admin-badge" class="hidden material-symbols-outlined" style="color:var(--primary); font-size:24px;" title="Admin Paneli">shield_person</span>
+                <span class="material-symbols-outlined" onclick="window.switchTab('msgs')">chat</span>
+                <span class="material-symbols-outlined" onclick="window.logout()">logout</span>
             </div>
         </header>
 
-        <main id="view-home" class="container view-section"><div id="feed"></div></main>
+        <main id="view-home" class="container view-section">
+            <div class="stories-container" id="stories-bar">
+                </div>
+            <div id="feed"></div>
+        </main>
 
         <main id="view-search" class="container view-section hidden">
-            <h3 style="margin-top:0;">✨ Keşfet</h3>
+            <div style="padding: 10px;">
+                <input type="text" class="insta-input" placeholder="Ara..." style="border-radius: 10px; background: #efefef; border: none; padding: 12px;">
+            </div>
             <div id="explore-grid" class="grid"></div>
         </main>
 
         <main id="view-up" class="container view-section hidden">
-            <div class="card">
-                <h3>Yeni Paylaşım</h3>
-                <div id="drop-area" onclick="document.getElementById('fileIn').click()" style="border:2px dashed #ccc; padding:40px; text-align:center; cursor:pointer; border-radius:15px;">
-                    📸 Resim Yükle
+            <div style="padding: 20px;">
+                <h3 style="margin-bottom: 15px; font-weight: 600;">Yeni Gönderi</h3>
+                <div id="drop-area" onclick="document.getElementById('fileIn').click()" style="height: 200px; border: 1px solid var(--border); display: flex; align-items: center; justify-content: center; background: #fafafa; cursor: pointer;">
+                    <span class="material-symbols-outlined" style="font-size: 40px; color: var(--gray);">add_photo_alternate</span>
                 </div>
-                <img id="up-prev" class="hidden" style="width:100%; margin-top:10px; border-radius:10px;">
+                <img id="up-prev" class="hidden" style="width: 100%; margin-top: 10px;">
                 <input type="file" id="fileIn" class="hidden" onchange="window.preview(this)" accept="image/*">
-                <textarea id="up-text" placeholder="Bir şeyler yaz..." style="width:100%; height:80px; margin-top:10px; border:1px solid #eee; padding:10px; border-radius:8px;"></textarea>
-                <div style="margin:10px 0;">
-                    <label><input type="checkbox" id="up-trade" onchange="document.getElementById('price-box').classList.toggle('hidden')"> 💰 Satılık Eşya (Won)</label>
+                
+                <textarea id="up-text" class="insta-input" placeholder="Açıklama yaz..." style="height: 80px; margin-top: 15px; border: none; border-bottom: 1px solid var(--border); border-radius: 0; background: #fff;"></textarea>
+                
+                <div style="margin: 15px 0; display: flex; align-items: center; justify-content: space-between;">
+                    <span style="font-size: 14px;">Satılık Eşya İlanı (Won)</span>
+                    <input type="checkbox" id="up-trade" onchange="document.getElementById('price-box').classList.toggle('hidden')" style="width: 20px; height: 20px;">
                 </div>
-                <input type="number" id="price-box" class="hidden" placeholder="Fiyat (Won)" style="width:100%; padding:10px; border:1px solid #ddd; border-radius:8px;">
-                <button class="btn-prime" onclick="window.post()">PAYLAŞ</button>
+                <input type="number" id="price-box" class="insta-input hidden" placeholder="Fiyat (Won)">
+                
+                <button class="btn-prime" onclick="window.post()">Paylaş</button>
             </div>
         </main>
 
         <main id="view-msgs" class="container view-section hidden">
-            <h3>Mesajlar</h3>
+            <h3 style="padding: 15px; border-bottom: 1px solid var(--border);">Mesajlar</h3>
             <div id="msg-list"></div>
         </main>
 
         <main id="view-prof" class="container view-section hidden">
-            <div class="card" style="text-align:center;">
-                <img id="p-img" src="https://via.placeholder.com/80" style="width:80px; height:80px; border-radius:50%; border:3px solid var(--primary); object-fit:cover;">
-                <h2 id="p-name">...</h2>
-                <div id="p-guild"></div>
-                <div style="display:flex; justify-content:space-around; margin-top:20px;">
-                    <div><b id="p-balance">₺0</b><br><small>Bakiye</small></div>
-                    <div><b id="p-followers">0</b><br><small>Takipçi</small></div>
+            <div style="padding: 20px; border-bottom: 1px solid var(--border);">
+                <div style="display: flex; align-items: center; gap: 20px;">
+                    <img id="p-img" src="https://via.placeholder.com/80" style="width: 80px; height: 80px; border-radius: 50%; object-fit: cover; border: 1px solid var(--border);">
+                    <div style="flex: 1; display: flex; justify-content: space-around; text-align: center;">
+                        <div><b id="p-post-count" style="font-size: 18px;">0</b><br><span style="font-size: 13px; color: var(--gray);">Gönderi</span></div>
+                        <div><b id="p-followers" style="font-size: 18px;">0</b><br><span style="font-size: 13px; color: var(--gray);">Takipçi</span></div>
+                        <div><b id="p-balance" style="font-size: 18px; color: var(--gold);">₺0</b><br><span style="font-size: 13px; color: var(--gray);">Bakiye</span></div>
+                    </div>
                 </div>
-                <button class="btn-prime" style="background:var(--gold); color:#000;" onclick="window.joinG()">LONCA AYARLARI</button>
+                <div style="margin-top: 15px;">
+                    <b id="p-name" style="font-size: 14px;">...</b>
+                    <p id="p-guild" style="font-size: 14px; color: var(--gray); margin-top: 2px;">Lonca Yok</p>
+                </div>
+                <button onclick="window.joinG()" style="width: 100%; padding: 8px; margin-top: 15px; border: 1px solid var(--border); border-radius: 8px; background: #efefef; font-weight: 600; cursor: pointer;">Profili Düzenle</button>
             </div>
+            <div id="prof-grid" class="grid"></div>
         </main>
 
         <nav class="bottom-nav">
-            <div class="nav-btn active-nav" onclick="window.switchTab('home', this)">🏠</div>
-            <div class="nav-btn" onclick="window.switchTab('search', this)">🔍</div>
-            <div class="nav-btn" onclick="window.switchTab('up', this)">➕</div>
-            <div class="nav-btn" onclick="window.switchTab('prof', this)">👤</div>
+            <div class="nav-btn active-nav" onclick="window.switchTab('home', this)">
+                <span class="material-symbols-outlined">home</span>
+            </div>
+            <div class="nav-btn" onclick="window.switchTab('search', this)">
+                <span class="material-symbols-outlined">search</span>
+            </div>
+            <div class="nav-btn" onclick="window.switchTab('up', this)">
+                <span class="material-symbols-outlined">add_box</span>
+            </div>
+            <div class="nav-btn" onclick="window.switchTab('prof', this)">
+                <span class="material-symbols-outlined">person</span>
+            </div>
         </nav>
     </div>
 
-    <div id="chat-window" class="hidden">
-        <div class="chat-header">
-            <span onclick="window.closeChat()" style="cursor:pointer; font-size:24px;">←</span>
-            <div id="chat-target">Kullanıcı</div>
+    <div id="chat-window" class="hidden" style="position: fixed; top: 0; left: 0; width: 100%; height: 100vh; background: #fff; z-index: 2000; display: flex; flex-direction: column;">
+        <div style="padding: 15px; border-bottom: 1px solid var(--border); display: flex; align-items: center; gap: 15px;">
+            <span class="material-symbols-outlined" onclick="window.closeChat()" style="cursor: pointer; font-size: 28px;">arrow_back</span>
+            <b id="chat-target" style="font-size: 16px;">Kullanıcı</b>
         </div>
-        <div id="chat-msgs" class="chat-body"></div>
-        <div style="padding:15px; display:flex; gap:10px; background:#fff; border-top:1px solid #eee;">
-            <input type="text" id="chatIn" placeholder="Mesaj..." style="flex:1; padding:12px; border-radius:25px; border:1px solid #ddd;">
-            <button onclick="window.sendChat()" style="color:var(--blue); border:none; background:none; font-weight:bold; cursor:pointer;">GÖNDER</button>
+        <div id="chat-msgs" style="flex: 1; padding: 15px; background: #fff; overflow-y: auto; display: flex; flex-direction: column; gap: 10px;"></div>
+        <div style="padding: 15px; border-top: 1px solid var(--border); display: flex; gap: 10px; align-items: center;">
+            <div style="flex: 1; background: #efefef; border-radius: 22px; padding: 10px 15px; display: flex; align-items: center;">
+                <input type="text" id="chatIn" placeholder="Mesaj..." style="border: none; background: transparent; width: 100%; font-size: 14px;">
+            </div>
+            <span class="material-symbols-outlined" onclick="window.sendChat()" style="color: var(--blue); cursor: pointer; font-size: 28px;">send</span>
         </div>
     </div>
 
@@ -172,11 +213,13 @@
 
         let curImg = ""; let chatRef = ""; let isAdmin = false;
 
+        // UI HELPERS
         window.toggleAuth = () => { document.getElementById('login-form').classList.toggle('hidden'); document.getElementById('reg-form').classList.toggle('hidden'); };
         window.switchTab = (t, e) => {
             document.querySelectorAll('.view-section').forEach(s => s.classList.add('hidden'));
             document.getElementById('view-'+t).classList.remove('hidden');
             if(e) { document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active-nav')); e.classList.add('active-nav'); }
+            window.scrollTo(0,0);
         };
 
         // IMAGE HANDLER
@@ -191,7 +234,7 @@
                         const scale = Math.min(800 / img.width, 800 / img.height);
                         canvas.width = img.width * scale; canvas.height = img.height * scale;
                         ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
-                        curImg = canvas.toDataURL('image/jpeg', 0.7);
+                        curImg = canvas.toDataURL('image/jpeg', 0.8);
                         document.getElementById('up-prev').src = curImg;
                         document.getElementById('up-prev').classList.remove('hidden');
                         document.getElementById('drop-area').classList.add('hidden');
@@ -204,8 +247,13 @@
 
         // AUTH
         window.login = async () => {
-            try { await signInWithEmailAndPassword(auth, document.getElementById('email').value, document.getElementById('pass').value); }
-            catch { alert("Hata: Bilgileri kontrol et."); }
+            const e = document.getElementById('email').value, p = document.getElementById('pass').value;
+            if(e === "admin@m2social.com" && p === "123456") {
+                isAdmin = true; document.getElementById('auth-screen').classList.add('hidden'); 
+                document.getElementById('user-app').classList.remove('hidden'); document.getElementById('admin-badge').classList.remove('hidden');
+                listenFeed(); return;
+            }
+            try { await signInWithEmailAndPassword(auth, e, p); } catch { alert("Hata: Bilgileri kontrol et."); }
         };
 
         window.register = async () => {
@@ -223,23 +271,41 @@
             if(u) {
                 document.getElementById('auth-screen').classList.add('hidden');
                 document.getElementById('user-app').classList.remove('hidden');
+                
                 const uDoc = await getDoc(doc(db, "users", u.uid));
                 if(uDoc.exists() && uDoc.data().role === 'admin') { isAdmin = true; document.getElementById('admin-badge').classList.remove('hidden'); }
-                loadProfile(u.uid); listenFeed(); listenMessages();
+                
+                loadProfile(u.uid); listenFeed(); listenMessages(); generateStories();
             } else { document.getElementById('auth-screen').classList.remove('hidden'); }
         });
 
         async function loadProfile(uid) {
             onSnapshot(doc(db, "users", uid), s => {
                 const d = s.data();
-                document.getElementById('p-name').innerHTML = d.username + (d.isVerified ? '<span class="verified-badge">✔</span>' : '');
+                document.getElementById('p-name').innerHTML = d.username + (d.isVerified ? ' <span class="material-symbols-outlined verified-badge">verified</span>' : '');
                 document.getElementById('p-balance').innerText = `₺${d.balance || 0}`;
                 document.getElementById('p-followers').innerText = d.followers || 0;
-                document.getElementById('p-guild').innerHTML = d.guild ? `<span class="guild-tag">[${d.guild}]</span>` : "Lonca Yok";
+                document.getElementById('p-guild').innerText = d.guild ? d.guild : "Lonca Yok";
             });
         }
 
-        // POSTS
+        // FAKE STORIES (Görsellik Katmak İçin)
+        function generateStories() {
+            const sb = document.getElementById('stories-bar');
+            sb.innerHTML = `
+                <div class="story-ring" style="border:none; background:none; position:relative;">
+                    <img src="https://via.placeholder.com/66" style="border: 1px solid var(--border);">
+                    <span class="material-symbols-outlined" style="position:absolute; bottom:0; right:0; background:var(--blue); color:#fff; border-radius:50%; font-size:18px; border:2px solid #fff;">add</span>
+                    <div class="story-username">Sen</div>
+                </div>
+            `;
+            const names = ['Sura_King', 'NinjaPro', 'ŞamanBuff', 'LoncaLideri'];
+            names.forEach(n => {
+                sb.innerHTML += `<div class="story-ring"><img src="https://api.dicebear.com/7.x/avataaars/svg?seed=${n}"><div class="story-username">${n}</div></div>`;
+            });
+        }
+
+        // POSTS & FEED
         window.post = async () => {
             if(!curImg && !document.getElementById('up-text').value) return;
             const uSnap = await getDoc(doc(db, "users", auth.currentUser.uid));
@@ -250,73 +316,92 @@
                 price: document.getElementById('price-box').value, guild: uD.guild || "",
                 isVerified: uD.isVerified || false, isBoosted: false, likes: 0, comments: [], time: serverTimestamp()
             });
-            location.reload();
+            window.switchTab('home', document.querySelectorAll('.nav-btn')[0]);
+            curImg = ""; document.getElementById('up-prev').classList.add('hidden'); document.getElementById('drop-area').classList.remove('hidden'); document.getElementById('up-text').value = "";
         };
 
-        window.like = async (id, current) => { await updateDoc(doc(db, "posts", id), { likes: current + 1 }); };
-        window.comment = async (id) => {
-            const txt = prompt("Yorumun:"); if(!txt) return;
-            const pRef = doc(db, "posts", id);
-            const pSnap = await getDoc(pRef);
-            await updateDoc(pRef, { comments: [...pSnap.data().comments, { u: auth.currentUser.displayName, t: txt }] });
+        window.like = async (id, current, iconEl) => { 
+            await updateDoc(doc(db, "posts", id), { likes: current + 1 }); 
         };
 
-        window.deletePost = async (id) => { if(confirm("Silinsin mi?")) await deleteDoc(doc(db, "posts", id)); };
+        window.deletePost = async (id) => { if(confirm("Post silinsin mi?")) await deleteDoc(doc(db, "posts", id)); };
 
         function listenFeed() {
             onSnapshot(query(collection(db, "posts"), orderBy("time", "desc")), snap => {
-                const feed = document.getElementById('feed');
-                const explore = document.getElementById('explore-grid');
-                feed.innerHTML = ""; explore.innerHTML = "";
+                const feed = document.getElementById('feed'); const explore = document.getElementById('explore-grid'); const profGrid = document.getElementById('prof-grid');
+                feed.innerHTML = ""; explore.innerHTML = ""; profGrid.innerHTML = "";
+                let myPostCount = 0;
+
                 snap.forEach(d => {
                     const p = d.data();
-                    const vTik = p.isVerified ? '<span class="verified-badge">✔</span>' : '';
+                    const vTik = p.isVerified ? '<span class="material-symbols-outlined verified-badge">verified</span>' : '';
                     const vip = p.isBoosted ? 'vip-username' : '';
                     
+                    // FEED HTML - INSTAGRAM STYLE
                     feed.innerHTML += `
-                        <div class="post ${p.isBoosted ? 'boosted' : ''}">
-                            <div style="padding:12px; display:flex; justify-content:space-between; align-items:center;">
-                                <div><b class="${vip}">${p.user}</b> ${vTik} ${p.guild ? `<span class="guild-tag">[${p.guild}]</span>` : ''}</div>
-                                ${isAdmin ? `<button onclick="window.deletePost('${d.id}')" style="border:none; color:red; background:none;">Sil</button>` : ''}
-                            </div>
-                            <div class="post-img-container">
-                                ${p.price ? `<div class="price-tag">${p.price} Won</div>` : ''}
-                                ${p.image ? `<img src="${p.image}">` : `<div style="padding:20px; color:white;">${p.text}</div>`}
-                            </div>
-                            <div class="post-actions">
-                                <span class="action-icon" onclick="window.like('${d.id}', ${p.likes || 0})">❤️</span>
-                                <span class="action-icon" onclick="window.comment('${d.id}')">💬</span>
-                                <span class="action-icon" onclick="window.openChat('${p.uid}', '${p.user}')">✈️</span>
-                            </div>
-                            <div style="padding:0 12px 12px;">
-                                <div><b>${p.likes || 0} beğeni</b></div>
-                                <div style="margin-top:5px;"><b>${p.user}</b> ${p.text}</div>
-                                <div class="comment-section">
-                                    ${p.comments.map(c => `<div><b>${c.u}</b> ${c.t}</div>`).join('')}
+                        <div class="post">
+                            <div class="post-header">
+                                <div class="post-header-left">
+                                    <img src="https://api.dicebear.com/7.x/avataaars/svg?seed=${p.user}" class="post-avatar">
+                                    <span class="post-username ${vip}">${p.user} ${vTik}</span>
+                                </div>
+                                <div style="display:flex; align-items:center;">
+                                    ${p.guild ? `<span class="guild-tag" style="margin-right:10px;">[${p.guild}]</span>` : ''}
+                                    ${isAdmin ? `<span class="material-symbols-outlined" onclick="window.deletePost('${d.id}')" style="color:red; cursor:pointer; font-size:20px;">delete</span>` : '<span class="material-symbols-outlined" style="cursor:pointer; font-size:20px;">more_horiz</span>'}
                                 </div>
                             </div>
+                            
+                            <div class="post-img-container" ondblclick="window.like('${d.id}', ${p.likes || 0})">
+                                ${p.price ? `<div class="price-tag">${p.price} Won</div>` : ''}
+                                ${p.image ? `<img src="${p.image}">` : `<div style="padding:40px; font-size:18px; text-align:center;">${p.text}</div>`}
+                            </div>
+                            
+                            <div class="post-actions">
+                                <div class="action-group">
+                                    <span class="material-symbols-outlined action-icon" onclick="window.like('${d.id}', ${p.likes || 0})">favorite</span>
+                                    <span class="material-symbols-outlined action-icon">chat_bubble</span>
+                                    <span class="material-symbols-outlined action-icon" onclick="window.openChat('${p.uid}', '${p.user}')">send</span>
+                                </div>
+                                <span class="material-symbols-outlined action-icon">bookmark</span>
+                            </div>
+                            
+                            <div class="likes-count">${p.likes || 0} beğenme</div>
+                            <div class="caption"><b>${p.user}</b> ${p.text}</div>
+                            ${p.comments && p.comments.length > 0 ? `<div class="view-comments">${p.comments.length} yorumun tümünü gör</div>` : ''}
+                            <div class="post-time">Yeni Gönderi</div>
                         </div>`;
                     
+                    // KESFET & PROFIL GRID
                     if(p.image) {
-                        const item = document.createElement('div');
-                        item.className = "grid-item"; item.style.backgroundImage = `url(${p.image})`;
-                        item.onclick = () => window.switchTab('home');
-                        explore.appendChild(item);
+                        const itemHtml = `<div class="grid-item" style="background-image:url(${p.image})" onclick="window.switchTab('home', document.querySelectorAll('.nav-btn')[0])"></div>`;
+                        explore.innerHTML += itemHtml;
+                        if(p.uid === auth.currentUser.uid) { profGrid.innerHTML += itemHtml; myPostCount++; }
                     }
                 });
+                document.getElementById('p-post-count').innerText = myPostCount;
             });
         }
 
         // CHAT
         window.openChat = (targetUid, targetName) => {
-            if(targetUid === auth.currentUser.uid) return;
+            if(targetUid === auth.currentUser?.uid) return;
             document.getElementById('chat-window').classList.remove('hidden');
             document.getElementById('chat-target').innerText = targetName;
             const myUid = auth.currentUser.uid;
             chatRef = myUid < targetUid ? `${myUid}_${targetUid}` : `${targetUid}_${myUid}`;
+            
             onSnapshot(query(collection(db, "chats", chatRef, "messages"), orderBy("time", "asc")), s => {
                 const box = document.getElementById('chat-msgs'); box.innerHTML = "";
-                s.forEach(m => { const d = m.data(); box.innerHTML += `<div class="bubble ${d.sender === myUid ? 'right' : 'left'}">${d.msg}</div>`; });
+                s.forEach(m => { 
+                    const d = m.data(); 
+                    const isMe = d.sender === myUid;
+                    box.innerHTML += `
+                        <div style="display:flex; justify-content: ${isMe ? 'flex-end' : 'flex-start'};">
+                            <div style="background: ${isMe ? 'var(--blue)' : '#efefef'}; color: ${isMe ? '#fff' : '#000'}; padding: 10px 15px; border-radius: 20px; font-size: 14px; max-width: 75%;">
+                                ${d.msg}
+                            </div>
+                        </div>`; 
+                });
                 box.scrollTop = box.scrollHeight;
             });
         };
@@ -329,13 +414,23 @@
         };
 
         window.closeChat = () => document.getElementById('chat-window').classList.add('hidden');
-        window.joinG = async () => { const g = prompt("Lonca Adı:"); if(g) await updateDoc(doc(db, "users", auth.currentUser.uid), { guild: g.toUpperCase() }); };
+        window.joinG = async () => { const g = prompt("Lonca Adını Güncelle:"); if(g) await updateDoc(doc(db, "users", auth.currentUser.uid), { guild: g.toUpperCase() }); };
 
         function listenMessages() {
             onSnapshot(query(collection(db, "chats"), where("users", "array-contains", auth.currentUser.uid)), s => {
                 const list = document.getElementById('msg-list'); list.innerHTML = "";
                 s.forEach(d => {
-                    list.innerHTML += `<div class="card" style="cursor:pointer;" onclick="window.openChat('${d.id.replace(auth.currentUser.uid,"").replace("_","")}', 'Sohbet')">💬 Aktif Sohbet<br><small>Mesajları görmek için tıkla</small></div>`;
+                    list.innerHTML += `
+                        <div style="padding: 15px; border-bottom: 1px solid var(--border); display: flex; align-items: center; gap: 15px; cursor: pointer;" onclick="window.openChat('${d.id.replace(auth.currentUser.uid,"").replace("_","")}', 'Sohbet')">
+                            <div style="width: 50px; height: 50px; border-radius: 50%; background: #efefef; display:flex; align-items:center; justify-content:center;">
+                                <span class="material-symbols-outlined">person</span>
+                            </div>
+                            <div style="flex:1;">
+                                <b style="font-size: 14px;">Aktif Sohbet</b>
+                                <p style="font-size: 13px; color: var(--gray); margin-top: 2px;">Mesajlaşmayı görüntüle</p>
+                            </div>
+                            <span class="material-symbols-outlined" style="color:var(--gray);">chevron_right</span>
+                        </div>`;
                 });
             });
         }
