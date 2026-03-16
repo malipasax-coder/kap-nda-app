@@ -2,429 +2,613 @@
 <html lang="tr">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>M2Social | EFSANE v13.0</title>
-    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,0,0" rel="stylesheet" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <title>Kapında Social V37 - Closed Loop Economy</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <script src="https://www.gstatic.com/firebasejs/10.8.1/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.8.1/firebase-firestore-compat.js"></script>
+
+    <script>
+        let clickCount = 0;
+        function zorlaAc() { clickCount++; if(clickCount >= 3) { let s = document.getElementById('serverLoading'); if(s) s.style.display = 'none'; if(typeof listenToCloud === 'function') listenToCloud(); } }
+        function authModSwitch(mod) {
+            document.getElementById('tabLoginBtn').className = 'auth-tab ' + (mod==='login'?'active':'');
+            document.getElementById('tabRegisterBtn').className = 'auth-tab ' + (mod==='register'?'active':'');
+            document.getElementById('loginFormBlock').style.display = mod==='login'?'block':'none';
+            document.getElementById('registerFormBlock').style.display = mod==='register'?'block':'none';
+        }
+        function safeText(id, text) { let el = document.getElementById(id); if(el) el.innerText = text; }
+        function safeDisplay(id, display) { let el = document.getElementById(id); if(el) el.style.display = display; }
+    </script>
+
     <style>
-        :root { --twitter-blue: #1d9bf0; --bg: #ffffff; --border: #eff3f4; --text: #0f1419; --gray: #536471; --hover: #f7f9f9; --gold: #f1c40f; --trade-bg: #fffcf2; }
-        * { box-sizing: border-box; outline: none; margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; -webkit-tap-highlight-color: transparent; }
-        body { background: var(--bg); color: var(--text); padding-bottom: 60px; padding-top: 53px; overflow-x: hidden; }
-        .hidden { display: none !important; }
-
-        /* HEADER */
-        header { background: rgba(255,255,255,0.9); backdrop-filter: blur(5px); border-bottom: 1px solid var(--border); padding: 0 16px; height: 53px; position: fixed; width: 100%; top: 0; z-index: 1000; display: flex; justify-content: space-between; align-items: center; }
-        .logo { font-size: 20px; font-weight: 900; letter-spacing: -0.5px; cursor: pointer; color: var(--twitter-blue); }
-        .container { max-width: 600px; margin: 0 auto; background: #fff; min-height: 100vh; border-left: 1px solid var(--border); border-right: 1px solid var(--border); }
-
-        /* FEED TABS */
-        .feed-tabs { display: flex; border-bottom: 1px solid var(--border); background: rgba(255,255,255,0.9); backdrop-filter: blur(5px); position: sticky; top: 53px; z-index: 999; }
-        .tab { flex: 1; text-align: center; padding: 15px; font-weight: 700; color: var(--gray); cursor: pointer; transition: 0.2s; position: relative; }
-        .tab:hover { background: var(--hover); }
-        .tab.active { color: var(--text); }
-        .tab.active::after { content: ''; position: absolute; bottom: 0; left: 50%; transform: translateX(-50%); width: 50px; height: 4px; background: var(--twitter-blue); border-radius: 99px; }
-
-        /* TWEET STYLES */
-        .tweet { display: flex; padding: 12px 16px; border-bottom: 1px solid var(--border); cursor: pointer; transition: background 0.2s; }
-        .tweet:hover { background: var(--hover); }
-        .tweet.trade-post { background: var(--trade-bg); border-left: 3px solid var(--gold); }
-        .tweet-avatar { width: 40px; height: 40px; border-radius: 50%; object-fit: cover; margin-right: 12px; flex-shrink: 0; border: 1px solid var(--border); }
-        .tweet-body { flex: 1; min-width: 0; }
-        .tweet-header { display: flex; align-items: center; flex-wrap: wrap; margin-bottom: 4px; font-size: 15px; }
-        .tweet-name { font-weight: 700; color: var(--text); margin-right: 4px; }
-        .tweet-handle { color: var(--gray); margin-right: 4px; font-size: 14px; }
-        .verified-badge { color: var(--twitter-blue); font-size: 16px; vertical-align: middle; margin-right: 4px; }
-        .mod-badge { background: #8e44ad; color: #fff; font-size: 10px; padding: 2px 4px; border-radius: 4px; font-weight: 800; margin-right: 4px; }
-        .guild-tag { background: #000; color: var(--gold); font-size: 11px; padding: 2px 6px; border-radius: 4px; border: 1px solid var(--gold); font-weight: 800; cursor: pointer; }
+        @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;800;900&display=swap');
+        :root { --primary: #2563eb; --primary-dark: #1d4ed8; --secondary: #0f172a; --bg-color: #f8fafc; --card-bg: #ffffff; --text-main: #0f172a; --text-muted: #64748b; --danger: #ef4444; --success: #10b981; --warning: #f59e0b; --border: #e2e8f0; --blue-tick: #1d9bf0; --vip-gold: #fbbf24;}
         
-        .tweet-text { font-size: 15px; line-height: 20px; white-space: pre-wrap; margin-bottom: 12px; }
-        .tweet-image { width: 100%; border-radius: 16px; border: 1px solid var(--border); margin-bottom: 12px; object-fit: cover; max-height: 400px; }
-        .price-tag { display: inline-block; background: var(--gold); color: #000; padding: 6px 12px; border-radius: 12px; font-weight: 800; font-size: 13px; margin-bottom: 10px; }
+        * { box-sizing: border-box; outline: none; -webkit-tap-highlight-color: transparent;}
+        body { font-family: 'Plus Jakarta Sans', sans-serif; background: #cbd5e1; margin: 0; display: flex; justify-content: center; align-items: center; min-height: 100vh; overflow: hidden; }
         
-        .tweet-actions { display: flex; justify-content: space-between; max-width: 425px; color: var(--gray); margin-top: 5px; }
-        .action-btn { display: flex; align-items: center; gap: 4px; font-size: 13px; transition: color 0.2s; }
-        .action-btn .material-symbols-outlined { font-size: 18px; padding: 8px; border-radius: 50%; transition: background 0.2s; }
-        .action-btn.reply:hover { color: var(--twitter-blue); }
-        .action-btn.like:hover { color: #f91880; }
+        .app-shell { width: 100%; height: 100dvh; background: var(--bg-color); position: relative; overflow: hidden; display: flex; flex-direction: column; }
+        @media (min-width: 480px) { .app-shell { max-width: 414px; max-height: 90vh; border-radius: 40px; box-shadow: 0 25px 50px -12px rgba(0,0,0,0.4); border: 12px solid #1e293b; } }
+        
+        #serverLoading { position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: var(--secondary); z-index: 9999; display: flex; flex-direction: column; justify-content: center; align-items: center; color: white; cursor: pointer; }
+        .spinner { width: 50px; height: 50px; border: 4px solid rgba(255,255,255,0.1); border-top: 4px solid var(--primary); border-radius: 50%; animation: spin 1s cubic-bezier(0.4, 0, 0.2, 1) infinite; margin-bottom: 20px; }
+        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
 
-        .comments-area { margin-top: 10px; border-top: 1px dashed var(--border); padding-top: 10px; }
-        .comment-item { display: flex; gap: 8px; margin-bottom: 8px; font-size: 14px; }
-        .comment-avatar { width: 24px; height: 24px; border-radius: 50%; object-fit: cover; }
+        .header { background: rgba(255, 255, 255, 0.95); backdrop-filter: blur(10px); padding: 15px 20px; display: flex; justify-content: space-between; align-items: center; z-index: 20; border-bottom: 1px solid var(--border); }
+        .header h2 { margin: 0; font-size: 22px; font-weight: 900; letter-spacing: -0.5px;}
+        .cart-badge { position: absolute; top: -6px; right: -6px; background: var(--danger); color: white; font-size: 10px; width: 18px; height: 18px; border-radius: 50%; display: flex; justify-content: center; align-items: center; font-weight: bold; border: 2px solid var(--card-bg); }
 
-        /* FAB & NAV */
-        .fab { position: fixed; bottom: 80px; right: 20px; width: 56px; height: 56px; background: var(--twitter-blue); color: white; border-radius: 50%; display: flex; align-items: center; justify-content: center; box-shadow: rgba(213, 217, 233, 0.5) 0px 8px 24px; cursor: pointer; border: none; z-index: 100; transition: 0.2s; }
-        .fab:active { transform: scale(0.9); }
-        .bottom-nav { position: fixed; bottom: 0; width: 100%; background: rgba(255,255,255,0.9); backdrop-filter: blur(5px); border-top: 1px solid var(--border); display: flex; justify-content: space-around; align-items: center; height: 53px; z-index: 1000; }
-        .nav-btn { cursor: pointer; color: var(--text); padding: 10px; border-radius: 50%; }
-        .nav-btn .material-symbols-outlined { font-size: 26px; font-weight: 300; }
-        .active-nav .material-symbols-outlined { font-variation-settings: 'FILL' 1; color: var(--twitter-blue); }
+        .view-container { flex: 1; position: relative; overflow: hidden; background: var(--bg-color); }
+        .view { position: absolute; top: 0; left: 0; width: 100%; height: 100%; overflow-y: auto; padding-bottom: 100px; opacity: 0; pointer-events: none; transition: 0.3s ease; background: var(--bg-color);}
+        .view.active { opacity: 1; pointer-events: all; z-index: 5; }
 
-        /* ADMIN DASHBOARD */
-        .admin-stat-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; padding: 16px; }
-        .admin-stat-card { background: var(--hover); padding: 15px; border-radius: 12px; text-align: center; border: 1px solid var(--border); }
-        .admin-stat-card h3 { font-size: 22px; color: var(--twitter-blue); margin-bottom: 4px; }
-        .user-mgmt-row { display: flex; align-items: center; justify-content: space-between; padding: 12px 16px; border-bottom: 1px solid var(--border); }
-        .adm-btn { border: none; padding: 6px 12px; border-radius: 99px; font-weight: 700; font-size: 12px; cursor: pointer; }
+        .post-card { background: white; margin: 15px; border-radius: 20px; box-shadow: 0 4px 15px rgba(0,0,0,0.03); overflow: hidden; }
+        .post-header { display: flex; align-items: center; padding: 15px; gap: 12px; }
+        .post-image { width: 100%; height: 350px; background-size: cover; background-position: center; background-color:#e2e8f0; }
+        .post-actions { padding: 15px; display: flex; justify-content: space-between; align-items: center; gap:10px; }
 
-        /* FORMS & MODALS */
-        .auth-card { padding: 40px; text-align: center; max-width: 350px; margin: 50px auto; border: 1px solid var(--border); border-radius: 16px; }
-        input.tw-input { width: 100%; padding: 12px; margin: 8px 0; border: 1px solid var(--border); border-radius: 8px; font-size: 15px; }
-        .btn-tweet { background: var(--twitter-blue); color: white; border: none; border-radius: 9999px; padding: 6px 16px; font-weight: 700; font-size: 14px; cursor: pointer; opacity: 0.5; }
-        .btn-tweet.active { opacity: 1; }
+        .admin-god-card { background: linear-gradient(135deg, #1e293b, #0f172a); color: white; border-radius: 24px; padding: 25px; margin: 15px; position: relative; box-shadow: 0 10px 25px rgba(15,23,42,0.3);}
+        .list-item { display: flex; justify-content: space-between; align-items: center; padding: 15px 20px; background: white; border-bottom: 1px solid var(--border); transition: background 0.2s;}
 
-        /* SETTINGS MODAL */
-        #settings-modal { position: fixed; top: 0; left: 0; width: 100%; height: 100vh; background: #fff; z-index: 3000; overflow-y: auto; }
-        .settings-header { display: flex; justify-content: space-between; align-items: center; padding: 15px; border-bottom: 1px solid var(--border); font-weight: 800; font-size: 18px; }
-        .settings-content { padding: 20px; max-width: 500px; margin: 0 auto; }
-        .avatar-edit-box { width: 100px; height: 100px; border-radius: 50%; background: #eff3f4; margin: 0 auto 20px; display: flex; align-items: center; justify-content: center; cursor: pointer; border: 2px dashed var(--gray); position: relative; overflow: hidden; }
-        .avatar-edit-box img { width: 100%; height: 100%; object-fit: cover; position: absolute; top: 0; left: 0; }
+        .input-group { margin-bottom: 15px; padding: 0; }
+        .input-group input, .input-group select, .input-group textarea { width: 100%; padding: 16px; border: 2px solid transparent; border-radius: 16px; font-family: inherit; font-weight: 600; background: #f1f5f9; transition: all 0.3s ease; font-size: 14px;}
+        .input-group input:focus, .input-group textarea:focus { border: 2px solid var(--primary); background: white; box-shadow: 0 0 0 4px rgba(37,99,235,0.1); }
+
+        button { border: none; padding: 16px; border-radius: 16px; font-weight: 800; cursor: pointer; width: 100%; font-family: inherit; display:flex; justify-content:center; align-items:center; gap:8px; transition: all 0.2s; font-size: 14px;}
+        button:active { transform: translateY(2px) scale(0.97); }
+        .btn-primary { background: linear-gradient(135deg, var(--primary), var(--primary-dark)); color: white; }
+        .btn-success { background: linear-gradient(135deg, #10b981, #059669); color: white; }
+        .btn-warning { background: linear-gradient(135deg, #f59e0b, #d97706); color: white; }
+        .btn-danger { background: linear-gradient(135deg, #ef4444, #b91c1c); color: white; }
+        .btn-outline { background: transparent; border: 2px solid var(--border); color: var(--text-main); }
+        .btn-action { flex: 1; padding: 12px; border: none; border-radius: 14px; font-size: 13px; font-weight: 800; box-shadow: 0 4px 12px rgba(0,0,0,0.05); }
+
+        .bottom-nav { position: absolute; bottom: 0; width: 100%; background: rgba(255,255,255,0.95); backdrop-filter: blur(10px); border-top: none; display: flex; padding: 15px 0 calc(15px + env(safe-area-inset-bottom)) 0; z-index: 30; justify-content: space-around; box-shadow: 0 -5px 25px rgba(0,0,0,0.05); border-radius: 24px 24px 0 0;}
+        .nav-item { color: var(--text-muted); font-size: 22px; cursor: pointer; display:none; padding: 10px;}
+        .nav-item.active { color: var(--primary); }
+
+        .modal-overlay { position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: rgba(15,23,42,0.8); backdrop-filter: blur(5px); z-index: 100; opacity: 0; pointer-events: none; transition: 0.3s; display: flex; justify-content: center; align-items: center; padding: 20px;}
+        .modal-overlay.active { opacity: 1; pointer-events: all; }
+        .modal-card { background: white; width: 100%; border-radius: 28px; padding: 25px; position:relative; max-height:85vh; overflow-y:auto; transform: scale(0.95); transition: 0.3s;}
+        .modal-overlay.active .modal-card { transform: scale(1); }
+        .close-btn { position:absolute; top:15px; right:15px; width:36px; height:36px; background:var(--bg-color); border-radius:50%; display:flex; justify-content:center; align-items:center; cursor:pointer; color:var(--text-muted);}
+
+        #toast { position: absolute; top: 40px; left: 50%; transform: translateX(-50%) translateY(-20px); background: rgba(15,23,42,0.95); backdrop-filter:blur(10px); color: white; padding: 14px 28px; border-radius: 30px; font-size: 13px; font-weight:bold; z-index: 1000; opacity: 0; transition: 0.4s; pointer-events: none; white-space:nowrap; box-shadow: 0 10px 25px rgba(0,0,0,0.2);}
+        #toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+        
+        .profile-header { background: white; padding: 20px; border-bottom: 1px solid var(--border); text-align:center;}
+        .level-badge { display:inline-flex; align-items:center; gap:5px; background: rgba(37, 99, 235, 0.1); color: var(--primary); padding: 6px 14px; border-radius: 14px; font-size: 12px; font-weight: 800; cursor: pointer;}
+        .level-badge.vip { background: rgba(251, 191, 36, 0.15); color: #b45309; }
+
+        .story-viewer { position:fixed; top:0; left:0; width:100%; height:100%; background:#0f172a; z-index:99999; display:flex; flex-direction:column; opacity:0; pointer-events:none; transition:0.3s; }
+        .story-viewer.active { opacity:1; pointer-events:all; }
+        .story-progress-bg { height:3px; background:rgba(255,255,255,0.3); margin:15px 15px 10px 15px; border-radius:3px; overflow:hidden; }
+        .story-progress-fill { height:100%; width:0%; background:#fff; }
+        .story-header-info { display:flex; align-items:center; justify-content:space-between; padding:0 15px; color:white; }
+        .story-img-box { flex:1; background-size:contain; background-position:center; background-repeat:no-repeat; position:relative; }
+        .story-title-text { position:absolute; bottom:50px; left:0; width:100%; text-align:center; color:white; font-size:28px; font-weight:900; text-shadow:0 4px 15px rgba(0,0,0,0.8); }
+
+        .stories-container { display: flex; gap: 15px; padding: 15px; overflow-x: auto; background: var(--card-bg); border-bottom: 1px solid var(--border); scrollbar-width: none; }
+        .story-item { display: flex; flex-direction: column; align-items: center; gap: 5px; cursor: pointer; flex-shrink: 0;}
+        .story-ring { width: 66px; height: 66px; border-radius: 50%; background: linear-gradient(45deg, #f09433 0%, #e6683c 25%, #dc2743 50%, #cc2366 75%, #bc1888 100%); padding: 3px; }
+        .story-avatar { width: 100%; height: 100%; background: var(--border); border-radius: 50%; border: 2px solid white; display:flex; justify-content:center; align-items:center; color:var(--secondary); font-weight:bold; font-size:20px; background-size:cover; background-position:center;}
+        .stories-container::-webkit-scrollbar { display: none; }
+
+        .auth-tabs { display: flex; margin: 0 0 20px 0; background: #f1f5f9; border-radius: 16px; padding: 6px; }
+        .auth-tab { flex: 1; text-align: center; padding: 14px; font-size: 14px; font-weight: 800; color: var(--text-muted); cursor: pointer; border-radius: 12px; transition: 0.3s; }
+        .auth-tab.active { background: white; color: var(--primary); box-shadow: 0 4px 10px rgba(0,0,0,0.05); }
+        .cart-floating-bar { position: absolute; bottom: 85px; left: 15px; right: 15px; background: white; padding: 20px; border-radius: 24px; box-shadow: 0 10px 30px rgba(0,0,0,0.1); z-index: 25; border: 1px solid var(--border);}
+        
+        .admin-tabs { display: flex; margin: 0 15px 10px 15px; border-bottom: 1px solid var(--border); overflow-x: auto; scrollbar-width: none;}
+        .admin-tab { padding: 12px 15px; font-size: 12px; font-weight: 800; color: var(--text-muted); cursor: pointer; white-space: nowrap; }
+        .admin-tab.active { color: var(--primary); border-bottom: 2px solid var(--primary); }
     </style>
 </head>
 <body>
 
-    <section id="auth-screen">
-        <div class="auth-card">
-            <h1 style="font-size: 32px; font-weight: 900; margin-bottom: 10px; color: var(--twitter-blue);">M2Social</h1>
-            <p style="font-size: 14px; color: var(--gray); margin-bottom: 25px;">Metin2 Ticaret & Savaş Ağı</p>
-            <form id="login-form" onsubmit="event.preventDefault(); window.login();">
-                <input type="email" id="email" class="tw-input" placeholder="E-posta" required>
-                <input type="password" id="pass" class="tw-input" placeholder="Şifre" required>
-                <button type="submit" style="width:100%; padding:12px; background:#000; color:#fff; border-radius:99px; font-weight:700; margin-top:10px; border:none; cursor:pointer;">Giriş Yap</button>
-                <p onclick="window.toggleAuth()" style="font-size: 14px; color: var(--twitter-blue); margin-top: 20px; cursor: pointer; font-weight:600;">Hesabın yok mu? Kaydol</p>
-            </form>
-            <form id="reg-form" class="hidden" onsubmit="event.preventDefault(); window.register();">
-                <input type="text" id="rUser" class="tw-input" placeholder="Ad Soyad veya Nick" required>
-                <input type="email" id="rEmail" class="tw-input" placeholder="E-posta" required>
-                <input type="password" id="rPass" class="tw-input" placeholder="Şifre" required>
-                <button type="submit" style="width:100%; padding:12px; background:var(--twitter-blue); color:#fff; border-radius:99px; font-weight:700; margin-top:10px; border:none; cursor:pointer;">Kayıt Ol</button>
-                <p onclick="window.toggleAuth()" style="font-size: 14px; color: var(--twitter-blue); margin-top: 20px; cursor: pointer; font-weight:600;">Girişe Dön</p>
-            </form>
+    <div class="app-shell">
+        <div id="serverLoading" onclick="zorlaAc()">
+            <div class="spinner"></div>
+            <h2 style="margin:0;">Kapında Social</h2>
+            <p style="font-size:11px; margin-top:10px; opacity:0.7;">Sistem Başlatılıyor...</p>
         </div>
-    </section>
 
-    <div id="user-app" class="hidden">
-        
-        <header>
-            <img id="header-avatar" src="https://via.placeholder.com/32" style="width: 32px; height: 32px; border-radius: 50%; cursor: pointer; object-fit: cover;" onclick="window.switchTab('prof')">
-            <div class="logo" onclick="window.setFilter('all')">M2SOCIAL</div>
-            <div style="display:flex; gap:15px; align-items:center;">
-                <span id="btn-admin" class="hidden material-symbols-outlined" onclick="window.switchTab('admin'); window.initAdmin();" style="cursor:pointer; color:var(--twitter-blue);" title="Tanrı Modu">admin_panel_settings</span>
-                <span class="material-symbols-outlined" onclick="window.logout()" style="cursor:pointer;">logout</span>
+        <div id="toast">Bildirim</div>
+
+        <div class="story-viewer" id="storyViewerScreen">
+            <div class="story-progress-bg"><div class="story-progress-fill" id="sProgressBar"></div></div>
+            <div class="story-header-info">
+                <div style="display:flex; align-items:center; gap:10px;">
+                    <div style="width:36px; height:36px; border-radius:50%; background:white; color:black; display:flex; justify-content:center; align-items:center; font-weight:bold; font-size:14px; background-size:cover; background-position:center;" id="vStoryAvatar">A</div>
+                    <b style="font-size:14px;" id="vStoryName">Mağaza</b><i class="fa-solid fa-circle-check" style="color:var(--blue-tick);"></i>
+                </div>
+                <i class="fa-solid fa-xmark" style="font-size:28px; cursor:pointer;" onclick="closeStory()"></i>
             </div>
-        </header>
-
-        <button class="fab" onclick="window.switchTab('up', null)">
-            <span class="material-symbols-outlined" style="font-size: 28px;">add</span>
-        </button>
-
-        <main id="view-home" class="container view-section">
-            <div class="feed-tabs">
-                <div id="tab-all" class="tab active" onclick="window.setFilter('all')">Tümü</div>
-                <div id="tab-trade" class="tab" onclick="window.setFilter('trade')">Pazar (Ticaret)</div>
+            <div class="story-img-box" id="vStoryImg">
+                <div class="story-title-text" id="vStoryText">Flaş İndirim!</div>
             </div>
-            <div id="feed-filter-msg" class="hidden" style="padding: 10px 16px; background: var(--twitter-blue); color: white; font-weight: 700; font-size: 14px; text-align: center;"></div>
-            <div id="feed"></div>
-        </main>
+        </div>
 
-        <main id="view-up" class="container view-section hidden" style="min-height: 100vh; position: relative; z-index: 2000;">
-            <div style="display: flex; justify-content: space-between; padding: 10px 16px; border-bottom: 1px solid var(--border);">
-                <span class="material-symbols-outlined" onclick="window.switchTab('home')" style="cursor: pointer;">close</span>
-                <button id="post-btn" class="btn-tweet" onclick="window.post()">Gönder</button>
+        <div class="modal-overlay" id="withdrawModal">
+            <div class="modal-card">
+                <div class="close-btn" onclick="closeModal('withdrawModal')"><i class="fa-solid fa-xmark"></i></div>
+                <h3 style="margin:0 0 5px 0; text-align:center;"><i class="fa-solid fa-building-columns" style="color:var(--success); font-size:24px;"></i><br>Hesaba Aktar</h3>
+                <p style="font-size:12px; color:var(--text-muted); text-align:center; margin-bottom:15px;">Ödemeler mağazalara haftalık çekim günlerinde yapılmaktadır.</p>
+                <div style="background:var(--bg-color); padding:10px; border-radius:12px; text-align:center; margin-bottom:15px;">
+                    <span style="font-size:11px; color:var(--text-muted);">Mevcut Kasa Bakiyeniz</span><br>
+                    <b style="font-size:20px; color:var(--text-main);" id="wBakiyeGoster">0 ₺</b>
+                </div>
+                <div class="input-group"><input type="text" id="wAd" placeholder="Ad Soyad / Firma Adı"></div>
+                <div class="input-group"><input type="text" id="wIban" placeholder="TR ile başlayan IBAN"></div>
+                <div class="input-group"><input type="number" id="wTutar" placeholder="Çekilecek Tutar (₺)"></div>
+                <button class="btn-success" onclick="paraCekTalebi()"><i class="fa-solid fa-paper-plane"></i> Çekim Talebi Gönder</button>
             </div>
-            <div style="display: flex; padding: 16px;">
-                <img id="compose-avatar" src="https://via.placeholder.com/40" style="width: 40px; height: 40px; border-radius: 50%; margin-right: 12px; object-fit: cover;">
-                <div style="flex: 1;">
-                    <textarea id="up-text" placeholder="Neler oluyor? (Ticaret veya Savaş İlanı...)" oninput="window.checkCompose()" style="width: 100%; min-height: 120px; border: none; font-size: 18px; resize: none; margin-bottom: 10px;"></textarea>
-                    <img id="up-prev" class="hidden" style="width: 100%; border-radius: 16px; margin-bottom: 10px;">
-                    <div style="border-top: 1px solid var(--border); padding-top: 12px; display: flex; gap: 15px; color: var(--twitter-blue);">
-                        <span class="material-symbols-outlined" style="cursor: pointer;" onclick="document.getElementById('fileIn').click()">image</span>
-                        <input type="file" id="fileIn" class="hidden" onchange="window.preview(this)" accept="image/*">
-                        <span class="material-symbols-outlined" style="cursor: pointer;" onclick="document.getElementById('price-box').classList.toggle('hidden')">storefront</span>
+        </div>
+
+        <div class="modal-overlay" id="vipModal">
+            <div class="modal-card">
+                <div class="close-btn" onclick="closeModal('vipModal')"><i class="fa-solid fa-xmark"></i></div>
+                <h3 style="margin:0 0 10px 0; text-align:center;"><i class="fa-solid fa-crown" style="color:var(--vip-gold); font-size:24px;"></i><br>VIP Ayrıcalığı</h3>
+                <p style="font-size:12px; color:var(--text-muted); text-align:center; margin-bottom:25px; line-height:1.5;">Kendi satış ağınızı kurun, ürünleri paylaşın ve sisteme gelen her satıştan otomatik komisyon kazanın!</p>
+                <div id="vipPlansContainer"></div>
+            </div>
+        </div>
+
+        <div class="modal-overlay" id="storyModal">
+            <div class="modal-card">
+                <div class="close-btn" onclick="closeModal('storyModal')"><i class="fa-solid fa-xmark"></i></div>
+                <h3 style="margin:0 0 20px 0;"><i class="fa-solid fa-camera" style="color:var(--danger);"></i> Flaş Hikaye (24s)</h3>
+                <div class="input-group"><input type="text" id="sBaslik" placeholder="Vurgu Başlığı (Örn: İndirim!)"></div>
+                <div class="input-group"><input type="file" accept="image/*" onchange="resimOku(this, 'sRes')"><input type="hidden" id="sRes"></div>
+                <button class="btn-warning" onclick="hikayeAt()"><i class="fa-solid fa-paper-plane"></i> Hikayeyi Yayına Al</button>
+            </div>
+        </div>
+
+        <div class="modal-overlay" id="editProfileModal">
+            <div class="modal-card">
+                <div class="close-btn" onclick="closeModal('editProfileModal')"><i class="fa-solid fa-xmark"></i></div>
+                <h3 style="margin:0 0 20px 0;"><i class="fa-solid fa-user-pen" style="color:var(--primary);"></i> Profili Düzenle</h3>
+                <div class="input-group"><input type="text" id="eName" placeholder="Ad Soyad"></div>
+                <div class="input-group"><textarea id="eBio" rows="3" placeholder="Kendinden bahset..."></textarea></div>
+                <div class="input-group"><input type="file" accept="image/*" onchange="resimOku(this, 'eAv')"><input type="hidden" id="eAv"></div>
+                <button class="btn-primary" onclick="saveProfile()"><i class="fa-solid fa-check"></i> Değişiklikleri Kaydet</button>
+            </div>
+        </div>
+
+        <div class="header" id="appHeader" style="display:none;">
+            <h2 id="headerTitle" style="font-family:cursive; color:var(--primary);">Kapında</h2>
+            <div class="header-action" onclick="switchView('cartView')" id="cartIconBox">
+                <i class="fa-solid fa-bag-shopping"></i><div class="cart-badge" id="cartCount">0</div>
+            </div>
+        </div>
+
+        <div class="view-container">
+            <div class="view active" id="authView" style="background:white;">
+                <div style="height:100%; display:flex; flex-direction:column; justify-content:center; padding: 0 25px;">
+                    <div style="text-align:center; margin-bottom:40px;">
+                        <h1 style="margin:0; font-family:cursive; font-size:48px; color:var(--primary); letter-spacing:-2px;">Kapında</h1>
+                        <p style="font-size:14px; font-weight:600; color:var(--text-muted); margin-top:5px;">Bağlan, Paylaş, Kazan</p>
                     </div>
-                    <input type="number" id="price-box" class="tw-input hidden" placeholder="Satılık İse Fiyatı (Won) Girin" style="background:var(--trade-bg); border-color:var(--gold);">
+                    <div class="auth-tabs">
+                        <div class="auth-tab active" id="tabLoginBtn" onclick="authModSwitch('login')">Giriş Yap</div>
+                        <div class="auth-tab" id="tabRegisterBtn" onclick="authModSwitch('register')">Kayıt Ol</div>
+                    </div>
+                    <div id="loginFormBlock">
+                        <div class="input-group"><input type="text" id="lEmail" placeholder="E-posta Adresi"></div>
+                        <div class="input-group"><input type="password" id="lPass" placeholder="Şifre"></div>
+                        <button class="btn-primary" style="margin-top:10px;" onclick="girisYap()"><i class="fa-solid fa-arrow-right-to-bracket"></i> Sisteme Bağlan</button>
+                    </div>
+                    <div id="registerFormBlock" style="display:none;">
+                        <div class="input-group"><input type="text" id="rName" placeholder="Ad Soyad"></div>
+                        <div class="input-group"><input type="email" id="rEmail" placeholder="E-posta Adresi"></div>
+                        <div class="input-group"><input type="password" id="rPass" placeholder="Şifre Belirle"></div>
+                        <div class="input-group"><input type="text" id="rSponsor" placeholder="Davet Kodu (Opsiyonel)"></div>
+                        <button class="btn-success" style="margin-top:10px;" onclick="kayitOl()"><i class="fa-solid fa-user-plus"></i> Aramıza Katıl</button>
+                    </div>
                 </div>
             </div>
-        </main>
 
-        <main id="view-admin" class="container view-section hidden">
-            <h2 style="padding: 16px; border-bottom: 1px solid var(--border); font-size: 20px; font-weight:900;">👑 Tanrı Modu</h2>
-            <div class="admin-stat-grid">
-                <div class="admin-stat-card"><h3 id="adm-u-count">0</h3><p>Toplam Üye</p></div>
-                <div class="admin-stat-card"><h3 id="adm-p-count">0</h3><p>Toplam Post</p></div>
-            </div>
-            <div style="border-top: 5px solid var(--border); margin-top: 10px;">
-                <h3 style="padding: 16px; font-size: 18px; border-bottom: 1px solid var(--border);">Kullanıcı Yönetimi</h3>
-                <div id="adm-user-list"></div>
-            </div>
-        </main>
-
-        <main id="view-prof" class="container view-section hidden">
-            <div style="height: 130px; background: var(--twitter-blue);"></div>
-            <div style="padding: 0 16px; position: relative;">
-                <img id="p-img" src="https://via.placeholder.com/80" style="width: 80px; height: 80px; border-radius: 50%; border: 4px solid #fff; margin-top: -40px; background: #fff; object-fit: cover;">
-                <div style="position: absolute; right: 16px; top: 12px; display: flex; gap: 10px;">
-                    <button onclick="window.joinG()" style="border: 1px solid var(--border); background: transparent; padding: 6px 12px; border-radius: 99px; font-weight: 700; cursor: pointer;">Lonca</button>
-                    <button onclick="window.openSettings()" style="border: 1px solid var(--border); background: var(--hover); padding: 6px 12px; border-radius: 99px; font-weight: 700; cursor: pointer;">Profili Düzenle</button>
+            <div class="view" id="homeView">
+                <div class="stories-container" id="storiesFeed"></div>
+                <div style="padding:15px 15px 5px 15px;">
+                    <div style="position:relative;">
+                        <i class="fa-solid fa-magnifying-glass" style="position:absolute; left:16px; top:18px; color:var(--text-muted);"></i>
+                        <input type="text" id="aramaBox" placeholder="Ürün veya Mağaza ara..." onkeyup="kesfetCiz()" style="width:100%; padding:16px 16px 16px 45px; border-radius:16px; border:none; background:white; font-family:inherit; font-weight:600; box-shadow:0 4px 15px rgba(0,0,0,0.03);">
+                    </div>
                 </div>
-                <div style="margin-top: 10px;">
-                    <b id="p-name" style="font-size: 20px; font-weight: 800;">...</b>
-                    <p id="p-handle" style="color: var(--gray); font-size: 15px; margin-bottom: 12px;">@kullanici</p>
+                <div id="exploreFeed"></div>
+            </div>
+
+            <div class="view" id="profileView">
+                <div class="profile-header">
+                    <div id="pAvatar" style="width:90px; height:90px; background:linear-gradient(135deg, var(--primary), var(--primary-dark)); border-radius:50%; margin:0 auto 15px auto; color:white; display:flex; justify-content:center; align-items:center; font-size:36px; font-weight:900; background-size:cover; box-shadow:0 10px 20px rgba(37,99,235,0.2);">A</div>
+                    <h2 id="pName" style="margin:0; font-size:24px;">İsim</h2>
+                    <div id="pLevelBadge" class="level-badge" onclick="openVipModal()">Seviye 0 <i class="fa-solid fa-arrow-up-right-dots"></i></div>
+                    
+                    <div style="display:flex; justify-content:space-around; margin-top:25px; border-top:1px solid var(--border); padding-top:25px;">
+                        <div><b id="pFollowers" style="font-size:22px; color:var(--text-main);">0</b><br><small style="color:var(--text-muted); font-weight:600;">Ekip (Ağım)</small></div>
+                        <div><b id="pOrders" style="font-size:22px; color:var(--text-main);">0</b><br><small style="color:var(--text-muted); font-weight:600;">Sipariş</small></div>
+                        <div><b id="pBalance" style="font-size:22px; color:var(--success);">0 ₺</b><br><small style="color:var(--text-muted); font-weight:600;">Cüzdan</small></div>
+                    </div>
+
+                    <div style="display:flex; gap:12px; margin-top:25px;">
+                        <button class="btn-action" style="background:var(--bg-color); color:var(--primary);" onclick="window.open('https://www.shopier.com/kapindavip', '_blank')"><i class="fa-solid fa-wallet" style="font-size:16px;"></i><br>Bakiye Yükle</button>
+                        <button class="btn-action" id="btnCekYap" style="display:none; background:linear-gradient(135deg, #10b981, #059669); color:white;" onclick="convertToVoucher()"><i class="fa-solid fa-ticket" style="font-size:16px;"></i><br>Çek Üret</button>
+                        <button class="btn-action" style="background:var(--bg-color); color:var(--text-main);" onclick="openModal('editProfileModal')"><i class="fa-solid fa-gear" style="font-size:16px;"></i><br>Ayarlar</button>
+                    </div>
+
+                    <div style="display:flex; gap:12px; margin-top:12px;">
+                        <button class="btn-action" id="btnUrunEkle" style="display:none; background:var(--primary); color:white;" onclick="switchView('storeAddProdView')"><i class="fa-solid fa-plus"></i> Ürün</button>
+                        <button class="btn-action" id="btnHikaye" style="display:none; background:linear-gradient(45deg, #f09433, #dc2743); color:white;" onclick="openModal('storyModal')"><i class="fa-solid fa-camera"></i> Hikaye</button>
+                        <button class="btn-action" id="btnKasa" style="display:none; background:var(--warning); color:white;" onclick="switchView('storePosView')"><i class="fa-solid fa-cash-register"></i> Kasam</button>
+                    </div>
+
+                    <button class="btn-outline" style="margin-top:25px; border:2px solid #fee2e2; color:var(--danger); border-radius:16px;" onclick="cikisYap()"><i class="fa-solid fa-power-off"></i> Hesaptan Çıkış Yap</button>
+                </div>
+                <div id="profileGrid" style="display:grid; grid-template-columns: repeat(3, 1fr); gap:3px; margin-top:3px;"></div>
+            </div>
+
+            <div class="view" id="cartView">
+                <div style="padding:20px; background:rgba(255,255,255,0.9); backdrop-filter:blur(10px); position:sticky; top:0; z-index:10; border-bottom:1px solid var(--border);"><h3 style="margin:0;">Sepetim</h3></div>
+                <div id="cartItemsContainer" style="padding:20px; padding-bottom:250px;"></div>
+                
+                <div class="cart-floating-bar">
+                    <div class="input-group" style="margin-bottom:15px;"><input type="text" id="sAdres" placeholder="Açık Teslimat Adresi" style="background:#f8fafc;"></div>
+                    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:15px;">
+                        <span style="font-weight:800; font-size:16px; color:var(--text-muted);">Ödenecek Tutar</span>
+                        <span id="cartTotal" style="font-size:28px; font-weight:900; color:var(--text-main);">0 ₺</span>
+                    </div>
+                    <button class="btn-primary" style="padding:18px; font-size:16px;" onclick="siparisVer()"><i class="fa-solid fa-shield-halved"></i> Güvenli Ödemeyi Onayla</button>
                 </div>
             </div>
-            <div style="display: flex; border-bottom: 1px solid var(--border); margin-top: 10px;">
-                <div style="flex: 1; text-align: center; padding: 16px; font-weight: 700; border-bottom: 4px solid var(--twitter-blue);">Gönderilerim</div>
-            </div>
-            <div id="prof-feed"></div>
-        </main>
 
-        <nav class="bottom-nav">
-            <div class="nav-btn active-nav" onclick="window.switchTab('home', this); window.setFilter('all');"><span class="material-symbols-outlined">home</span></div>
-            <div class="nav-btn" onclick="window.switchTab('search', this)"><span class="material-symbols-outlined">search</span></div>
-            <div class="nav-btn" onclick="window.switchTab('prof', this)"><span class="material-symbols-outlined">person</span></div>
-        </nav>
+            <div class="view" id="storeAddProdView">
+                <div style="padding:20px; display:flex; align-items:center; gap:15px; background:white; border-bottom:1px solid var(--border);"><div class="close-btn" style="position:static;" onclick="switchView('profileView')"><i class="fa-solid fa-arrow-left"></i></div><h3 style="margin:0;">Ürün Paylaş</h3></div>
+                <div style="padding:25px;">
+                    <div class="input-group"><input type="text" id="upAd" placeholder="Ürün Adı"></div>
+                    <div class="input-group"><input type="number" id="upFiyat" placeholder="Müşteri Satış Fiyatı (₺)"></div>
+                    <div class="input-group"><input type="file" accept="image/*" onchange="resimOku(this, 'upResBase64')" style="background:white; border:2px dashed var(--border);"><input type="hidden" id="upResBase64"></div>
+                    <button class="btn-primary" style="margin-top:10px;" onclick="urunKaydet()"><i class="fa-solid fa-cloud-arrow-up"></i> Vitrine Ekle</button>
+                </div>
+            </div>
+
+            <div class="view" id="storePosView">
+                <div style="padding:20px; display:flex; align-items:center; gap:15px; background:white; border-bottom:1px solid var(--border);"><div class="close-btn" style="position:static;" onclick="switchView('profileView')"><i class="fa-solid fa-arrow-left"></i></div><h3 style="margin:0;">Esnaf Kasası</h3></div>
+                <div style="padding:20px;">
+                    <div class="admin-god-card" style="background:linear-gradient(135deg, #10b981, #059669); text-align:center; box-shadow:0 10px 25px rgba(16,185,129,0.3);">
+                        <p style="margin:0; font-size:12px; font-weight:800; opacity:0.9;">SİSTEMDEKİ ALACAĞIM</p>
+                        <h1 id="sKasaBakiye" style="margin:10px 0 0 0; font-size:42px;">0 ₺</h1>
+                    </div>
+                    <button class="btn-success" style="margin-bottom:20px; font-size:15px; padding:16px;" onclick="paraCekModalAc()"><i class="fa-solid fa-building-columns"></i> Kazancı IBAN'a Çek</button>
+
+                    <div style="background:white; padding:25px; border-radius:24px; border:2px dashed var(--warning); text-align:center;">
+                        <div style="width:60px; height:60px; background:rgba(245,158,11,0.1); color:var(--warning); border-radius:50%; display:flex; justify-content:center; align-items:center; font-size:24px; margin:0 auto 15px auto;"><i class="fa-solid fa-ticket"></i></div>
+                        <h4 style="margin:0 0 10px 0; font-size:18px;">Çek Bozdur</h4>
+                        <p style="font-size:12px; color:var(--text-muted); margin-bottom:20px; line-height:1.5;">Temsilcinin size getirdiği Hediye Çeki kodunu girin. Kodun değeri Kasanıza alacak olarak eklenir, Temsilciye nakit verirsiniz.</p>
+                        <div class="input-group" style="padding:0;"><input type="text" id="bozdurKod" placeholder="CEK-XXXX" style="text-align:center; font-size:22px; letter-spacing:2px; font-weight:900;"></div>
+                        <button class="btn-warning" onclick="cekBozdur()"><i class="fa-solid fa-check-double"></i> Kodu Doğrula ve Bozdur</button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="view" id="adminDashboardView">
+                <div style="padding:25px 20px 5px 20px;"><h2 style="margin:0; font-size:28px; font-weight:900; letter-spacing:-1px;">Tanrı Modu <i class="fa-solid fa-bolt" style="color:var(--warning);"></i></h2></div>
+                <div class="admin-god-card">
+                    <p style="margin:0; font-size:12px; opacity:0.8; font-weight:800;">TOPLAM DÖNEN CİRO</p>
+                    <h1 id="godTotalCiro" style="margin:5px 0; font-size:42px; letter-spacing:-2px;">0 ₺</h1>
+                    <div style="display:flex; justify-content:space-between; margin-top:25px; border-top:1px solid rgba(255,255,255,0.1); padding-top:15px; font-size:12px;">
+                        <div><span style="opacity:0.7;">Esnaf Borcu:</span> <b id="godStoreDebt" style="font-size:16px; display:block; margin-top:3px;">0 ₺</b></div>
+                        <div style="text-align:right;"><span style="color:#fef08a; opacity:0.8;">SİSTEM NET KÂRI:</span> <b id="godProfit" style="color:#fef08a; font-size:16px; display:block; margin-top:3px;">0 ₺</b></div>
+                    </div>
+                </div>
+
+                <div class="admin-tabs" style="padding: 0 5px;">
+                    <div class="admin-tab active" onclick="adminTab('users', this)">Üye Yönetimi</div>
+                    <div class="admin-tab" onclick="adminTab('withdrawals', this)">Esnaf Ödemeleri</div>
+                    <div class="admin-tab" onclick="adminTab('settings', this)">SaaS Ayarları</div>
+                </div>
+
+                <div id="adminTabUsers">
+                    <div style="padding:0 20px 15px 20px;">
+                        <div class="input-group" style="padding:0; margin:0;"><input type="text" id="adminUserSearch" placeholder="Üye e-posta veya isim ara..." onkeyup="adminUsersDraw()" style="background:white; box-shadow:0 4px 15px rgba(0,0,0,0.03);"></div>
+                    </div>
+                    <div id="adminUserList"></div>
+                </div>
+
+                <div id="adminTabWithdrawals" style="display:none; padding:15px 20px;">
+                    <div id="adminWithdrawList"></div>
+                </div>
+
+                <div id="adminTabSettings" style="display:none; padding:15px 20px;">
+                    <div style="background:white; padding:20px; border-radius:24px; border:1px solid var(--border); margin-bottom:20px; box-shadow:0 4px 15px rgba(0,0,0,0.03);">
+                        <h4 style="margin:0 0 15px 0;">Mevcut VIP Paketler</h4>
+                        <div id="adminPlansList"></div>
+                    </div>
+
+                    <div style="background:white; padding:20px; border-radius:24px; border:1px solid var(--border); box-shadow:0 4px 15px rgba(0,0,0,0.03);">
+                        <h4 style="margin:0 0 20px 0;"><i class="fa-solid fa-plus" style="color:var(--primary);"></i> Yeni VIP Seviye Ekle</h4>
+                        <div class="input-group" style="padding:0;"><input type="text" id="newPlanLevel" placeholder="Seviye No (Örn: 3)"></div>
+                        <div class="input-group" style="padding:0;"><input type="text" id="newPlanName" placeholder="Paket Adı (Örn: Diamond VIP)"></div>
+                        <div class="input-group" style="padding:0;"><input type="number" id="newPlanPrice" placeholder="Satış Fiyatı (₺)"></div>
+                        <div class="input-group" style="padding:0;"><input type="number" id="newPlanRate" placeholder="Komisyon Yüzdesi (Örn: %15 için 15)"></div>
+                        <button class="btn-success" style="margin-top:10px;" onclick="adminAddPlan()"><i class="fa-solid fa-check"></i> Paketi Sisteme Ekle</button>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+
+        <div class="bottom-nav" id="appNav" style="display:none;">
+            <div class="nav-item" id="nav-home" onclick="switchView('homeView')"><i class="fa-solid fa-house"></i></div>
+            <div class="nav-item" id="nav-cart" onclick="switchView('cartView')"><i class="fa-solid fa-bag-shopping"></i></div>
+            <div class="nav-item" id="nav-admin" onclick="switchView('adminDashboardView')"><i class="fa-solid fa-chess-king"></i></div>
+            <div class="nav-item" id="nav-profile" onclick="switchView('profileView')"><i class="fa-solid fa-user"></i></div>
+        </div>
     </div>
 
-    <div id="settings-modal" class="hidden">
-        <div class="settings-header">
-            <span class="material-symbols-outlined" onclick="document.getElementById('settings-modal').classList.add('hidden')" style="cursor: pointer;">close</span>
-            <span>Profili Düzenle</span>
-            <button onclick="window.saveSettings()" style="background:var(--text); color:#fff; border:none; padding:6px 16px; border-radius:99px; font-weight:700; cursor:pointer;">Kaydet</button>
-        </div>
-        <div class="settings-content">
-            <div class="avatar-edit-box" onclick="document.getElementById('avatarIn').click()">
-                <span class="material-symbols-outlined" id="avatar-icon" style="color:var(--gray); font-size:30px;">add_a_photo</span>
-                <img id="set-avatar-prev" class="hidden">
-            </div>
-            <input type="file" id="avatarIn" class="hidden" onchange="window.previewAvatar(this)" accept="image/*">
-            <p style="text-align:center; font-size:12px; color:var(--gray); margin-top:-10px; margin-bottom:20px;">Fotoğrafı Değiştir</p>
+    <script>
+        const firebaseConfig = { apiKey: "AIzaSyBWSlha9fD_q3zHXaRJ3ocJdtALqkrW-LU", authDomain: "kapinda-8d3ef.firebaseapp.com", projectId: "kapinda-8d3ef", storageBucket: "kapinda-8d3ef.firebasestorage.app", messagingSenderId: "246456710881", appId: "1:246456710881:web:c2a7bdb5e3b9065d1829a0" };
+        let db = null;
+        let appData = { users: {}, products: [], stats: {totalCiro:0, netKar:0}, plans: {1:{fiyat:500, oran:0.10, ad:'Seviye 1 VIP'}, 2:{fiyat:1000, oran:0.20, ad:'Seviye 2 Elite'}}, vouchers: [], stories: [], withdrawals: [] };
+        let aktifKullaniciEmail = null; let sepet = []; let currentView = 'authView'; let sessionLoaded = false; let storyTimer = null;
 
-            <label style="font-size:13px; font-weight:700; color:var(--gray);">İsim / Nickname</label>
-            <input type="text" id="set-name" class="tw-input" placeholder="Adınız">
+        // 1. Yardımcılar
+        function showToast(m, err=false) { let t = document.getElementById('toast'); if(!t) return; t.innerText = m; t.style.background = err ? "var(--danger)" : "var(--primary-dark)"; t.classList.add('show'); setTimeout(()=>t.classList.remove('show'), 3000); }
+        function openModal(id) { let m=document.getElementById(id); if(m) m.classList.add('active'); }
+        function closeModal(id) { let m=document.getElementById(id); if(m) m.classList.remove('active'); }
+        function resimOku(i, tId) { let r = new FileReader(); r.onload = (e) => { let trg = document.getElementById(tId); if(trg) trg.value = e.target.result; }; r.readAsDataURL(i.files[0]); }
 
-            <label style="font-size:13px; font-weight:700; color:var(--gray); margin-top:10px; display:block;">E-posta Adresi</label>
-            <input type="email" id="set-email" class="tw-input" placeholder="E-posta">
-
-            <label style="font-size:13px; font-weight:700; color:var(--gray); margin-top:10px; display:block;">Yeni Şifre (Boş bırakırsanız değişmez)</label>
-            <input type="password" id="set-pass" class="tw-input" placeholder="Yeni Şifre Belirle">
-        </div>
-    </div>
-
-    <script type="module">
-        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-app.js";
-        import { getAuth, signInWithEmailAndPassword, createUserWithEmailAndPassword, onAuthStateChanged, updateProfile, signOut, updateEmail, updatePassword } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-auth.js";
-        import { getFirestore, collection, addDoc, onSnapshot, query, orderBy, serverTimestamp, setDoc, doc, getDoc, updateDoc, deleteDoc } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-firestore.js";
-
-        const firebaseConfig = {
-            apiKey: "AIzaSyBWSlha9fD_q3zHXaRJ3ocJdtALqkrW-LU",
-            authDomain: "kapinda-8d3ef.firebaseapp.com",
-            projectId: "kapinda-8d3ef",
-            storageBucket: "kapinda-8d3ef.firebasestorage.app",
-            messagingSenderId: "246456710881",
-            appId: "1:246456710881:web:1d27f666a6c0dab01829a0"
-        };
-
-        const app = initializeApp(firebaseConfig);
-        const auth = getAuth(app);
-        const db = getFirestore(app);
-
-        let curImg = ""; let myRole = "user"; let currentFilter = 'all'; 
-        let newAvatarBase64 = ""; let myCurrentAvatar = "";
-
-        // UI HELPERS
-        window.toggleAuth = () => { document.getElementById('login-form').classList.toggle('hidden'); document.getElementById('reg-form').classList.toggle('hidden'); };
-        window.switchTab = (t, e) => { document.querySelectorAll('.view-section').forEach(s => s.classList.add('hidden')); document.getElementById('view-'+t).classList.remove('hidden'); if(e) { document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active-nav')); e.classList.add('active-nav'); } window.scrollTo(0,0); };
-        window.setFilter = (filterType) => { currentFilter = filterType; if(filterType === 'all' || filterType === 'trade') { document.getElementById('tab-all').classList.toggle('active', filterType === 'all'); document.getElementById('tab-trade').classList.toggle('active', filterType === 'trade'); document.getElementById('feed-filter-msg').classList.add('hidden'); } else if (filterType.startsWith('guild:')) { document.getElementById('tab-all').classList.remove('active'); document.getElementById('tab-trade').classList.remove('active'); document.getElementById('feed-filter-msg').innerText = `🛡️ Filtre: Sadece [${filterType.split(':')[1]}] loncası gösteriliyor.`; document.getElementById('feed-filter-msg').classList.remove('hidden'); } listenFeed(); };
-
-        window.checkCompose = () => { const txt = document.getElementById('up-text').value; const btn = document.getElementById('post-btn'); if(txt.length > 0 || curImg !== "") btn.classList.add('active'); else btn.classList.remove('active'); };
-
-        window.preview = (i) => { if(i.files[0]) { const r = new FileReader(); r.onload = (e) => { const img = new Image(); img.onload = () => { const canvas = document.createElement('canvas'); const ctx = canvas.getContext('2d'); const scale = Math.min(800 / img.width, 800 / img.height); canvas.width = img.width * scale; canvas.height = img.height * scale; ctx.drawImage(img, 0, 0, canvas.width, canvas.height); curImg = canvas.toDataURL('image/jpeg', 0.8); document.getElementById('up-prev').src = curImg; document.getElementById('up-prev').classList.remove('hidden'); window.checkCompose(); }; img.src = e.target.result; }; r.readAsDataURL(i.files[0]); } };
-        
-        // PROFİL FOTOĞRAFI YÜKLEME
-        window.previewAvatar = (i) => { if(i.files[0]) { const r = new FileReader(); r.onload = (e) => { const img = new Image(); img.onload = () => { const canvas = document.createElement('canvas'); const ctx = canvas.getContext('2d'); const scale = Math.min(200 / img.width, 200 / img.height); canvas.width = img.width * scale; canvas.height = img.height * scale; ctx.drawImage(img, 0, 0, canvas.width, canvas.height); newAvatarBase64 = canvas.toDataURL('image/jpeg', 0.7); document.getElementById('set-avatar-prev').src = newAvatarBase64; document.getElementById('set-avatar-prev').classList.remove('hidden'); document.getElementById('avatar-icon').classList.add('hidden'); }; img.src = e.target.result; }; r.readAsDataURL(i.files[0]); } };
-
-        // AUTH
-        window.login = async () => {
-            const e = document.getElementById('email').value, p = document.getElementById('pass').value;
-            if(e === "admin@m2social.com" && p === "123456") { myRole = 'admin'; document.getElementById('auth-screen').classList.add('hidden'); document.getElementById('user-app').classList.remove('hidden'); document.getElementById('btn-admin').classList.remove('hidden'); listenFeed(); return; }
-            try { await signInWithEmailAndPassword(auth, e, p); } catch { alert("Giriş başarısız. Bilgileri kontrol et."); }
-        };
-
-        window.register = async () => {
-            const u = document.getElementById('rUser').value, e = document.getElementById('rEmail').value, p = document.getElementById('rPass').value;
-            try { const res = await createUserWithEmailAndPassword(auth, e, p); await updateProfile(res.user, { displayName: u }); await setDoc(doc(db, "users", res.user.uid), { username: u, email: e, balance: 0, guild: "", isVerified: false, role: 'user', avatar: "" }); } catch (err) { alert(err.message); }
-        };
-
-        window.logout = () => signOut(auth).then(() => location.reload());
-
-        onAuthStateChanged(auth, async (u) => {
-            if(u) {
-                document.getElementById('auth-screen').classList.add('hidden'); document.getElementById('user-app').classList.remove('hidden');
-                loadProfile(u.uid); listenFeed();
-            } else { document.getElementById('auth-screen').classList.remove('hidden'); }
-        });
-
-        async function loadProfile(uid) {
-            onSnapshot(doc(db, "users", uid), s => {
-                const d = s.data();
-                myRole = d.role || 'user';
-                if(myRole === 'admin') document.getElementById('btn-admin').classList.remove('hidden');
-                
-                myCurrentAvatar = d.avatar || `https://api.dicebear.com/7.x/avataaars/svg?seed=${d.username}`;
-                document.getElementById('header-avatar').src = myCurrentAvatar;
-                document.getElementById('compose-avatar').src = myCurrentAvatar;
-                document.getElementById('p-img').src = myCurrentAvatar;
-
-                const tik = d.isVerified ? '<span class="material-symbols-outlined verified-badge">verified</span>' : '';
-                const roleBadge = d.role === 'admin' ? '<span class="mod-badge" style="background:var(--twitter-blue);">ADMİN</span>' : (d.role === 'mod' ? '<span class="mod-badge">MOD</span>' : '');
-                
-                document.getElementById('p-name').innerHTML = `${d.username} ${tik} ${roleBadge}`;
-                document.getElementById('p-handle').innerText = '@' + d.username.toLowerCase().replace(/\s/g, '');
-            });
-        }
-
-        // SETTINGS (PROFIL DUZENLEME)
-        window.openSettings = async () => {
-            const user = auth.currentUser;
-            const uSnap = await getDoc(doc(db, "users", user.uid));
-            const d = uSnap.data();
-            
-            document.getElementById('set-name').value = d.username;
-            document.getElementById('set-email').value = user.email;
-            document.getElementById('set-pass').value = "";
-            newAvatarBase64 = d.avatar || "";
-            
-            if(newAvatarBase64) {
-                document.getElementById('set-avatar-prev').src = newAvatarBase64;
-                document.getElementById('set-avatar-prev').classList.remove('hidden');
-                document.getElementById('avatar-icon').classList.add('hidden');
-            }
-            document.getElementById('settings-modal').classList.remove('hidden');
-        };
-
-        window.saveSettings = async () => {
-            const user = auth.currentUser;
-            const newName = document.getElementById('set-name').value;
-            const newEmail = document.getElementById('set-email').value;
-            const newPass = document.getElementById('set-pass').value;
-
+        // 2. Başlatıcı
+        window.onload = () => { 
             try {
-                // Şifre ve Mail güncellemesi son giriş (recent login) isteyebilir.
-                if(newEmail !== user.email) await updateEmail(user, newEmail);
-                if(newPass.length > 5) await updatePassword(user, newPass);
-                
-                await updateProfile(user, { displayName: newName });
-                await updateDoc(doc(db, "users", user.uid), { 
-                    username: newName, 
-                    email: newEmail,
-                    avatar: newAvatarBase64
-                });
-
-                alert("Profil başarıyla güncellendi!");
-                document.getElementById('settings-modal').classList.add('hidden');
-            } catch (error) {
-                if(error.code === 'auth/requires-recent-login') {
-                    alert("Güvenlik nedeniyle mail veya şifre değiştirmeden önce hesaptan çıkış yapıp tekrar girmelisiniz!");
-                } else {
-                    alert("Hata: " + error.message);
-                }
-            }
+                firebase.initializeApp(firebaseConfig); db = firebase.firestore();
+                let saved = localStorage.getItem('kapinda_session'); if(saved) aktifKullaniciEmail = saved;
+                listenToCloud(); 
+            } catch(e) { console.error(e); showToast("Bağlantı Hatası!", true); }
+            setTimeout(()=>safeDisplay('serverLoading', 'none'), 1500); 
         };
 
-        // ADMIN PANEL
-        window.initAdmin = () => {
-            if(myRole !== 'admin') return alert("Erişim Reddedildi!");
-            onSnapshot(collection(db, "users"), snap => {
-                document.getElementById('adm-u-count').innerText = snap.size;
-                let html = "";
-                snap.forEach(docSnap => {
-                    const d = docSnap.data();
-                    const av = d.avatar || `https://api.dicebear.com/7.x/avataaars/svg?seed=${d.username}`;
-                    const btnTikClass = d.isVerified ? 'adm-btn gray' : 'adm-btn blue';
-                    const btnTikText = d.isVerified ? 'Tiki Al' : 'Tik Ver';
-                    const btnModClass = (d.role === 'mod' || d.role === 'admin') ? 'adm-btn gray' : 'adm-btn gold';
-                    const btnModText = (d.role === 'mod' || d.role === 'admin') ? 'Yetki Al' : 'Mod Yap';
-
-                    html += `
-                        <div class="user-mgmt-row">
-                            <div style="display:flex; align-items:center; gap:10px;">
-                                <img src="${av}" style="width:36px; height:36px; border-radius:50%; object-fit:cover;">
-                                <div><b style="font-size:14px;">${d.username}</b> ${d.isVerified ? '<span class="verified-badge" style="font-size:14px;">✔</span>' : ''}<div style="font-size:12px; color:var(--gray);">Yetki: ${d.role}</div></div>
-                            </div>
-                            <div style="display:flex; gap:5px;">
-                                <button class="${btnTikClass}" onclick="window.toggleVerify('${docSnap.id}', ${d.isVerified})">${btnTikText}</button>
-                                <button class="${btnModClass}" onclick="window.toggleMod('${docSnap.id}', '${d.role}')">${btnModText}</button>
-                            </div>
-                        </div>`;
-                });
-                document.getElementById('adm-user-list').innerHTML = html;
+        function listenToCloud() {
+            db.collection('kapinda').doc('users').onSnapshot(d => { 
+                if(d.exists) { appData.users = d.data(); if(aktifKullaniciEmail && appData.users[aktifKullaniciEmail] && !sessionLoaded) { girisYap(true); sessionLoaded = true; } renderUI(); } 
+                else if(!appData.users['admin.com']) { setupFirstTime(); }
             });
-            onSnapshot(collection(db, "posts"), snap => document.getElementById('adm-p-count').innerText = snap.size);
-        };
-
-        window.toggleVerify = async (uid, currentStatus) => { await updateDoc(doc(db, "users", uid), { isVerified: !currentStatus }); };
-        window.toggleMod = async (uid, currentRole) => { if(currentRole === 'admin') return alert("Kurucunun yetkisi alınamaz."); await updateDoc(doc(db, "users", uid), { role: currentRole === 'mod' ? 'user' : 'mod' }); };
-
-        // POSTS & FEED
-        window.post = async () => {
-            const btn = document.getElementById('post-btn'); if(!btn.classList.contains('active')) return;
-            const uSnap = await getDoc(doc(db, "users", auth.currentUser.uid)); const uD = uSnap.data();
-            await addDoc(collection(db, "posts"), {
-                uid: auth.currentUser.uid, user: auth.currentUser.displayName, avatar: myCurrentAvatar,
-                text: document.getElementById('up-text').value, image: curImg, price: document.getElementById('price-box').value, 
-                guild: uD.guild || "", isVerified: uD.isVerified || false, role: uD.role || 'user', likes: 0, comments: [], time: serverTimestamp()
-            });
-            window.switchTab('home', document.querySelectorAll('.nav-btn')[0]); curImg = ""; document.getElementById('up-prev').classList.add('hidden'); document.getElementById('up-text').value = ""; document.getElementById('price-box').value = ""; window.checkCompose();
-        };
-
-        window.like = async (id, current) => { await updateDoc(doc(db, "posts", id), { likes: current + 1 }); };
-        window.comment = async (id) => { const txt = prompt("Bu gönderiye yanıt verin:"); if(!txt) return; const pRef = doc(db, "posts", id); const pSnap = await getDoc(pRef); await updateDoc(pRef, { comments: [...(pSnap.data().comments || []), { u: auth.currentUser.displayName, t: txt, img: myCurrentAvatar }] }); };
-        window.deletePost = async (id) => { if(confirm("Bu gönderi silinsin mi?")) await deleteDoc(doc(db, "posts", id)); };
-
-        function listenFeed() {
-            onSnapshot(query(collection(db, "posts"), orderBy("time", "desc")), snap => {
-                const feed = document.getElementById('feed'); const profFeed = document.getElementById('prof-feed');
-                feed.innerHTML = ""; profFeed.innerHTML = "";
-
-                snap.forEach(d => {
-                    const p = d.data();
-                    if(currentFilter === 'trade' && !p.price) return;
-                    if(currentFilter.startsWith('guild:') && p.guild !== currentFilter.split(':')[1]) return;
-
-                    const pAvatar = p.avatar || `https://api.dicebear.com/7.x/avataaars/svg?seed=${p.user}`;
-                    const vTik = p.isVerified ? '<span class="material-symbols-outlined verified-badge">verified</span>' : '';
-                    const handle = '@' + p.user.toLowerCase().replace(/\s/g, '');
-                    const tradeClass = p.price ? 'trade-post' : '';
-                    const canDelete = (p.uid === auth.currentUser?.uid) || myRole === 'admin' || myRole === 'mod';
-
-                    let commentsHtml = "";
-                    if(p.comments && p.comments.length > 0) { commentsHtml = `<div class="comments-area">` + p.comments.map(c => `<div class="comment-item"><img src="${c.img}" class="comment-avatar"><div><b>${c.u}</b> <span style="color:var(--gray)">yanıtladı:</span> ${c.t}</div></div>`).join('') + `</div>`; }
-                    
-                    const tweetHtml = `
-                        <div class="tweet ${tradeClass}">
-                            <img src="${pAvatar}" class="tweet-avatar" onclick="window.switchTab('prof')">
-                            <div class="tweet-body">
-                                <div class="tweet-header">
-                                    <span class="tweet-name">${p.user}</span> ${vTik}
-                                    ${p.guild ? `<span class="guild-tag" onclick="event.stopPropagation(); window.setFilter('guild:${p.guild}')">[${p.guild}]</span>` : ''}
-                                    <span class="tweet-handle">${handle}</span>
-                                    ${canDelete ? `<span class="material-symbols-outlined" onclick="window.deletePost('${d.id}')" style="margin-left:auto; color:#e74c3c; font-size:18px; cursor:pointer;">delete</span>` : ''}
-                                </div>
-                                <div class="tweet-text">${p.text}</div>
-                                ${p.image ? `<img src="${p.image}" class="tweet-image">` : ''}
-                                ${p.price ? `<div class="price-tag">💰 Satılık: ${p.price} Won</div>` : ''}
-                                <div class="tweet-actions">
-                                    <div class="action-btn reply" onclick="window.comment('${d.id}')"><span class="material-symbols-outlined">chat_bubble_outline</span> ${p.comments?.length || 0}</div>
-                                    <div class="action-btn like" onclick="window.like('${d.id}', ${p.likes || 0})"><span class="material-symbols-outlined">favorite_border</span> ${p.likes || 0}</div>
-                                </div>
-                                ${commentsHtml}
-                            </div>
-                        </div>`;
-                    
-                    feed.innerHTML += tweetHtml;
-                    if(p.uid === auth.currentUser?.uid) profFeed.innerHTML += tweetHtml;
-                });
-            });
+            db.collection('kapinda').doc('products').onSnapshot(d => { if(d.exists) { appData.products = d.data().list || []; renderUI(); } });
+            db.collection('kapinda').doc('stats').onSnapshot(d => { if(d.exists) { appData.stats = d.data(); renderUI(); } });
+            db.collection('kapinda').doc('plans').onSnapshot(d => { if(d.exists) { appData.plans = d.data(); renderUI(); } });
+            db.collection('kapinda').doc('vouchers').onSnapshot(d => { if(d.exists) { appData.vouchers = d.data().list || []; renderUI(); } });
+            db.collection('kapinda').doc('stories').onSnapshot(d => { if(d.exists) { appData.stories = d.data().list || []; renderUI(); } });
+            db.collection('kapinda').doc('withdrawals').onSnapshot(d => { if(d.exists) { appData.withdrawals = d.data().list || []; renderUI(); } });
         }
-        window.joinG = async () => { const g = prompt("Yeni Lonca Adı:"); if(g) await updateDoc(doc(db, "users", auth.currentUser.uid), { guild: g.toUpperCase() }); };
-    </script>
-</body>
-</html>
+
+        async function setupFirstTime() {
+            let u = { 'admin.com': { rol: 'admin', isim: 'Yönetici', sifre: '1', bakiye: 0, seviye: '0', refKod: 'ADMIN' } };
+            await db.collection('kapinda').doc('users').set(u); await db.collection('kapinda').doc('stats').set({totalCiro:0, netKar:0}); await db.collection('kapinda').doc('plans').set(appData.plans); await db.collection('kapinda').doc('withdrawals').set({list:[]});
+        }
+
+        // 3. Giriş ve Kayıt
+        function girisYap(isAuto=false) {
+            let e = isAuto ? aktifKullaniciEmail : document.getElementById('lEmail').value.trim();
+            let p = isAuto ? null : document.getElementById('lPass').value.trim();
+            if(!isAuto && (!appData.users[e] || appData.users[e].sifre !== p)) return showToast("Bilgiler Hatalı!", true);
+            
+            aktifKullaniciEmail = e; localStorage.setItem('kapinda_session', e); const u = appData.users[e];
+            safeDisplay('appHeader', 'flex'); safeDisplay('appNav', 'flex');
+            safeDisplay('nav-home', u.rol==='admin' ? 'none':'flex'); safeDisplay('nav-cart', u.rol==='admin' ? 'none':'flex');
+            safeDisplay('nav-admin', u.rol==='admin' ? 'flex':'none'); safeDisplay('nav-profile', 'flex');
+            switchView(u.rol==='admin' ? 'adminDashboardView' : 'homeView');
+            if(!isAuto) showToast("Hoş Geldin, " + u.isim.split(' ')[0]);
+        }
+
+        function kayitOl() {
+            const ad = document.getElementById('rName').value.trim(); const e = document.getElementById('rEmail').value.trim(); const p = document.getElementById('rPass').value.trim();
+            if(!ad || !e || !p) return showToast("Eksik bilgi!", true); if(appData.users[e]) return showToast("Bu e-posta kayıtlı!", true);
+            const sp = document.getElementById('rSponsor').value.trim().toUpperCase(); let spMail = '';
+            if(sp) { for(let k in appData.users) { if(appData.users[k].refKod === sp) spMail = k; } }
+
+            appData.users[e] = { isim: ad, sifre: p, rol: 'customer', bakiye: 0, seviye: '0', refKod: 'VIP'+Math.floor(Math.random()*9000), sponsor: spMail };
+            db.collection('kapinda').doc('users').set(appData.users); showToast("Kayıt Tamam! Giriş yapabilirsiniz."); authModSwitch('login');
+            document.getElementById('lEmail').value = e; document.getElementById('lPass').value = p;
+        }
+
+        function cikisYap() { localStorage.removeItem('kapinda_session'); location.reload(); }
+
+        function switchView(tId) {
+            document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
+            let target = document.getElementById(tId); if(target) target.classList.add('active');
+            document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+            let nId = 'nav-' + tId.replace('View','').replace('Dashboard','admin').toLowerCase();
+            let nav = document.getElementById(nId); if(nav) nav.classList.add('active');
+            
+            currentView = tId;
+            if(tId === 'homeView') safeText('headerTitle', 'Keşfet');
+            else if(tId === 'cartView') safeText('headerTitle', 'Sepetim');
+            else if(tId === 'profileView' && appData.users[aktifKullaniciEmail]) safeText('headerTitle', appData.users[aktifKullaniciEmail].isim);
+            else if(tId === 'adminDashboardView') safeText('headerTitle', 'Tanrı Modu');
+            renderUI();
+        }
+
+        // 4. Arayüz Güncelleme
+        function renderUI() {
+            if(!aktifKullaniciEmail || !appData.users[aktifKullaniciEmail]) return;
+            const u = appData.users[aktifKullaniciEmail];
+            
+            safeText('pName', u.isim + (u.rol==='store'?' ✓':'')); safeText('pBalance', (u.bakiye || 0) + " ₺");
+            
+            let badge = document.getElementById('pLevelBadge');
+            if(badge) {
+                badge.style.display = (u.rol==='store'||u.rol==='admin') ? 'none':'inline-flex';
+                badge.innerText = "Seviye " + (u.seviye||"0") + (u.seviye==='0'?" (Yükselt)":"");
+                badge.className = (u.seviye==='0' || !u.seviye) ? 'level-badge' : 'level-badge vip';
+            }
+
+            let av = document.getElementById('pAvatar');
+            if(av) { if(u.avatar) { av.style.backgroundImage = `url('${u.avatar}')`; av.innerText=''; } else { av.style.backgroundImage='none'; av.innerText=u.isim[0]; } }
+
+            let tk=0; for(let k in appData.users) { if(appData.users[k].sponsor === aktifKullaniciEmail) tk++; }
+            safeText('pFollowers', tk);
+
+            safeDisplay('btnUrunEkle', u.rol==='store'?'block':'none'); safeDisplay('btnHikaye', u.rol==='store'?'block':'none');
+            safeDisplay('btnKasa', u.rol==='store'?'block':'none'); safeDisplay('btnCekYap', (u.rol==='promoter' && u.bakiye > 0)?'block':'none');
+
+            if(currentView === 'homeView') kesfetCiz(u);
+            if(currentView === 'profileView') profilGridCiz(u);
+            if(currentView === 'adminDashboardView' && u.rol==='admin') godModeCiz();
+            if(currentView === 'storePosView') safeText('sKasaBakiye', u.bakiye + " ₺");
+        }
+
+        // 5. Keşfet ve Hikayeler
+        function kesfetCiz(cu) {
+            let arama = document.getElementById('aramaBox') ? document.getElementById('aramaBox').value.toLowerCase() : '';
+            let pH = ''; let list = [...appData.products].reverse();
+            list.forEach(p => {
+                let sat = appData.users[p.storeEmail] || {isim:'Mağaza', rol:'customer'};
+                if(arama && !p.ad.toLowerCase().includes(arama) && !sat.isim.toLowerCase().includes(arama)) return;
+                
+                let tik = sat.rol==='store' ? '<i class="fa-solid fa-circle-check blue-tick"></i>':'';
+                let av = sat.avatar ? `background-image:url('${sat.avatar}'); color:transparent;` : '';
+                
+                let btnHtml = '';
+                if(cu.rol === 'store') {
+                    btnHtml = `<button class="btn-outline" style="max-width:120px; font-size:12px; cursor:default;" disabled>Mağaza Modu</button>`;
+                } else if(cu.rol === 'promoter') {
+                    btnHtml = `<div style="display:flex; gap:8px; align-items:center;"><button class="btn-primary" style="padding:12px; font-size:12px; white-space:nowrap;" onclick="linkUret()"><i class="fa-solid fa-link"></i> Satış Linki Oluştur</button><div style="width:40px; height:40px; border-radius:12px; background:var(--bg-color); color:var(--text-main); display:flex; justify-content:center; align-items:center; cursor:pointer;" onclick="sepeteEkle('${p.id}','${p.ad}',${p.fiyat},'${p.storeEmail}')"><i class="fa-solid fa-cart-plus"></i></div></div>`;
+                } else {
+                    btnHtml = `<button class="btn-primary" style="max-width:140px; padding:12px; font-size:13px;" onclick="sepeteEkle('${p.id}','${p.ad}',${p.fiyat},'${p.storeEmail}')">Sepete Ekle</button>`;
+                }
+
+                pH += `<div class="post-card"><div class="post-header"><div class="post-avatar" style="${av}">${sat.isim[0]}</div><b style="font-size:14px; color:var(--text-main);">${sat.isim} ${tik}</b></div><div class="post-image" style="background-image:url('${p.resim}')"></div><div style="padding:15px 20px 5px 20px;"><h4 style="margin:0; font-size:16px;">${p.ad}</h4></div><div class="post-actions"><b style="font-size:22px; font-weight:900;">${p.fiyat} ₺</b> ${btnHtml} </div></div>`;
+            });
+            let tf = document.getElementById('exploreFeed'); if(tf) tf.innerHTML = pH || '<p style="text-align:center; margin-top:30px; color:var(--text-muted); font-weight:600;">Görüntülenecek ürün yok.</p>';
+
+            let sH = ''; let simdi = Date.now();
+            appData.stories.forEach((s, i) => {
+                if(simdi - s.time < 86400000) { 
+                    let st = appData.users[s.store] || {isim:'X'};
+                    sH += `<div class="story-item" onclick="openStory(${i})"><div class="story-ring"><div class="story-avatar" style="background-image:url('${s.resim}')"></div></div><div class="story-name">${st.isim}</div></div>`;
+                }
+            });
+            let sf = document.getElementById('storiesFeed'); if(sf) sf.innerHTML = sH || '<p style="font-size:11px; color:var(--text-muted); padding:10px; margin:0;">Henüz hikaye paylaşılmamış.</p>';
+        }
+        function linkUret() { showToast("Satış Linkiniz Kopyalandı!"); }
+
+        function openStory(idx) {
+            let s = appData.stories[idx]; let st = appData.users[s.store];
+            safeText('vStoryName', st.isim);
+            let av = document.getElementById('vStoryAvatar'); if(st.avatar) { av.style.backgroundImage=`url('${st.avatar}')`; av.innerText=''; } else { av.style.backgroundImage='none'; av.innerText=st.isim[0]; }
+            document.getElementById('vStoryImg').style.backgroundImage = `url('${s.resim}')`;
+            safeText('vStoryText', s.baslik);
+            document.getElementById('storyViewerScreen').classList.add('active');
+            let bar = document.getElementById('sProgressBar'); bar.style.transition = 'none'; bar.style.width = '0%';
+            setTimeout(()=>{ bar.style.transition = 'width 5s linear'; bar.style.width = '100%'; }, 50);
+            clearTimeout(storyTimer); storyTimer = setTimeout(()=>{ closeStory(); }, 5000);
+        }
+        function closeStory() { clearTimeout(storyTimer); document.getElementById('storyViewerScreen').classList.remove('active'); }
+
+        // 6. Sepet İşlemleri
+        function sepeteEkle(id, ad, f, s) { sepet.push({id, ad, fiyat:f, satici:s}); safeText('cartCount', sepet.length); showToast("Sepete Eklendi!"); }
+        function sepetCiz() {
+            let h=''; let t=0;
+            sepet.forEach((x,i) => { t+=x.fiyat; h+=`<div class="list-item" style="border-radius:16px; margin-bottom:10px; box-shadow:0 4px 10px rgba(0,0,0,0.02); border:none;"><b>${x.ad}</b><div style="display:flex; align-items:center; gap:15px;"><b style="color:var(--primary); font-size:16px;">${x.fiyat} ₺</b><div style="width:36px; height:36px; background:#fee2e2; color:var(--danger); border-radius:10px; display:flex; justify-content:center; align-items:center; cursor:pointer;" onclick="sepettenSil(${i})"><i class="fa-solid fa-trash"></i></div></div></div>`; });
+            let cc = document.getElementById('cartItemsContainer'); if(cc) cc.innerHTML = h || '<div style="text-align:center; padding:40px 20px;"><i class="fa-solid fa-basket-shopping" style="font-size:48px; color:var(--border); margin-bottom:15px;"></i><h3 style="margin:0; color:var(--text-muted);">Sepetiniz Boş</h3></div>';
+            safeText('cartTotal', t+" ₺");
+        }
+        function sepettenSil(i) { sepet.splice(i,1); safeText('cartCount', sepet.length); sepetCiz(); }
+        function siparisVer() {
+            if(!sepet.length) return showToast("Sepetiniz boş!", true);
+            const u = appData.users[aktifKullaniciEmail]; let t = 0; sepet.forEach(x=>t+=x.fiyat);
+            if(u.bakiye < t) return showToast("Cüzdan Bakiyesi Yetersiz!", true);
+            u.bakiye -= t; 
+            sepet.forEach(item => {
+                let f = item.fiyat; let ePayi = f * 0.80; let sMarj = f * 0.20; let vPay = 0;
+                if(u.sponsor && appData.users[u.sponsor] && appData.users[u.sponsor].rol==='promoter') {
+                    let lvl = appData.users[u.sponsor].seviye; let oran = appData.plans[lvl] ? appData.plans[lvl].oran : 0.10;
+                    vPay = f * oran; appData.users[u.sponsor].bakiye += vPay;
+                }
+                if(appData.users[item.satici]) appData.users[item.satici].bakiye += ePayi;
+                appData.stats.totalCiro += f; appData.stats.netKar += (sMarj - vPay); 
+            });
+            db.collection('kapinda').doc('users').set(appData.users); db.collection('kapinda').doc('stats').set(appData.stats);
+            sepet = []; safeText('cartCount', '0'); switchView('profileView'); showToast("Sipariş Onaylandı!");
+        }
+
+        // 7. VIP Sınırsız Altyapı
+        function openVipModal() {
+            let h=''; let keys = Object.keys(appData.plans).sort((a,b)=>parseInt(a)-parseInt(b));
+            for(let k of keys) { 
+                let p = appData.plans[k]; 
+                h+=`<div style="padding:20px; border:2px solid var(--bg-color); border-radius:20px; margin-bottom:12px; display:flex; justify-content:space-between; align-items:center; background:#f8fafc;"><div><b style="color:var(--primary); font-size:16px;">${p.ad}</b><p style="margin:4px 0 0 0; font-size:12px; color:var(--text-muted); font-weight:600;"><i class="fa-solid fa-bolt" style="color:var(--warning);"></i> %${p.oran*100} Komisyon</p></div><button class="btn-primary" style="width:auto; padding:12px 20px; box-shadow:none;" onclick="buyVip('${k}',${p.fiyat})">${p.fiyat} ₺</button></div>`; 
+            }
+            let vc = document.getElementById('vipPlansContainer'); if(vc) vc.innerHTML = h; openModal('vipModal');
+        }
+        function buyVip(lvl, f) {
+            const u = appData.users[aktifKullaniciEmail]; if(u.bakiye < f) return showToast("Cüzdan Bakiyesi Yetersiz!", true);
+            u.bakiye -= f; u.rol = 'promoter'; u.seviye = lvl; appData.stats.totalCiro += f; appData.stats.netKar += f;
+            db.collection('kapinda').doc('users').set(appData.users); db.collection('kapinda').doc('stats').set(appData.stats);
+            closeModal('vipModal'); showToast(`Tebrikler! Seviye ${lvl} Aktif.`);
+        }
+
+        // 8. Esnaf & Çek Fonksiyonları
+        function urunKaydet() {
+            const a=document.getElementById('upAd').value; const f=parseInt(document.getElementById('upFiyat').value); const r=document.getElementById('upResBase64').value;
+            if(!a||!f||!r) return showToast("Tüm alanları doldurun (Resim dahil)", true);
+            appData.products.push({id:'p'+Date.now(), ad:a, fiyat:f, resim:r, storeEmail:aktifKullaniciEmail});
+            db.collection('kapinda').doc('products').set({list:appData.products}); switchView('profileView'); document.getElementById('upAd').value=''; document.getElementById('upFiyat').value=''; document.getElementById('upResBase64').value='';
+        }
+        function hikayeAt() {
+            const b=document.getElementById('sBaslik').value; const r=document.getElementById('sRes').value;
+            if(!r) return showToast("Bir resim seçmelisin",true);
+            appData.stories.unshift({store:aktifKullaniciEmail, baslik:b, resim:r, time:Date.now()});
+            db.collection('kapinda').doc('stories').set({list:appData.stories}); closeModal('storyModal'); showToast("Flaş Hikaye Yayında!");
+        }
+        function convertToVoucher() {
+            const u = appData.users[aktifKullaniciEmail]; if(u.bakiye<=0) return showToast("Çevrilecek bakiye yok!", true);
+            let tutar = u.bakiye; u.bakiye = 0; let k = "CEK-"+Math.floor(1000+Math.random()*9000);
+            appData.vouchers.unshift({code:k, amount:tutar, owner:aktifKullaniciEmail, status:'active'});
+            db.collection('kapinda').doc('users').set(appData.users); db.collection('kapinda').doc('vouchers').set({list:appData.vouchers}); showToast("Hediye Çeki Üretildi!");
+        }
+        function cekBozdur() {
+            let k = document.getElementById('bozdurKod').value.toUpperCase().trim(); if(!k) return;
+            let ix = appData.vouchers.findIndex(v=>v.code===k && v.status==='active');
+            if(ix>-1) {
+                appData.vouchers[ix].status='used'; appData.users[aktifKullaniciEmail].bakiye += appData.vouchers[ix].amount;
+                db.collection('kapinda').doc('users').set(appData.users); db.collection('kapinda').doc('vouchers').set({list:appData.vouchers});
+                document.getElementById('bozdurKod').value=''; showToast("Başarılı! Tutar Kasaya Eklendi.");
+            } else { showToast("Kod Geçersiz veya Kullanılmış!", true); }
+        }
+        function profilGridCiz(u) {
+            let h='';
+            if(u.rol==='store') { appData.products.forEach(p=>{ if(p.storeEmail===aktifKullaniciEmail) h+=`<div style="aspect-ratio:1/1; background:url('${p.resim}') center/cover; border-radius:8px;"></div>`; }); }
+            else if(u.rol==='promoter') { appData.vouchers.forEach(v=>{ if(v.owner===aktifKullaniciEmail && v.status==='active') h+=`<div style="background:linear-gradient(135deg, #10b981, #059669); color:white; display:flex; flex-direction:column; justify-content:center; align-items:center; border-radius:16px; margin:2px; padding:10px;"><p style="margin:0; font-size:10px; opacity:0.8;">HEDİYE ÇEKİ</p><b style="font-size:20px; margin:5px 0;">${v.amount}₺</b><p style="margin:0; font-size:11px; font-weight:900; background:rgba(0,0,0,0.2); padding:4px 8px; border-radius:8px;">${v.code}</p></div>`; }); }
+            let pg = document.getElementById('profileGrid'); if(pg) pg.innerHTML = h;
+        }
+
+        // --- YENİ: ESNAF PARA ÇEK (IBAN) ---
+        function paraCekModalAc() { safeText('wBakiyeGoster', appData.users[aktifKullaniciEmail].bakiye + " ₺"); openModal('withdrawModal'); }
+        function paraCekTalebi() {
+            const u = appData.users[aktifKullaniciEmail];
+            let n = document.getElementById('wAd').value.trim(); let i = document.getElementById('wIban').value.trim(); let t = parseInt(document.getElementById('wTutar').value);
+            if(!n || !i || !t) return showToast("Tüm alanları doldurun!", true);
+            if(t > u.bakiye) return showToast("Kasa bakiyesi yetersiz!", true);
+            
+            u.bakiye -= t; 
+            appData.withdrawals.unshift({ id: 'W'+Date.now(), email: aktifKullaniciEmail, ad: n, iban: i, tutar: t, tarih: new Date().toLocaleDateString(), durum: 'bekliyor' });
+            db.collection('kapinda').doc('users').set(appData.users); db.collection('kapinda').doc('withdrawals').set({list: appData.withdrawals});
+            closeModal('withdrawModal'); showToast("Çekim talebi alındı!"); renderUI();
+        }
+
+        // 9. Admin Tanrı Modu
+        function adminTab(t, el) {
+            document.querySelectorAll('.admin-tab').forEach(x=>x.classList.remove('active')); if(el) el.classList.add('active');
+            safeDisplay('adminTabUsers', t==='users'?'block':'none'); safeDisplay('adminTabSettings', t==='settings'?'block':'none'); safeDisplay('adminTabWithdrawals', t==='withdrawals'?'block':'none');
+            if(t==='settings') adminPlansDraw(); if(t==='withdrawals') adminWithdrawDraw();
+        }
+        function adminUsersDraw() {
+            let q = document.getElementById('adminUserSearch') ? document.getElementById('adminUserSearch').value.toLowerCase() : '';
+            let h=''; let eB=0;
+            for(let k in appData.users) {
+                let u=appData.users[k]; if(u.rol==='store') eB+=u.bakiye;
+                if(q && !k.toLowerCase().includes(q) && !u.isim.toLowerCase().includes(q)) continue;
+                h+=`<div class="list-item" style="border-radius:16px; margin-bottom:10px; border:none; box-shadow:0 4px 15px rgba(0,0,0,0.02);"><div><b style="font-size:15px; color:var(--text-main);">${u.isim}</b> <small style="background:var(--bg-color); padding:2px 8px; border-radius:8px; color:var(--primary); font-weight:800; font-size:10px;">${u.rol
