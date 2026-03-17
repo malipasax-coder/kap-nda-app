@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-    <title>Kapında Social V48 - Pro & God Mode Edition</title>
+    <title>Kapında - IG Gradient Edition</title>
     
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     
@@ -11,132 +11,168 @@
     <script src="https://www.gstatic.com/firebasejs/10.8.1/firebase-firestore-compat.js"></script>
 
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;800;900&display=swap');
+        @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;800;900&display=swap');
         
+        /* INSTAGRAM VIBRANT COLOR PALETTE */
         :root { 
-            --primary: #2563eb; --primary-grad: linear-gradient(135deg, #2563eb, #4f46e5);
-            --secondary: #0f172a; --bg-color: #f8fafc; --card-bg: #ffffff; 
-            --text-main: #0f172a; --text-muted: #64748b; --danger: #ef4444; --success: #10b981; 
-            --warning: #f59e0b; --border: #e2e8f0; --blue-tick: #1d9bf0; --vip-gold: #fbbf24;
-            --ig-gray: #f1f5f9; --glass-bg: rgba(255, 255, 255, 0.85);
+            --primary: #dc2743; /* Core IG Red/Pink */
+            --primary-grad: linear-gradient(45deg, #f09433 0%, #e6683c 25%, #dc2743 50%, #cc2366 75%, #bc1888 100%);
+            --secondary: #a1a1aa; 
+            --bg-color: #fafafa; /* IG Off-white */
+            --card-bg: #ffffff; 
+            --text-main: #262626; /* IG Dark Text */
+            --text-muted: #8e8e8e; /* IG Light Text */
+            --danger: #ed4956; 
+            --success: #10b981; 
+            --warning: #f59e0b; 
+            --border: #dbdbdb; /* IG Border Color */
+            --blue-tick: #0095f6; /* IG Verified Blue */
+            --vip-gold: linear-gradient(135deg, #bf953f, #fcf6ba, #b38728, #fbf5b7); 
+            --ig-gray: #efefef; 
+            --glass-bg: rgba(250, 250, 250, 0.85);
+            --shadow-sm: 0 4px 20px rgba(0, 0, 0, 0.04);
+            --shadow-md: 0 10px 30px rgba(0, 0, 0, 0.08);
         }
 
+        /* IG DARK MODE */
         body.dark-mode {
-            --bg-color: #000000; --card-bg: #0a0a0a; --text-main: #f8fafc; --text-muted: #94a3b8; 
-            --border: #262626; --secondary: #ffffff; --ig-gray: #171717; --glass-bg: rgba(0, 0, 0, 0.85);
+            --bg-color: #000000; 
+            --card-bg: #000000; 
+            --text-main: #f5f5f5; 
+            --text-muted: #a8a8a8; 
+            --border: #262626; 
+            --secondary: #ffffff; 
+            --ig-gray: #121212; 
+            --glass-bg: rgba(0, 0, 0, 0.85);
+            --primary: #dc2743;
+            --primary-grad: linear-gradient(45deg, #f09433 0%, #e6683c 25%, #dc2743 50%, #cc2366 75%, #bc1888 100%);
+            --shadow-sm: 0 4px 20px rgba(255, 255, 255, 0.02);
+            --shadow-md: 0 10px 30px rgba(0, 0, 0, 0.5);
         }
         
         * { box-sizing: border-box; outline: none; -webkit-tap-highlight-color: transparent; margin: 0; padding: 0;}
-        body { font-family: 'Plus Jakarta Sans', sans-serif; background: #94a3b8; display: flex; justify-content: center; align-items: center; min-height: 100vh; overflow: hidden; transition: background 0.3s; }
+        body { font-family: 'Plus Jakarta Sans', sans-serif; background: #e4e4e7; display: flex; justify-content: center; align-items: center; min-height: 100vh; overflow: hidden; transition: background 0.3s; }
         
         .app-shell { width: 100%; height: 100dvh; background: var(--bg-color); position: relative; overflow: hidden; display: flex; flex-direction: column; transition: background 0.3s;}
-        @media (min-width: 480px) { .app-shell { max-width: 414px; max-height: 90vh; border-radius: 40px; box-shadow: 0 25px 50px -12px rgba(0,0,0,0.5); border: 8px solid #0f172a; } }
+        @media (min-width: 480px) { .app-shell { max-width: 414px; max-height: 90vh; border-radius: 40px; box-shadow: 0 25px 50px -12px rgba(0,0,0,0.5); border: 8px solid #000; } }
         
-        #serverLoading { position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: var(--bg-color); z-index: 9999; display: flex; flex-direction: column; justify-content: center; align-items: center; color: var(--text-main); cursor: pointer; transition: opacity 0.5s;}
-        .spinner { width: 40px; height: 40px; border: 3px solid var(--border); border-top: 3px solid var(--primary); border-radius: 50%; animation: spin 1s linear infinite; margin-bottom: 20px; }
+        /* TEXT GRADIENT UTILITY */
+        .text-gradient { background: var(--primary-grad); -webkit-background-clip: text; -webkit-text-fill-color: transparent; display: inline-block; }
+
+        /* LOADING SCREEN */
+        #serverLoading { position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: var(--bg-color); z-index: 9999; display: flex; flex-direction: column; justify-content: center; align-items: center; color: var(--text-main); cursor: pointer; transition: opacity 0.6s ease-in-out;}
+        .premium-spinner { width: 50px; height: 50px; border: 3px solid var(--border); border-top: 3px solid var(--primary); border-radius: 50%; animation: spin 0.8s cubic-bezier(0.4, 0, 0.2, 1) infinite; margin-bottom: 20px; }
         @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
 
-        /* GLASSMORPHISM HEADERS & NAV */
-        .header { background: var(--glass-bg); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); padding: 12px 20px; display: flex; justify-content: space-between; align-items: center; z-index: 20; border-bottom: 1px solid var(--border); transition: 0.3s; position: absolute; top:0; width: 100%;}
-        .header h2 { font-size: 24px; font-weight: 900; letter-spacing: -0.5px; color: var(--text-main); font-family: cursive;}
-        .cart-badge { position: absolute; top: -6px; right: -8px; background: var(--danger); color: white; font-size: 10px; width: 18px; height: 18px; border-radius: 50%; display: flex; justify-content: center; align-items: center; font-weight: bold; border: 2px solid var(--bg-color); }
+        /* HEADER */
+        .header { background: var(--glass-bg); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px); padding: 15px 20px; display: flex; justify-content: space-between; align-items: center; z-index: 20; border-bottom: 1px solid var(--border); transition: 0.3s; position: absolute; top:0; width: 100%;}
+        .header h2 { font-size: 24px; font-weight: 900; letter-spacing: -1px; text-transform: uppercase;}
+        .cart-badge { position: absolute; top: -5px; right: -8px; background: var(--danger); color: white; font-size: 10px; width: 18px; height: 18px; border-radius: 50%; display: flex; justify-content: center; align-items: center; font-weight: bold; border: 2px solid var(--bg-color); }
 
-        .view-container { flex: 1; position: relative; overflow: hidden; background: var(--bg-color); margin-top: 55px;}
-        .view { position: absolute; top: 0; left: 0; width: 100%; height: 100%; overflow-y: auto; padding-bottom: 90px; opacity: 0; pointer-events: none; transition: 0.2s ease; background: var(--bg-color);}
+        .view-container { flex: 1; position: relative; overflow: hidden; background: var(--bg-color); margin-top: 60px;}
+        .view { position: absolute; top: 0; left: 0; width: 100%; height: 100%; overflow-y: auto; padding-bottom: 100px; opacity: 0; pointer-events: none; transition: 0.3s ease; background: var(--bg-color);}
         .view.active { opacity: 1; pointer-events: all; z-index: 5; }
 
-        .post-card { background: var(--card-bg); margin-bottom: 10px; border-bottom: 1px solid var(--border); }
-        .post-header { display: flex; align-items: center; padding: 12px 15px; gap: 10px; cursor: pointer; justify-content: space-between;}
-        .post-avatar { width:36px; height:36px; border-radius:50%; background:var(--primary-grad); color:white; display:flex; justify-content:center; align-items:center; font-weight:bold; background-size:cover; background-position:center; }
+        /* POST CARDS */
+        .post-card { background: var(--card-bg); margin-bottom: 12px; border-bottom: 1px solid var(--border); }
+        .post-header { display: flex; align-items: center; padding: 14px 15px; gap: 12px; cursor: pointer; justify-content: space-between;}
+        .post-avatar { width:38px; height:38px; border-radius:50%; background:var(--primary-grad); color:white; display:flex; justify-content:center; align-items:center; font-weight:bold; background-size:cover; background-position:center; }
         .post-image { width: 100%; aspect-ratio: 4/5; background-size: cover; background-position: center; background-color: var(--ig-gray); }
         .ig-action-bar { padding: 12px 15px; display: flex; justify-content: space-between; align-items: center; color: var(--text-main); font-size: 24px; }
         .ig-icons-left { display: flex; gap: 18px; align-items: center; }
-        .ig-icons-left i { cursor: pointer; transition: transform 0.15s cubic-bezier(0.175, 0.885, 0.32, 1.275);}
+        .ig-icons-left i { cursor: pointer; transition: transform 0.1s;}
         .ig-icons-left i:active { transform: scale(0.7); }
         .post-content { padding: 0 15px 15px 15px; color: var(--text-main); }
-        .like-count { font-size: 14px; font-weight: 800; margin-bottom: 4px; display: block;}
+        .like-count { font-size: 13px; font-weight: 800; margin-bottom: 6px; display: block;}
 
-        .stories-container { display: flex; gap: 12px; padding: 12px 15px; overflow-x: auto; background: var(--card-bg); border-bottom: 1px solid var(--border); scrollbar-width: none; }
-        .story-item { display: flex; flex-direction: column; align-items: center; gap: 4px; cursor: pointer; flex-shrink: 0;}
-        .story-ring { width: 70px; height: 70px; border-radius: 50%; background: linear-gradient(45deg, #f09433 0%, #e6683c 25%, #dc2743 50%, #cc2366 75%, #bc1888 100%); padding: 3px; }
-        .story-avatar { width: 100%; height: 100%; background: var(--bg-color); border-radius: 50%; border: 2px solid var(--card-bg); display:flex; justify-content:center; align-items:center; color:var(--text-main); font-weight:bold; font-size:20px; background-size:cover; background-position:center;}
+        /* STORIES */
+        .stories-container { display: flex; gap: 15px; padding: 15px; overflow-x: auto; background: var(--card-bg); border-bottom: 1px solid var(--border); scrollbar-width: none; }
+        .story-item { display: flex; flex-direction: column; align-items: center; gap: 6px; cursor: pointer; flex-shrink: 0;}
+        .story-ring { width: 72px; height: 72px; border-radius: 50%; background: var(--primary-grad); padding: 3px; }
+        .story-avatar { width: 100%; height: 100%; background: var(--bg-color); border-radius: 50%; border: 3px solid var(--card-bg); display:flex; justify-content:center; align-items:center; color:var(--text-main); font-weight:bold; font-size:20px; background-size:cover; background-position:center;}
         .stories-container::-webkit-scrollbar { display: none; }
         .story-name { font-size: 11px; color: var(--text-main); font-weight: 600; max-width: 68px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 
-        .profile-header { background: var(--card-bg); padding: 20px 15px; border-bottom: 1px solid var(--border); }
+        /* PROFILE */
+        .profile-header { background: var(--card-bg); padding: 25px 20px; border-bottom: 1px solid var(--border); }
         .profile-stats { display: flex; justify-content: space-around; align-items: center; flex: 1; margin-left: 20px;}
         .stat-box { text-align: center; color: var(--text-main); }
-        .stat-box b { font-size: 18px; display: block; }
-        .stat-box small { font-size: 12px; color: var(--text-main); }
+        .stat-box b { font-size: 18px; display: block; font-weight: 900;}
+        .stat-box small { font-size: 11px; color: var(--text-muted); font-weight: 600; letter-spacing: 0.5px;}
         
-        .level-badge { display:inline-flex; align-items:center; gap:5px; background: var(--ig-gray); color: var(--text-main); padding: 4px 10px; border-radius: 6px; font-size: 12px; font-weight: 800; cursor: pointer; transition:0.2s; margin-top: 5px;}
-        .level-badge.vip { background: linear-gradient(135deg, rgba(251, 191, 36, 0.2), rgba(245, 158, 11, 0.1)); color: #b45309; border: 1px solid rgba(251, 191, 36, 0.3);}
+        .level-badge { display:inline-flex; align-items:center; gap:5px; background: var(--ig-gray); color: var(--text-main); padding: 6px 12px; border-radius: 8px; font-size: 12px; font-weight: 800; cursor: pointer; transition:0.2s; margin-top: 8px;}
+        .level-badge.vip { background: var(--primary-grad); color: #fff; box-shadow: 0 4px 15px rgba(220, 39, 67, 0.3); border: none;}
 
-        .input-group { margin-bottom: 12px; padding: 0; }
-        .input-group input, .input-group select, .input-group textarea { width: 100%; padding: 14px; border: 1px solid var(--border); border-radius: 12px; font-family: inherit; font-weight: 600; background: var(--ig-gray); font-size: 14px; color: var(--text-main); transition: 0.3s;}
-        .input-group input:focus, .input-group textarea:focus { border-color: var(--primary); background: var(--card-bg); box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);}
+        /* INPUTS & BUTTONS */
+        .input-group { margin-bottom: 15px; padding: 0; }
+        .input-group input, .input-group select, .input-group textarea { width: 100%; padding: 16px; border: 1px solid var(--border); border-radius: 14px; font-family: inherit; font-weight: 600; background: var(--ig-gray); font-size: 14px; color: var(--text-main); transition: all 0.3s ease;}
+        .input-group input:focus, .input-group textarea:focus { border-color: var(--primary); background: var(--card-bg); box-shadow: var(--shadow-sm);}
 
-        button { border: none; padding: 12px 15px; border-radius: 12px; font-weight: 800; cursor: pointer; font-family: inherit; display:inline-flex; justify-content:center; align-items:center; gap:8px; font-size: 14px; transition:all 0.2s;}
-        button:active { transform: scale(0.96); opacity: 0.9;}
-        .btn-primary { background: var(--primary-grad); color: white; width: 100%; box-shadow: 0 4px 15px rgba(37, 99, 235, 0.2);}
-        .btn-success { background: linear-gradient(135deg, #10b981, #059669); color: white; width: 100%; box-shadow: 0 4px 15px rgba(16, 185, 129, 0.2);}
-        .btn-warning { background: linear-gradient(135deg, #f59e0b, #d97706); color: white; width: 100%;}
+        button { border: none; padding: 14px 20px; border-radius: 14px; font-weight: 800; cursor: pointer; font-family: inherit; display:inline-flex; justify-content:center; align-items:center; gap:8px; font-size: 14px; transition:all 0.2s; letter-spacing: -0.3px;}
+        button:active { transform: scale(0.97); opacity: 0.9;}
+        .btn-primary { background: var(--primary-grad); color: white; width: 100%; box-shadow: 0 4px 15px rgba(220, 39, 67, 0.2);}
+        .btn-success { background: linear-gradient(135deg, #10b981, #059669); color: white; width: 100%;}
+        .btn-warning { background: var(--vip-gold); color: #000; width: 100%; box-shadow: 0 4px 15px rgba(191, 149, 63, 0.3);}
         .btn-danger { background: var(--danger); color: white; width: 100%;}
         .btn-outline { background: transparent; border: 1px solid var(--border); color: var(--text-main); width: 100%;}
-        .btn-action { flex: 1; padding: 8px; border-radius: 8px; font-size: 13px; font-weight: 800; background: var(--ig-gray); color: var(--text-main); }
+        .btn-action { flex: 1; padding: 10px; border-radius: 10px; font-size: 13px; font-weight: 800; background: var(--ig-gray); color: var(--text-main); transition: 0.2s;}
+        .btn-action:hover { background: var(--border); }
 
-        .bottom-nav { position: absolute; bottom: 0; width: 100%; background: var(--glass-bg); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); border-top: 1px solid var(--border); display: flex; padding: 12px 0 calc(12px + env(safe-area-inset-bottom)) 0; z-index: 30; justify-content: space-around; transition: 0.3s;}
-        .nav-item { color: var(--text-main); font-size: 24px; cursor: pointer; display:none; padding: 10px; transition: transform 0.2s; opacity: 0.4;}
+        /* BOTTOM NAV */
+        .bottom-nav { position: absolute; bottom: 0; width: 100%; background: var(--glass-bg); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px); border-top: 1px solid var(--border); display: flex; padding: 15px 0 calc(15px + env(safe-area-inset-bottom)) 0; z-index: 30; justify-content: space-around; transition: 0.3s;}
+        .nav-item { color: var(--text-main); font-size: 24px; cursor: pointer; display:none; padding: 5px 20px; transition: transform 0.2s; opacity: 0.3;}
         .nav-item:active { transform: scale(0.85); }
         .nav-item.active { opacity: 1; color: var(--text-main); }
 
-        .modal-overlay { position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.7); backdrop-filter: blur(5px); -webkit-backdrop-filter: blur(5px); z-index: 100; opacity: 0; pointer-events: none; transition: 0.3s; display: flex; justify-content: center; align-items: flex-end;}
+        /* MODALS */
+        .modal-overlay { position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.6); backdrop-filter: blur(4px); -webkit-backdrop-filter: blur(4px); z-index: 100; opacity: 0; pointer-events: none; transition: 0.3s; display: flex; justify-content: center; align-items: flex-end;}
         .modal-overlay.active { opacity: 1; pointer-events: all; }
-        .modal-card { background: var(--card-bg); width: 100%; border-radius: 24px 24px 0 0; padding: 25px; position:relative; max-height:85vh; overflow-y:auto; transform: translateY(100%); transition: 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.1); color: var(--text-main);}
+        .modal-card { background: var(--card-bg); width: 100%; border-radius: 30px 30px 0 0; padding: 30px 25px; position:relative; max-height:85vh; overflow-y:auto; transform: translateY(100%); transition: 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.1); color: var(--text-main); box-shadow: var(--shadow-md);}
         .modal-overlay.active .modal-card { transform: translateY(0); }
-        .close-bar { width: 40px; height: 5px; background: var(--border); border-radius: 3px; margin: 0 auto 20px auto; }
+        .close-bar { width: 40px; height: 5px; background: var(--border); border-radius: 4px; margin: 0 auto 25px auto; }
 
-        #toast { position: absolute; top: 70px; left: 50%; transform: translateX(-50%) translateY(-20px); background: var(--text-main); color: var(--bg-color); padding: 14px 28px; border-radius: 30px; font-size: 13px; font-weight:bold; z-index: 1000; opacity: 0; transition: 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); pointer-events: none; white-space:nowrap; box-shadow: 0 10px 25px rgba(0,0,0,0.2);}
+        #toast { position: absolute; top: 70px; left: 50%; transform: translateX(-50%) translateY(-20px); background: var(--text-main); color: var(--bg-color); padding: 14px 28px; border-radius: 30px; font-size: 13px; font-weight:bold; z-index: 1000; opacity: 0; transition: 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); pointer-events: none; white-space:nowrap; box-shadow: var(--shadow-md);}
         #toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
         
-        /* ADMIN - GOD MODE STYLES */
-        #adminDashboardView { background: #020617; color: #f8fafc; }
-        .god-header { padding: 20px; background: rgba(15, 23, 42, 0.8); backdrop-filter: blur(10px); border-bottom: 1px solid #1e293b; display:flex; justify-content:space-between; align-items:center;}
-        .god-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; padding: 15px; }
-        .god-stat-card { background: linear-gradient(145deg, #0f172a, #1e293b); border: 1px solid rgba(255,255,255,0.05); border-radius: 16px; padding: 15px; box-shadow: 0 4px 20px rgba(0,0,0,0.3); position: relative; overflow: hidden;}
-        .god-stat-card::before { content: ''; position: absolute; top:-50%; left:-50%; width:200%; height:200%; background: radial-gradient(circle, rgba(56,189,248,0.05) 0%, transparent 70%); pointer-events: none;}
-        .god-stat-title { font-size: 11px; color: #94a3b8; font-weight: 800; letter-spacing: 0.5px; margin-bottom: 5px; text-transform: uppercase;}
-        .god-stat-value { font-size: 24px; font-weight: 900; color: #fff; margin:0;}
-        .god-tabs { display: flex; padding: 0 15px; gap: 10px; margin-bottom: 10px; overflow-x: auto; scrollbar-width: none;}
-        .god-tab { background: #0f172a; border: 1px solid #1e293b; color: #94a3b8; padding: 10px 15px; border-radius: 12px; font-size: 12px; font-weight: 800; cursor: pointer; white-space: nowrap; transition: 0.3s;}
-        .god-tab.active { background: #38bdf8; color: #020617; border-color: #38bdf8; box-shadow: 0 0 15px rgba(56,189,248,0.3);}
-        .god-list-item { background: #0f172a; border: 1px solid #1e293b; border-radius: 12px; padding: 15px; margin-bottom: 10px; display:flex; justify-content:space-between; align-items:center; color: #f8fafc;}
+        /* ADMIN GOD MODE */
+        #adminDashboardView { background: var(--bg-color); color: var(--text-main); margin-top:-60px; height:calc(100% + 60px); padding-bottom:100px;}
+        .god-header { padding: 30px 20px 20px 20px; background: var(--card-bg); border-bottom: 1px solid var(--border); display:flex; justify-content:space-between; align-items:center;}
+        .god-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; padding: 20px; }
+        .god-stat-card { background: var(--card-bg); border: 1px solid var(--border); border-radius: 20px; padding: 20px; box-shadow: var(--shadow-sm); position: relative; overflow: hidden;}
+        .god-stat-title { font-size: 10px; color: var(--text-muted); font-weight: 800; letter-spacing: 1px; margin-bottom: 8px; text-transform: uppercase;}
+        .god-stat-value { font-size: 26px; font-weight: 900; color: var(--text-main); margin:0; letter-spacing:-0.5px;}
+        .god-tabs { display: flex; padding: 0 20px; gap: 10px; margin-bottom: 15px; overflow-x: auto; scrollbar-width: none;}
+        .god-tab { background: var(--card-bg); border: 1px solid var(--border); color: var(--text-muted); padding: 10px 18px; border-radius: 20px; font-size: 13px; font-weight: 800; cursor: pointer; white-space: nowrap; transition: 0.3s; box-shadow: var(--shadow-sm);}
+        .god-tab.active { background: var(--primary-grad); color: white; border-color: transparent; }
+        .god-list-item { background: var(--card-bg); border: 1px solid var(--border); border-radius: 16px; padding: 18px; margin-bottom: 12px; display:flex; justify-content:space-between; align-items:center; color: var(--text-main); box-shadow: var(--shadow-sm);}
 
-        .cart-floating-bar { position: absolute; bottom: 75px; left: 15px; right: 15px; background: var(--glass-bg); backdrop-filter: blur(15px); padding: 20px; border-radius: 24px; box-shadow: 0 10px 30px rgba(0,0,0,0.1); border: 1px solid var(--border); z-index: 25; color: var(--text-main);}
+        .cart-floating-bar { position: absolute; bottom: 85px; left: 15px; right: 15px; background: var(--glass-bg); backdrop-filter: blur(25px); padding: 25px; border-radius: 28px; box-shadow: var(--shadow-md); border: 1px solid var(--border); z-index: 25; color: var(--text-main);}
         
-        .chat-input-bar { position:absolute; bottom:0; width:100%; background:var(--card-bg); padding:10px 15px; border-top:1px solid var(--border); display:flex; gap:10px; align-items:center;}
+        .chat-input-bar { position:absolute; bottom:0; width:100%; background:var(--card-bg); padding:15px; border-top:1px solid var(--border); display:flex; gap:12px; align-items:center;}
         .ig-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 2px; }
         .ig-grid-item { aspect-ratio: 1/1; background-size: cover; background-position: center; background-color: var(--ig-gray); cursor: pointer;}
         
-        .toggle-switch { position: relative; display: inline-block; width: 46px; height: 24px; }
+        /* TOGGLE SWITCH */
+        .toggle-switch { position: relative; display: inline-block; width: 50px; height: 28px; }
         .toggle-switch input { opacity: 0; width: 0; height: 0; }
-        .slider { position: absolute; cursor: pointer; top: 0; left: 0; right: 0; bottom: 0; background-color: var(--border); transition: .4s; border-radius: 24px; }
-        .slider:before { position: absolute; content: ""; height: 18px; width: 18px; left: 3px; bottom: 3px; background-color: white; transition: .4s; border-radius: 50%; box-shadow: 0 2px 5px rgba(0,0,0,0.2);}
-        input:checked + .slider { background-color: var(--success); }
-        input:checked + .slider:before { transform: translateX(22px); }
+        .slider { position: absolute; cursor: pointer; top: 0; left: 0; right: 0; bottom: 0; background-color: var(--border); transition: .4s; border-radius: 30px; }
+        .slider:before { position: absolute; content: ""; height: 20px; width: 20px; left: 4px; bottom: 4px; background-color: var(--text-main); transition: .4s; border-radius: 50%; box-shadow: 0 2px 5px rgba(0,0,0,0.2);}
+        input:checked + .slider { background: var(--primary-grad); }
+        input:checked + .slider:before { transform: translateX(22px); background-color: #fff;}
 
-        /* Yorum Bölümü */
-        .comment-item { display:flex; gap:10px; margin-bottom: 12px; align-items: flex-start;}
-        .comment-av { width:28px; height:28px; border-radius:50%; background:var(--ig-gray); flex-shrink:0; background-size:cover; display:flex; justify-content:center; align-items:center; font-size:12px; font-weight:bold;}
-        .comment-body { background: var(--ig-gray); padding: 10px 14px; border-radius: 0 16px 16px 16px; font-size: 13px; color: var(--text-main); flex:1;}
+        /* YORUMLAR */
+        .comment-item { display:flex; gap:12px; margin-bottom: 15px; align-items: flex-start;}
+        .comment-av { width:32px; height:32px; border-radius:50%; background:var(--ig-gray); flex-shrink:0; background-size:cover; display:flex; justify-content:center; align-items:center; font-size:12px; font-weight:bold; color:var(--text-main);}
+        .comment-body { background: var(--ig-gray); padding: 12px 16px; border-radius: 0 16px 16px 16px; font-size: 13px; color: var(--text-main); flex:1;}
     </style>
 </head>
 <body>
 
     <div class="app-shell" id="appShell">
-        <div id="serverLoading" onclick="zorlaAc()">
-            <div class="spinner"></div>
-            <p style="font-size:12px; font-weight: 600; opacity:0.7; color:var(--text-main);">Kapında Cloud'a Bağlanıyor...</p>
+        <div id="serverLoading">
+            <div class="premium-spinner"></div>
+            <h1 class="text-gradient" style="font-size:28px; font-weight: 900; letter-spacing:-1px; margin:0;">KAPINDA</h1>
+            <p style="font-size:11px; font-weight: 800; color:var(--text-muted); margin-top: 8px; letter-spacing: 2px; text-transform:uppercase;">Bağlanıyor</p>
         </div>
 
         <div id="toast">Bildirim</div>
@@ -144,12 +180,12 @@
         <div class="modal-overlay" id="commentsModal">
             <div class="modal-card" style="max-height: 90vh;">
                 <div class="close-bar" onclick="closeModal('commentsModal')"></div>
-                <h3 style="margin:0 0 15px 0; text-align:center;">Yorumlar</h3>
+                <h3 style="margin:0 0 20px 0; text-align:center; font-weight:900;">Yorumlar</h3>
                 <div id="commentsListContainer" style="max-height: 50vh; overflow-y:auto; margin-bottom:15px; padding-right:5px;"></div>
-                <div style="display:flex; gap:10px; align-items:center;">
-                    <div id="myCommentAv" class="comment-av" style="background:var(--primary); color:white;">A</div>
-                    <input type="text" id="newCommentInput" placeholder="Yorum ekle..." style="flex:1; padding:12px 15px; border-radius:20px; border:1px solid var(--border); background:var(--bg-color); color:var(--text-main); outline:none; font-size:13px;">
-                    <button style="background:transparent; color:var(--primary); border:none; padding:0; font-size:16px; font-weight:bold; cursor:pointer;" onclick="yorumAt()">Paylaş</button>
+                <div style="display:flex; gap:12px; align-items:center; border-top:1px solid var(--border); padding-top:15px;">
+                    <div id="myCommentAv" class="comment-av" style="background:var(--primary-grad); color:white;">A</div>
+                    <input type="text" id="newCommentInput" placeholder="Yorum ekle..." style="flex:1; padding:14px 18px; border-radius:24px; border:1px solid var(--border); background:var(--ig-gray); color:var(--text-main); outline:none; font-size:13px; font-weight:600;">
+                    <button class="text-gradient" style="background:transparent; border:none; padding:0; font-size:14px; font-weight:900; cursor:pointer;" onclick="yorumAt()">Paylaş</button>
                     <input type="hidden" id="activeCommentProdId">
                 </div>
             </div>
@@ -158,8 +194,8 @@
         <div class="modal-overlay" id="withdrawModal">
             <div class="modal-card">
                 <div class="close-bar" onclick="closeModal('withdrawModal')"></div>
-                <h3 style="margin:0 0 5px 0; text-align:center;">Hesaba Aktar</h3>
-                <p style="font-size:12px; color:var(--text-muted); text-align:center; margin-bottom:20px;">Mevcut Bakiye: <b id="wBakiyeGoster">0 ₺</b></p>
+                <h3 style="margin:0 0 5px 0; text-align:center; font-weight:900;">Hesaba Aktar</h3>
+                <p style="font-size:12px; color:var(--text-muted); text-align:center; margin-bottom:25px; font-weight:600;">Mevcut Bakiye: <b id="wBakiyeGoster" class="text-gradient">0 ₺</b></p>
                 <div class="input-group"><input type="text" id="wAd" placeholder="Ad Soyad"></div>
                 <div class="input-group"><input type="text" id="wIban" placeholder="TR ile başlayan IBAN"></div>
                 <div class="input-group"><input type="number" id="wTutar" placeholder="Tutar (₺)"></div>
@@ -170,8 +206,8 @@
         <div class="modal-overlay" id="vipModal">
             <div class="modal-card">
                 <div class="close-bar" onclick="closeModal('vipModal')"></div>
-                <h3 style="margin:0 0 10px 0; text-align:center;">VIP Abonelik</h3>
-                <p style="font-size:12px; color:var(--text-muted); text-align:center; margin-bottom:20px;">Abonelik alarak ürün paylaşın, ekibinizi kurun.</p>
+                <h3 style="margin:0 0 10px 0; text-align:center; font-weight:900;" class="text-gradient">VIP Abonelik</h3>
+                <p style="font-size:12px; color:var(--text-muted); text-align:center; margin-bottom:25px; font-weight:600;">Abonelik alarak ürün paylaşın, ekibinizi kurun ve kazanın.</p>
                 <div id="vipPlansContainer"></div>
             </div>
         </div>
@@ -179,9 +215,9 @@
         <div class="modal-overlay" id="storyModal">
             <div class="modal-card">
                 <div class="close-bar" onclick="closeModal('storyModal')"></div>
-                <h3 style="margin:0 0 20px 0; text-align:center;">Hikaye Paylaş</h3>
+                <h3 style="margin:0 0 25px 0; text-align:center; font-weight:900;">Hikaye Paylaş</h3>
                 <div class="input-group"><input type="text" id="sBaslik" placeholder="Başlık (Örn: İndirim!)"></div>
-                <div class="input-group"><input type="file" accept="image/*" onchange="resimOku(this, 'sRes')"><input type="hidden" id="sRes"></div>
+                <div class="input-group"><input type="file" accept="image/*" onchange="resimOku(this, 'sRes')" style="background:var(--card-bg); border:2px dashed var(--border);"><input type="hidden" id="sRes"></div>
                 <button class="btn-primary" onclick="hikayeAt()">Yayına Al</button>
             </div>
         </div>
@@ -189,10 +225,10 @@
         <div class="modal-overlay" id="editProfileModal">
             <div class="modal-card">
                 <div class="close-bar" onclick="closeModal('editProfileModal')"></div>
-                <h3 style="margin:0 0 20px 0; text-align:center;">Ayarlar</h3>
+                <h3 style="margin:0 0 25px 0; text-align:center; font-weight:900;">Ayarlar</h3>
                 
-                <div style="display:flex; justify-content:space-between; align-items:center; padding: 15px 0; border-bottom: 1px solid var(--border); margin-bottom: 15px;">
-                    <b style="font-size: 14px;">Karanlık Mod</b>
+                <div style="display:flex; justify-content:space-between; align-items:center; padding: 20px 0; border-bottom: 1px solid var(--border); margin-bottom: 20px;">
+                    <b style="font-size: 15px; font-weight:800;">Karanlık Mod</b>
                     <label class="toggle-switch">
                         <input type="checkbox" id="darkModeToggle" onchange="toggleDarkMode()">
                         <span class="slider"></span>
@@ -201,16 +237,16 @@
 
                 <div class="input-group"><input type="text" id="eName" placeholder="Ad Soyad"></div>
                 <div class="input-group"><textarea id="eBio" rows="3" placeholder="Biyografi..."></textarea></div>
-                <div class="input-group"><input type="file" accept="image/*" onchange="resimOku(this, 'eAv')"><input type="hidden" id="eAv"></div>
+                <div class="input-group"><input type="file" accept="image/*" onchange="resimOku(this, 'eAv')" style="background:var(--card-bg);"><input type="hidden" id="eAv"></div>
                 <button class="btn-primary" onclick="saveProfile()">Değişiklikleri Kaydet</button>
-                <button class="btn-outline" style="margin-top:10px; color: var(--danger); border-color: var(--danger);" onclick="cikisYap()">Çıkış Yap</button>
+                <button class="btn-outline" style="margin-top:12px; color: var(--danger); border-color: var(--danger);" onclick="cikisYap()">Çıkış Yap</button>
             </div>
         </div>
 
         <div class="header" id="appHeader" style="display:none;">
-            <h2 id="headerTitle">Kapında</h2>
+            <h2 id="headerTitle" class="text-gradient">KAPINDA</h2>
             <div style="display:flex; gap:20px; align-items:center;">
-                <div onclick="switchView('messagesView')" style="font-size:22px; color:var(--text-main); cursor:pointer; transition: 0.2s;">
+                <div onclick="switchView('messagesView')" style="font-size:24px; color:var(--text-main); cursor:pointer; transition: 0.2s;">
                     <i class="fa-brands fa-facebook-messenger"></i>
                 </div>
             </div>
@@ -218,27 +254,26 @@
 
         <div class="view-container">
             <div class="view active" id="authView" style="background:var(--card-bg);">
-                <div style="height:100%; display:flex; flex-direction:column; justify-content:center; padding: 0 35px; margin-top:-55px;">
-                    <div style="text-align:center; margin-bottom:30px;">
-                        <div style="width: 80px; height: 80px; background: var(--primary-grad); border-radius: 24px; margin: 0 auto 15px auto; display:flex; justify-content:center; align-items:center; color:white; font-size:36px; box-shadow: 0 10px 25px rgba(37,99,235,0.3);"><i class="fa-solid fa-bolt"></i></div>
-                        <h1 style="margin:0; font-family:cursive; font-size:38px; color:var(--text-main);">Kapında</h1>
-                        <p style="font-size: 13px; color: var(--text-muted); font-weight: 600; margin-top: 5px;">Premium Sosyal Ticaret</p>
+                <div style="height:100%; display:flex; flex-direction:column; justify-content:center; padding: 0 40px; margin-top:-60px;">
+                    <div style="text-align:center; margin-bottom:40px;">
+                        <h1 class="text-gradient" style="margin:0; font-size:46px; font-weight:900; letter-spacing:-2px;">KAPINDA</h1>
+                        <p style="font-size: 11px; color: var(--text-muted); font-weight: 800; margin-top: 8px; letter-spacing: 3px; text-transform:uppercase;">Sosyal Ticaret</p>
                     </div>
-                    <div style="display:flex; margin-bottom: 20px; background: var(--ig-gray); border-radius: 12px; padding: 4px;">
-                        <div style="flex:1; text-align:center; padding:12px; font-size:13px; font-weight:800; border-radius:10px; cursor:pointer; background:var(--card-bg); color:var(--text-main); box-shadow:0 2px 8px rgba(0,0,0,0.05);" id="tabLoginBtn" onclick="authModSwitch('login')">Giriş Yap</div>
-                        <div style="flex:1; text-align:center; padding:12px; font-size:13px; font-weight:800; border-radius:10px; cursor:pointer; color:var(--text-muted);" id="tabRegisterBtn" onclick="authModSwitch('register')">Kayıt Ol</div>
+                    <div style="display:flex; margin-bottom: 25px; background: var(--ig-gray); border-radius: 16px; padding: 6px;">
+                        <div style="flex:1; text-align:center; padding:14px; font-size:13px; font-weight:800; border-radius:12px; cursor:pointer; background:var(--card-bg); color:var(--text-main); box-shadow:var(--shadow-sm);" id="tabLoginBtn" onclick="authModSwitch('login')">Giriş Yap</div>
+                        <div style="flex:1; text-align:center; padding:14px; font-size:13px; font-weight:800; border-radius:12px; cursor:pointer; color:var(--text-muted);" id="tabRegisterBtn" onclick="authModSwitch('register')">Hesap Aç</div>
                     </div>
                     <div id="loginFormBlock">
                         <div class="input-group"><input type="text" id="lEmail" placeholder="E-posta" value="admin.com"></div>
                         <div class="input-group"><input type="password" id="lPass" placeholder="Şifre" value="1"></div>
-                        <button class="btn-primary" style="margin-top:5px;" onclick="girisYap()">Sisteme Bağlan</button>
+                        <button class="btn-primary" style="margin-top:10px;" onclick="girisYap()">Sisteme Gir</button>
                     </div>
                     <div id="registerFormBlock" style="display:none;">
                         <div class="input-group"><input type="text" id="rName" placeholder="Ad Soyad"></div>
                         <div class="input-group"><input type="email" id="rEmail" placeholder="E-posta"></div>
                         <div class="input-group"><input type="password" id="rPass" placeholder="Şifre"></div>
                         <div class="input-group"><input type="text" id="rSponsor" placeholder="Referans Kodu (İsteğe Bağlı)"></div>
-                        <button class="btn-success" style="margin-top:5px;" onclick="kayitOl()">Hesap Oluştur</button>
+                        <button class="btn-primary" style="margin-top:10px;" onclick="kayitOl()">Hesap Oluştur</button>
                     </div>
                 </div>
             </div>
@@ -251,59 +286,59 @@
             <div class="view" id="profileView">
                 <div class="profile-header">
                     <div style="display:flex; align-items:center;">
-                        <div id="pAvatar" style="width:86px; height:86px; background:var(--ig-gray); border-radius:50%; color:var(--text-main); display:flex; justify-content:center; align-items:center; font-size:32px; font-weight:900; background-size:cover; flex-shrink: 0; border: 2px solid var(--border);">A</div>
+                        <div id="pAvatar" style="width:90px; height:90px; background:var(--ig-gray); border-radius:50%; color:var(--text-main); display:flex; justify-content:center; align-items:center; font-size:32px; font-weight:900; background-size:cover; flex-shrink: 0; border: 1px solid var(--border);">A</div>
                         <div class="profile-stats">
                             <div class="stat-box"><b id="pTeam">0</b><small>Ağım</small></div>
                             <div class="stat-box"><b id="pFollowers">0</b><small>Takipçi</small></div>
-                            <div class="stat-box"><b id="pBalance" style="color:var(--success);">0₺</b><small>Cüzdan</small></div>
+                            <div class="stat-box"><b id="pBalance" class="text-gradient">0₺</b><small>Cüzdan</small></div>
                         </div>
                     </div>
                     
-                    <div style="margin-top: 15px;">
+                    <div style="margin-top: 20px;">
                         <h2 id="pName" style="margin:0; font-size:16px; color:var(--text-main); font-weight:900;">İsim</h2>
                         <div id="pLevelBadge" class="level-badge" onclick="openVipModal()">Seviye 0</div>
-                        <p id="pBioText" style="font-size: 13px; color: var(--text-main); margin-top: 8px; font-weight: 600;"></p>
+                        <p id="pBioText" style="font-size: 13px; color: var(--text-main); margin-top: 10px; font-weight: 500; line-height:1.4;"></p>
                     </div>
 
-                    <div style="display:flex; gap:8px; margin-top:15px;">
+                    <div style="display:flex; gap:10px; margin-top:20px;">
                         <button class="btn-action" onclick="openModal('editProfileModal')">Profili Düzenle</button>
                         <button class="btn-action" onclick="window.open('https://www.shopier.com/kapindavip', '_blank')">Bakiye Yükle</button>
                         <button class="btn-action" id="btnCekYap" style="display:none;" onclick="convertToVoucher()">Çek Üret</button>
                     </div>
 
-                    <div style="display:flex; gap:8px; margin-top:8px;">
-                        <button class="btn-action" id="btnUrunEkle" style="display:none; background:var(--primary); color:white;" onclick="switchView('storeAddProdView')">Ürün Ekle</button>
-                        <button class="btn-action" id="btnHikaye" style="display:none; background:linear-gradient(45deg, #f09433, #dc2743); color:white;" onclick="openModal('storyModal')">Hikaye</button>
-                        <button class="btn-action" id="btnKasa" style="display:none;" onclick="switchView('storePosView')">Kasa</button>
-                        <button class="btn-action" id="btnParaCek" style="display:none; background:var(--success); color:white;" onclick="paraCekModalAc()">Para Çek</button>
+                    <div style="display:flex; gap:10px; margin-top:10px;">
+                        <button class="btn-primary" id="btnUrunEkle" style="display:none;" onclick="switchView('storeAddProdView')">Ürün Ekle</button>
+                        <button class="btn-warning" id="btnHikaye" style="display:none;" onclick="openModal('storyModal')">Hikaye</button>
+                        <button class="btn-action" id="btnKasa" style="display:none; background:var(--text-main); color:var(--bg-color);" onclick="switchView('storePosView')">Kasa</button>
+                        <button class="btn-success" id="btnParaCek" style="display:none;" onclick="paraCekModalAc()">Para Çek</button>
                     </div>
                 </div>
                 
-                <div style="display:flex; justify-content:center; padding:12px; border-bottom: 1px solid var(--border); color:var(--text-main);">
-                    <i class="fa-solid fa-table-cells" style="font-size: 20px;"></i>
+                <div style="display:flex; justify-content:center; padding:15px; border-bottom: 1px solid var(--border); color:var(--text-main);">
+                    <i class="fa-solid fa-table-cells" style="font-size: 22px;"></i>
                 </div>
                 <div id="profileGrid" class="ig-grid"></div>
             </div>
 
             <div class="view" id="otherProfileView">
-                <div style="padding:15px; display:flex; align-items:center; gap:15px; background:var(--glass-bg); backdrop-filter:blur(10px); border-bottom:1px solid var(--border); color:var(--text-main); position:sticky; top:0; z-index:10;">
+                <div style="padding:15px 20px; display:flex; align-items:center; gap:15px; background:var(--glass-bg); backdrop-filter:blur(20px); -webkit-backdrop-filter:blur(20px); border-bottom:1px solid var(--border); color:var(--text-main); position:sticky; top:0; z-index:10;">
                     <i class="fa-solid fa-arrow-left" style="font-size:20px; cursor:pointer;" onclick="switchView('homeView')"></i>
-                    <h3 id="opHeaderName" style="margin:0; font-size: 18px;">Profil</h3>
+                    <h3 id="opHeaderName" style="margin:0; font-size: 18px; font-weight:900;">Profil</h3>
                 </div>
                 <div class="profile-header">
                     <div style="display:flex; align-items:center;">
-                        <div id="opAvatar" style="width:86px; height:86px; background:var(--ig-gray); border-radius:50%; color:var(--text-main); display:flex; justify-content:center; align-items:center; font-size:32px; font-weight:900; background-size:cover; flex-shrink: 0; border: 2px solid var(--border);"></div>
+                        <div id="opAvatar" style="width:90px; height:90px; background:var(--ig-gray); border-radius:50%; color:var(--text-main); display:flex; justify-content:center; align-items:center; font-size:32px; font-weight:900; background-size:cover; flex-shrink: 0; border: 1px solid var(--border);"></div>
                         <div class="profile-stats">
                             <div class="stat-box"><b id="opFollowers">0</b><small>Takipçi</small></div>
                         </div>
                     </div>
                     
-                    <div style="margin-top: 15px;">
+                    <div style="margin-top: 20px;">
                         <h2 id="opName" style="margin:0; font-size:16px; color:var(--text-main); font-weight:900;">İsim</h2>
-                        <p id="opBio" style="font-size: 13px; color: var(--text-main); margin-top: 8px; font-weight: 600;">Bio...</p>
+                        <p id="opBio" style="font-size: 13px; color: var(--text-main); margin-top: 10px; font-weight: 500;">Bio...</p>
                     </div>
 
-                    <div style="display:flex; gap:8px; margin-top:15px;">
+                    <div style="display:flex; gap:10px; margin-top:20px;">
                         <button class="btn-primary" id="btnTakipEt" onclick="toggleTakip()">Takip Et</button>
                         <button class="btn-action" onclick="openChat(viewingEmail)">Mesaj</button>
                     </div>
@@ -312,10 +347,10 @@
             </div>
 
             <div class="view" id="messagesView">
-                <div style="padding:15px; background:var(--glass-bg); backdrop-filter:blur(10px); position:sticky; top:0; z-index:10; border-bottom:1px solid var(--border); color:var(--text-main);">
+                <div style="padding:15px 20px; background:var(--glass-bg); backdrop-filter:blur(20px); -webkit-backdrop-filter:blur(20px); position:sticky; top:0; z-index:10; border-bottom:1px solid var(--border); color:var(--text-main);">
                     <div style="display:flex; align-items:center; gap:15px;">
                         <i class="fa-solid fa-arrow-left" style="font-size:20px; cursor:pointer;" onclick="switchView('homeView')"></i>
-                        <h3 style="margin:0; font-size: 18px;">Mesajlar</h3>
+                        <h3 style="margin:0; font-size: 18px; font-weight:900;">Mesajlar</h3>
                     </div>
                 </div>
                 <div id="messagesContainer" style="padding:0;"></div>
@@ -323,139 +358,135 @@
 
             <div class="view" id="chatDetailView">
                 <div class="chat-container">
-                    <div style="padding:15px; display:flex; align-items:center; gap:15px; background:var(--glass-bg); backdrop-filter:blur(10px); border-bottom:1px solid var(--border); position:sticky; top:0; z-index:10; color:var(--text-main);">
+                    <div style="padding:15px 20px; display:flex; align-items:center; gap:15px; background:var(--glass-bg); backdrop-filter:blur(20px); -webkit-backdrop-filter:blur(20px); border-bottom:1px solid var(--border); position:sticky; top:0; z-index:10; color:var(--text-main);">
                         <i class="fa-solid fa-arrow-left" style="font-size:20px; cursor:pointer;" onclick="switchView('messagesView')"></i>
-                        <div style="display:flex; align-items:center; gap:10px;">
+                        <div style="display:flex; align-items:center; gap:12px;">
                             <div id="chatPartnerAvatar" style="width:36px; height:36px; border-radius:50%; background:var(--ig-gray); background-size:cover;"></div>
-                            <h3 id="chatPartnerName" style="margin:0; font-size:16px;">İsim</h3>
+                            <h3 id="chatPartnerName" style="margin:0; font-size:15px; font-weight:800;">İsim</h3>
                         </div>
                     </div>
                     <div class="chat-messages" id="chatMessagesBox"></div>
                     <div class="chat-input-bar">
-                        <input type="text" id="chatInput" placeholder="Mesaj yaz..." style="flex:1; padding:12px 15px; border-radius:24px; border:1px solid var(--border); background:var(--ig-gray); color:var(--text-main); outline:none;">
-                        <button style="width:40px; height:40px; padding:0; border-radius:50%; background:transparent; color:var(--primary); font-size:22px;" onclick="mesajGonder()"><i class="fa-solid fa-circle-arrow-up"></i></button>
+                        <input type="text" id="chatInput" placeholder="Mesaj yaz..." style="flex:1; padding:14px 18px; border-radius:24px; border:1px solid var(--border); background:var(--ig-gray); color:var(--text-main); outline:none; font-weight:600; font-size:13px;">
+                        <button style="width:45px; height:45px; padding:0; border-radius:50%; background:var(--primary-grad); color:white; font-size:16px;" onclick="mesajGonder()"><i class="fa-solid fa-paper-plane"></i></button>
                     </div>
                 </div>
             </div>
 
             <div class="view" id="cartView">
-                <div style="padding:15px; background:var(--glass-bg); backdrop-filter:blur(10px); position:sticky; top:0; z-index:10; border-bottom:1px solid var(--border); color:var(--text-main);">
-                    <h3 style="margin:0; font-size: 18px; text-align:center;">Sepetim</h3>
+                <div style="padding:15px 20px; background:var(--glass-bg); backdrop-filter:blur(20px); -webkit-backdrop-filter:blur(20px); position:sticky; top:0; z-index:10; border-bottom:1px solid var(--border); color:var(--text-main);">
+                    <h3 style="margin:0; font-size: 18px; text-align:center; font-weight:900;">Sepetim</h3>
                 </div>
-                <div id="cartItemsContainer" style="padding:15px; padding-bottom:200px;"></div>
+                <div id="cartItemsContainer" style="padding:20px; padding-bottom:200px;"></div>
                 
                 <div class="cart-floating-bar">
-                    <div class="input-group" style="margin-bottom:10px;"><input type="text" id="sAdres" placeholder="Açık Teslimat Adresi"></div>
-                    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:15px;">
-                        <span style="font-weight:600; font-size:14px; color:var(--text-muted);">Ödenecek Tutar</span>
-                        <span id="cartTotal" style="font-size:24px; font-weight:900;">0 ₺</span>
+                    <div class="input-group" style="margin-bottom:15px;"><input type="text" id="sAdres" placeholder="Açık Teslimat Adresi" style="background:var(--card-bg);"></div>
+                    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:20px;">
+                        <span style="font-weight:800; font-size:14px; color:var(--text-muted);">Ödenecek Tutar</span>
+                        <span id="cartTotal" style="font-size:26px; font-weight:900; letter-spacing:-0.5px;">0 ₺</span>
                     </div>
                     <button class="btn-primary" onclick="siparisVer()">Güvenli Ödemeyi Tamamla</button>
                 </div>
             </div>
 
-            <div class="view" id="adminDashboardView" style="background:#020617; margin-top:-55px; height:calc(100% + 55px); padding-bottom:100px;">
+            <div class="view" id="adminDashboardView" style="margin-top:-60px; height:calc(100% + 60px); padding-bottom:100px;">
                 <div class="god-header">
-                    <h2 style="margin:0; font-size:22px; color:#f8fafc; font-weight:900; letter-spacing:1px;"><i class="fa-solid fa-bolt" style="color:#38bdf8;"></i> GOD MODE</h2>
-                    <i class="fa-solid fa-power-off" style="color:#ef4444; font-size:20px; cursor:pointer;" onclick="cikisYap()"></i>
+                    <h2 style="margin:0; font-size:20px; color:var(--text-main); font-weight:900; letter-spacing:-0.5px;" class="text-gradient">ADMIN PANEL</h2>
+                    <i class="fa-solid fa-right-from-bracket" style="color:var(--text-muted); font-size:20px; cursor:pointer;" onclick="cikisYap()"></i>
                 </div>
                 
                 <div class="god-tabs">
                     <div class="god-tab active" onclick="godTab('analiz', this)">Analizler</div>
                     <div class="god-tab" onclick="godTab('uyeler', this)">Kullanıcılar</div>
-                    <div class="god-tab" onclick="godTab('odemeler', this)">Talepler <span id="godReqCount" style="background:#ef4444; color:white; border-radius:4px; padding:2px 6px; font-size:10px; margin-left:4px;">0</span></div>
-                    <div class="god-tab" onclick="godTab('saas', this)">SaaS Paket</div>
+                    <div class="god-tab" onclick="godTab('odemeler', this)">Talepler <span id="godReqCount" style="background:var(--danger); color:white; border-radius:6px; padding:2px 8px; font-size:10px; margin-left:6px;">0</span></div>
+                    <div class="god-tab" onclick="godTab('saas', this)">SaaS Abonelik</div>
                 </div>
 
                 <div id="godTabAnaliz">
                     <div class="god-grid">
                         <div class="god-stat-card">
-                            <div class="god-stat-title">TOPLAM CİRO Hacmi</div>
+                            <div class="god-stat-title">TOPLAM CİRO</div>
                             <div class="god-stat-value" id="godTotalCiro">0 ₺</div>
-                            <i class="fa-solid fa-chart-line" style="position:absolute; right:15px; bottom:15px; font-size:32px; color:rgba(56,189,248,0.2);"></i>
                         </div>
                         <div class="god-stat-card">
-                            <div class="god-stat-title">Sistem Net Kârı</div>
-                            <div class="god-stat-value" id="godProfit" style="color:#10b981;">0 ₺</div>
-                            <i class="fa-solid fa-sack-dollar" style="position:absolute; right:15px; bottom:15px; font-size:32px; color:rgba(16,185,129,0.2);"></i>
+                            <div class="god-stat-title">NET KÂR</div>
+                            <div class="god-stat-value text-gradient" id="godProfit">0 ₺</div>
                         </div>
                         <div class="god-stat-card">
-                            <div class="god-stat-title">Esnaf Borcu</div>
-                            <div class="god-stat-value" id="godStoreDebt" style="color:#f59e0b;">0 ₺</div>
-                            <i class="fa-solid fa-hand-holding-dollar" style="position:absolute; right:15px; bottom:15px; font-size:32px; color:rgba(245,158,11,0.2);"></i>
+                            <div class="god-stat-title">ESNAF BORCU</div>
+                            <div class="god-stat-value" id="godStoreDebt">0 ₺</div>
                         </div>
                         <div class="god-stat-card">
-                            <div class="god-stat-title">Platformdaki Ürün</div>
+                            <div class="god-stat-title">TOPLAM ÜRÜN</div>
                             <div class="god-stat-value" id="godTotalProducts">0</div>
-                            <i class="fa-solid fa-boxes-stacked" style="position:absolute; right:15px; bottom:15px; font-size:32px; color:rgba(255,255,255,0.1);"></i>
                         </div>
                     </div>
                     
-                    <div style="padding: 0 15px;">
-                        <h4 style="color:#94a3b8; margin: 10px 0; text-transform:uppercase; font-size:12px;">Kullanıcı Demografisi</h4>
-                        <div style="background:#0f172a; border:1px solid #1e293b; border-radius:12px; padding:15px; display:flex; justify-content:space-around;">
-                            <div style="text-align:center;"><b style="color:#f8fafc; font-size:20px;" id="godCountMusteri">0</b><br><small style="color:#64748b; font-size:10px;">MÜŞTERİ</small></div>
-                            <div style="text-align:center;"><b style="color:#38bdf8; font-size:20px;" id="godCountVip">0</b><br><small style="color:#64748b; font-size:10px;">VIP / PRO</small></div>
-                            <div style="text-align:center;"><b style="color:#fbbf24; font-size:20px;" id="godCountEsnaf">0</b><br><small style="color:#64748b; font-size:10px;">ESNAF</small></div>
+                    <div style="padding: 0 20px;">
+                        <h4 style="color:var(--text-muted); margin: 10px 0 15px 0; text-transform:uppercase; font-size:11px; font-weight:800; letter-spacing:1px;">Kullanıcı Demografisi</h4>
+                        <div style="background:var(--card-bg); border:1px solid var(--border); border-radius:20px; padding:20px; display:flex; justify-content:space-around; box-shadow:var(--shadow-sm);">
+                            <div style="text-align:center;"><b style="color:var(--text-main); font-size:22px;" id="godCountMusteri">0</b><br><small style="color:var(--text-muted); font-size:10px; font-weight:800;">MÜŞTERİ</small></div>
+                            <div style="text-align:center;"><b class="text-gradient" style="font-size:22px;" id="godCountVip">0</b><br><small style="color:var(--text-muted); font-size:10px; font-weight:800;">VIP PRO</small></div>
+                            <div style="text-align:center;"><b style="color:var(--text-main); font-size:22px;" id="godCountEsnaf">0</b><br><small style="color:var(--text-muted); font-size:10px; font-weight:800;">ESNAF</small></div>
                         </div>
                     </div>
                 </div>
 
-                <div id="godTabUyeler" style="display:none; padding: 0 15px;">
-                    <input type="text" id="adminUserSearch" placeholder="Üye ID, İsim veya E-posta ara..." onkeyup="adminUsersDraw()" style="width:100%; padding:14px; border-radius:12px; border:1px solid #1e293b; background:#0f172a; color:#f8fafc; margin-bottom:15px; outline:none; font-family:inherit;">
+                <div id="godTabUyeler" style="display:none; padding: 0 20px;">
+                    <input type="text" id="adminUserSearch" placeholder="Üye ID, İsim ara..." onkeyup="adminUsersDraw()" style="width:100%; padding:16px; border-radius:16px; border:1px solid var(--border); background:var(--card-bg); color:var(--text-main); margin-bottom:15px; outline:none; font-family:inherit; font-weight:600; box-shadow:var(--shadow-sm);">
                     <div id="adminUserList"></div>
                 </div>
 
-                <div id="godTabOdemeler" style="display:none; padding: 0 15px;">
+                <div id="godTabOdemeler" style="display:none; padding: 0 20px;">
                     <div id="adminWithdrawList"></div>
                 </div>
 
-                <div id="godTabSaas" style="display:none; padding: 0 15px;">
-                    <div style="background:#0f172a; padding:20px; border-radius:16px; border:1px solid #1e293b; margin-bottom:15px;">
-                        <h4 style="margin:0 0 15px 0; color:#f8fafc;">Aktif Seviye Paketleri</h4>
+                <div id="godTabSaas" style="display:none; padding: 0 20px;">
+                    <div style="background:var(--card-bg); padding:25px; border-radius:20px; border:1px solid var(--border); margin-bottom:15px; box-shadow:var(--shadow-sm);">
+                        <h4 style="margin:0 0 20px 0; color:var(--text-main); font-weight:900;">Mevcut Paketler</h4>
                         <div id="adminPlansList"></div>
                     </div>
-                    <div style="background:#0f172a; padding:20px; border-radius:16px; border:1px solid #1e293b;">
-                        <h4 style="margin:0 0 15px 0; color:#38bdf8;">Yeni Abonelik Tipi Yarat</h4>
-                        <input type="text" id="newPlanLevel" placeholder="Seviye No (1, 2, 3..)" style="width:100%; padding:12px; border-radius:8px; border:1px solid #1e293b; background:#020617; color:white; margin-bottom:10px;">
-                        <input type="text" id="newPlanName" placeholder="Paket Adı" style="width:100%; padding:12px; border-radius:8px; border:1px solid #1e293b; background:#020617; color:white; margin-bottom:10px;">
-                        <input type="number" id="newPlanPrice" placeholder="Satış Fiyatı (₺)" style="width:100%; padding:12px; border-radius:8px; border:1px solid #1e293b; background:#020617; color:white; margin-bottom:10px;">
-                        <input type="number" id="newPlanRate" placeholder="Kullanıcı Komisyon Yüzdesi (Örn: 15)" style="width:100%; padding:12px; border-radius:8px; border:1px solid #1e293b; background:#020617; color:white; margin-bottom:10px;">
-                        <button class="btn-primary" style="background:#38bdf8; color:#020617;" onclick="adminAddPlan()">Sisteme Ekle</button>
+                    <div style="background:var(--card-bg); padding:25px; border-radius:20px; border:1px solid var(--border); box-shadow:var(--shadow-sm);">
+                        <h4 style="margin:0 0 20px 0; color:var(--text-main); font-weight:900;" class="text-gradient">Abonelik Tipi Yarat</h4>
+                        <input type="text" id="newPlanLevel" placeholder="Seviye No (1, 2, 3..)" style="width:100%; padding:14px; border-radius:12px; border:1px solid var(--border); background:var(--ig-gray); color:var(--text-main); margin-bottom:12px; font-weight:600;">
+                        <input type="text" id="newPlanName" placeholder="Paket Adı" style="width:100%; padding:14px; border-radius:12px; border:1px solid var(--border); background:var(--ig-gray); color:var(--text-main); margin-bottom:12px; font-weight:600;">
+                        <input type="number" id="newPlanPrice" placeholder="Satış Fiyatı (₺)" style="width:100%; padding:14px; border-radius:12px; border:1px solid var(--border); background:var(--ig-gray); color:var(--text-main); margin-bottom:12px; font-weight:600;">
+                        <input type="number" id="newPlanRate" placeholder="Kullanıcı Komisyon Yüzdesi (Örn: 15)" style="width:100%; padding:14px; border-radius:12px; border:1px solid var(--border); background:var(--ig-gray); color:var(--text-main); margin-bottom:15px; font-weight:600;">
+                        <button class="btn-primary" onclick="adminAddPlan()">Sisteme Ekle</button>
                     </div>
                 </div>
             </div>
 
             <div class="view" id="storeAddProdView">
-                <div style="padding:15px; display:flex; align-items:center; gap:15px; background:var(--glass-bg); backdrop-filter:blur(10px); border-bottom:1px solid var(--border); color:var(--text-main);">
+                <div style="padding:15px 20px; display:flex; align-items:center; gap:15px; background:var(--glass-bg); backdrop-filter:blur(20px); -webkit-backdrop-filter:blur(20px); border-bottom:1px solid var(--border); color:var(--text-main); position:sticky; top:0; z-index:10;">
                     <i class="fa-solid fa-arrow-left" style="font-size:20px; cursor:pointer;" onclick="switchView('profileView')"></i>
-                    <h3 style="margin:0; font-size: 18px;">Yeni Gönderi</h3>
+                    <h3 style="margin:0; font-size: 18px; font-weight:900;">Yeni Gönderi</h3>
                 </div>
-                <div style="padding:20px;">
-                    <div class="input-group"><input type="file" accept="image/*" onchange="resimOku(this, 'upResBase64')" style="background:var(--card-bg); border:2px dashed var(--text-muted);"><input type="hidden" id="upResBase64"></div>
+                <div style="padding:25px;">
+                    <div class="input-group"><input type="file" accept="image/*" onchange="resimOku(this, 'upResBase64')" style="background:var(--card-bg); border:2px dashed var(--text-muted); padding:30px 15px; text-align:center;"><input type="hidden" id="upResBase64"></div>
                     <div class="input-group"><input type="text" id="upAd" placeholder="Açıklama / Ürün Adı"></div>
                     <div class="input-group"><input type="number" id="upFiyat" placeholder="Fiyat (₺)"></div>
-                    <button class="btn-primary" onclick="urunKaydet()">Paylaş</button>
+                    <button class="btn-primary" onclick="urunKaydet()" style="margin-top:10px;">Paylaş</button>
                 </div>
             </div>
 
             <div class="view" id="storePosView">
-                <div style="padding:15px; display:flex; align-items:center; gap:15px; background:var(--glass-bg); backdrop-filter:blur(10px); border-bottom:1px solid var(--border); color:var(--text-main);">
+                <div style="padding:15px 20px; display:flex; align-items:center; gap:15px; background:var(--glass-bg); backdrop-filter:blur(20px); -webkit-backdrop-filter:blur(20px); border-bottom:1px solid var(--border); color:var(--text-main); position:sticky; top:0; z-index:10;">
                     <i class="fa-solid fa-arrow-left" style="font-size:20px; cursor:pointer;" onclick="switchView('profileView')"></i>
-                    <h3 style="margin:0; font-size: 18px;">Kasa</h3>
+                    <h3 style="margin:0; font-size: 18px; font-weight:900;">Kasa</h3>
                 </div>
-                <div style="padding:20px;">
-                    <div style="background:linear-gradient(135deg, #10b981, #059669); color:white; border-radius:16px; padding:25px; margin-bottom:15px; text-align:center; box-shadow:0 10px 20px rgba(16,185,129,0.3);">
-                        <p style="margin:0; font-size:12px; font-weight:800; opacity:0.9;">ALACAK BAKİYE</p>
-                        <h1 id="sKasaBakiye" style="margin:10px 0 0 0; font-size:42px;">0 ₺</h1>
+                <div style="padding:25px;">
+                    <div style="background:var(--primary-grad); color:white; border-radius:24px; padding:30px; margin-bottom:15px; text-align:center; box-shadow:var(--shadow-md);">
+                        <p style="margin:0; font-size:11px; font-weight:800; opacity:0.9; letter-spacing:1px; text-transform:uppercase;">Alacak Bakiye</p>
+                        <h1 id="sKasaBakiye" style="margin:10px 0 0 0; font-size:46px; font-weight:900; letter-spacing:-1px;">0 ₺</h1>
                     </div>
-                    <button class="btn-success" style="margin-bottom:25px; padding:16px; font-size:16px;" onclick="document.getElementById('wBakiyeGoster').innerText = appData.users[aktifKullaniciEmail].bakiye + ' ₺'; openModal('withdrawModal');">IBAN'a Aktar</button>
+                    <button class="btn-success" style="margin-bottom:30px; padding:18px; font-size:16px;" onclick="document.getElementById('wBakiyeGoster').innerText = appData.users[aktifKullaniciEmail].bakiye + ' ₺'; openModal('withdrawModal');">Bankaya Aktar</button>
 
-                    <div style="background:var(--card-bg); padding:25px; border-radius:20px; border:1px solid var(--border); text-align:center; color:var(--text-main); box-shadow:0 4px 15px rgba(0,0,0,0.02);">
-                        <div style="width:60px; height:60px; background:rgba(245,158,11,0.1); color:var(--warning); border-radius:50%; display:flex; justify-content:center; align-items:center; font-size:24px; margin:0 auto 15px auto;"><i class="fa-solid fa-ticket"></i></div>
-                        <h4 style="margin:0 0 15px 0; font-size:18px;">Hediye Çeki Bozdur</h4>
-                        <div class="input-group"><input type="text" id="bozdurKod" placeholder="CEK-XXXX" style="text-align:center; font-weight:900; font-size:20px; letter-spacing: 2px;"></div>
-                        <button class="btn-warning" style="padding:14px;" onclick="cekBozdur()">Bozdur ve Kasaya Ekle</button>
+                    <div style="background:var(--card-bg); padding:30px 25px; border-radius:24px; border:1px solid var(--border); text-align:center; color:var(--text-main); box-shadow:var(--shadow-sm);">
+                        <div style="width:64px; height:64px; background:var(--ig-gray); color:var(--primary); border-radius:50%; display:flex; justify-content:center; align-items:center; font-size:24px; margin:0 auto 20px auto;"><i class="fa-solid fa-ticket"></i></div>
+                        <h4 style="margin:0 0 20px 0; font-size:18px; font-weight:900;">Hediye Çeki Bozdur</h4>
+                        <div class="input-group"><input type="text" id="bozdurKod" placeholder="CEK-XXXX" style="text-align:center; font-weight:900; font-size:22px; letter-spacing: 3px; background:var(--bg-color);"></div>
+                        <button class="btn-primary" style="padding:16px;" onclick="cekBozdur()">Kodu Onayla</button>
                     </div>
                 </div>
             </div>
@@ -475,9 +506,9 @@
         const firebaseConfig = { apiKey: "AIzaSyBWSlha9fD_q3zHXaRJ3ocJdtALqkrW-LU", authDomain: "kapinda-8d3ef.firebaseapp.com", projectId: "kapinda-8d3ef", storageBucket: "kapinda-8d3ef.firebasestorage.app", messagingSenderId: "246456710881", appId: "1:246456710881:web:c2a7bdb5e3b9065d1829a0" };
         let db = null;
         
-        let appData = { users: {}, products: [], stats: {totalCiro:0, netKar:0}, plans: {1:{fiyat:500, oran:0.10, ad:'Seviye 1 VIP'}, 2:{fiyat:1000, oran:0.20, ad:'Seviye 2 Elite'}}, vouchers: [], stories: [], withdrawals: [], chats: {} };
+        let appData = { users: {}, products: [], stats: {totalCiro:0, netKar:0}, plans: {1:{fiyat:500, oran:0.07, ad:'Seviye 1 Başlangıç'}, 2:{fiyat:1000, oran:0.10, ad:'Seviye 2 Bronz'}, 3:{fiyat:1500, oran:0.15, ad:'Seviye 3 Gümüş'}, 4:{fiyat:2000, oran:0.18, ad:'Seviye 4 Altın'}}, vouchers: [], stories: [], withdrawals: [], chats: {} };
         let aktifKullaniciEmail = null; let sepet = []; let currentView = 'authView'; let storyTimer = null; 
-        let viewingEmail = null; let activeChatEmail = null; let clickCount = 0;
+        let viewingEmail = null; let activeChatEmail = null; let isFirebaseLoaded = false; let fallbackTimer = null;
 
         window.onload = () => { 
             checkTheme();
@@ -486,11 +517,25 @@
                 db = firebase.firestore();
                 let saved = localStorage.getItem('kapinda_session'); if(saved) aktifKullaniciEmail = saved;
                 listenToCloud(); 
-            } catch(e) { console.error(e); showToast("Bağlantı Hatası!", true); }
-            setTimeout(()=> { let s = document.getElementById('serverLoading'); if(s) s.style.opacity = '0'; setTimeout(()=> { if(s) s.style.display = 'none'; }, 500); }, 1000); 
+                
+                // Fallback timer: Eğer 3 saniye içinde veri gelmezse, ekranı zorla aç ki kullanıcı sonsuz beklemesin.
+                fallbackTimer = setTimeout(()=>{ hideLoadingScreen(); }, 3000);
+            } catch(e) { 
+                console.error(e); 
+                showToast("Sunucu bağlantısı sağlanamadı. Lütfen yenileyin.", true); 
+                hideLoadingScreen();
+            }
         };
 
-        function zorlaAc() { clickCount++; if(clickCount >= 3) { let s = document.getElementById('serverLoading'); if(s) s.style.display = 'none'; if(typeof listenToCloud === 'function') listenToCloud(); } }
+        function hideLoadingScreen() {
+            if(isFirebaseLoaded) return;
+            isFirebaseLoaded = true;
+            clearTimeout(fallbackTimer);
+            let s = document.getElementById('serverLoading'); 
+            if(s) { s.style.opacity = '0'; setTimeout(()=> { s.style.display = 'none'; }, 600); }
+        }
+
+        function zorlaAc() { hideLoadingScreen(); if(typeof listenToCloud === 'function' && !db) { try{ firebase.initializeApp(firebaseConfig); db = firebase.firestore(); listenToCloud(); }catch(e){} } }
 
         function checkTheme() {
             let isDark = localStorage.getItem('kapinda_dark') === 'true';
@@ -504,6 +549,7 @@
 
         function listenToCloud() {
             db.collection('kapinda').doc('users').onSnapshot(doc => { 
+                hideLoadingScreen(); // Veri geldiği an yükleme ekranı kalkar.
                 if(doc.exists) { 
                     appData.users = doc.data(); 
                     if(aktifKullaniciEmail && appData.users[aktifKullaniciEmail] && currentView === 'authView') {
@@ -533,15 +579,17 @@
             document.getElementById('nav-cart').style.display = (u.rol === 'admin' ? 'none' : 'block');
             document.getElementById('nav-admin').style.display = (u.rol === 'admin' ? 'block' : 'none');
             document.getElementById('nav-profile').style.display = 'block';
-            if(u.avatar) { document.getElementById('navProfilePic').style.backgroundImage = `url('${u.avatar}')`; document.getElementById('navProfilePic').style.border = '1px solid var(--border)';}
-            else { document.getElementById('navProfilePic').innerText = u.isim[0]; document.getElementById('navProfilePic').style.display="flex"; document.getElementById('navProfilePic').style.justifyContent="center"; document.getElementById('navProfilePic').style.alignItems="center"; document.getElementById('navProfilePic').style.fontWeight="bold";}
+            if(u.avatar) { document.getElementById('navProfilePic').style.backgroundImage = `url('${u.avatar}')`; document.getElementById('navProfilePic').style.border = 'none'; document.getElementById('navProfilePic').innerText='';}
+            else { document.getElementById('navProfilePic').innerText = u.isim[0]; document.getElementById('navProfilePic').style.display="flex"; document.getElementById('navProfilePic').style.justifyContent="center"; document.getElementById('navProfilePic').style.alignItems="center"; document.getElementById('navProfilePic').style.fontWeight="900"; document.getElementById('navProfilePic').style.fontSize="12px"; document.getElementById('navProfilePic').style.color="var(--text-main)";}
         }
 
         function authModSwitch(mod) {
             document.getElementById('tabLoginBtn').style.background = mod==='login'?'var(--card-bg)':'transparent';
             document.getElementById('tabLoginBtn').style.color = mod==='login'?'var(--text-main)':'var(--text-muted)';
+            document.getElementById('tabLoginBtn').style.boxShadow = mod==='login'?'var(--shadow-sm)':'none';
             document.getElementById('tabRegisterBtn').style.background = mod==='register'?'var(--card-bg)':'transparent';
             document.getElementById('tabRegisterBtn').style.color = mod==='register'?'var(--text-main)':'var(--text-muted)';
+            document.getElementById('tabRegisterBtn').style.boxShadow = mod==='register'?'var(--shadow-sm)':'none';
             document.getElementById('loginFormBlock').style.display = mod==='login'?'block':'none';
             document.getElementById('registerFormBlock').style.display = mod==='register'?'block':'none';
         }
@@ -595,12 +643,12 @@
             
             let badge = document.getElementById('pLevelBadge');
             if(u.rol==='store' || u.rol==='admin') { badge.style.display='none'; }
-            else { badge.style.display='inline-flex'; badge.innerText = "Seviye " + (u.seviye||"0"); badge.className = (!u.seviye || u.seviye==='0') ? 'level-badge' : 'level-badge vip'; }
+            else { badge.style.display='inline-flex'; badge.innerText = "SEVİYE " + (u.seviye||"0"); badge.className = (!u.seviye || u.seviye==='0') ? 'level-badge' : 'level-badge vip'; }
             
             let av = document.getElementById('pAvatar');
-            if(u.avatar) { av.style.backgroundImage = `url('${u.avatar}')`; av.innerText=''; } else { av.style.backgroundImage='none'; av.innerText=u.isim[0]; }
+            if(u.avatar) { av.style.backgroundImage = `url('${u.avatar}')`; av.innerText=''; av.style.border='none';} else { av.style.backgroundImage='none'; av.innerText=u.isim[0]; }
             
-            if(u.avatar) { document.getElementById('navProfilePic').style.backgroundImage = `url('${u.avatar}')`; document.getElementById('navProfilePic').style.border = '1px solid var(--border)'; document.getElementById('navProfilePic').innerText='';}
+            if(u.avatar) { document.getElementById('navProfilePic').style.backgroundImage = `url('${u.avatar}')`; document.getElementById('navProfilePic').style.border = 'none'; document.getElementById('navProfilePic').innerText='';}
 
             let ekip = 0; let takipci = 0;
             for(let k in appData.users) { 
@@ -609,10 +657,10 @@
             }
             safeText('pFollowers', takipci); safeText('pTeam', ekip);
 
-            safeDisplay('btnUrunEkle', u.rol==='store'?'block':'none');
-            safeDisplay('btnHikaye', u.rol==='store'?'block':'none');
-            safeDisplay('btnKasa', u.rol==='store'?'block':'none');
-            safeDisplay('btnParaCek', (u.rol==='store' || u.rol==='promoter')?'block':'none');
+            safeDisplay('btnUrunEkle', u.rol==='store'?'flex':'none');
+            safeDisplay('btnHikaye', u.rol==='store'?'flex':'none');
+            safeDisplay('btnKasa', u.rol==='store'?'flex':'none');
+            safeDisplay('btnParaCek', (u.rol==='store' || u.rol==='promoter')?'flex':'none');
             safeDisplay('btnCekYap', 'none');
 
             if(currentView === 'homeView') kesfetCiz();
@@ -653,11 +701,11 @@
                 let cAv = s.avatar ? `background-image:url('${s.avatar}'); color:transparent;` : '';
                 h += `<div class="comment-item">
                         <div class="comment-av" style="${cAv}">${s.isim[0]}</div>
-                        <div class="comment-body"><b>${s.isim}</b><br>${c.text}</div>
+                        <div class="comment-body"><b style="font-weight:800;">${s.isim}</b><br><span style="margin-top:4px; display:block;">${c.text}</span></div>
                       </div>`;
             });
             let clc = document.getElementById('commentsListContainer');
-            clc.innerHTML = h || '<p style="text-align:center; font-size:12px; color:var(--text-muted);">Henüz yorum yok. İlk sen yaz!</p>';
+            clc.innerHTML = h || '<p style="text-align:center; font-size:13px; color:var(--text-muted); font-weight:600; margin-top:20px;">Henüz yorum yok. İlk sen yaz!</p>';
             setTimeout(()=>{ clc.scrollTop = clc.scrollHeight; }, 100);
         }
 
@@ -689,7 +737,7 @@
                 
                 let btnHtml = '';
                 if(cu.rol === 'store') btnHtml = '';
-                else if(cu.rol === 'promoter') btnHtml = `<i class="fa-solid fa-link" style="font-size:20px; cursor:pointer; color:var(--text-muted);" onclick="linkUret('${p.id}')"></i>`;
+                else if(cu.rol === 'promoter') btnHtml = `<i class="fa-solid fa-link" style="font-size:22px; cursor:pointer; color:var(--text-muted);" onclick="linkUret('${p.id}')"></i>`;
                 
                 let isLiked = p.likes && p.likes.includes(aktifKullaniciEmail);
                 let heartIcon = isLiked ? `<i class="fa-solid fa-heart" style="color:var(--danger);" onclick="toggleLike('${p.id}')"></i>` : `<i class="fa-regular fa-heart" onclick="toggleLike('${p.id}')"></i>`;
@@ -699,9 +747,9 @@
                 pH += `
                 <div class="post-card">
                     <div class="post-header" onclick="openOtherProfile('${p.storeEmail}')">
-                        <div style="display:flex; align-items:center; gap:10px;">
+                        <div style="display:flex; align-items:center; gap:12px;">
                             <div class="post-avatar" style="${av}">${sat.isim[0]}</div>
-                            <b style="font-size:14px;">${sat.isim} ${tik}</b>
+                            <b style="font-size:14px; font-weight:800;">${sat.isim} ${tik}</b>
                         </div>
                         <i class="fa-solid fa-ellipsis" style="color:var(--text-muted);"></i>
                     </div>
@@ -716,15 +764,15 @@
                     </div>
                     <div class="post-content">
                         ${likeCount > 0 ? `<span class="like-count">${likeCount} beğenme</span>` : ''}
-                        <b style="font-size:15px; margin-right:5px;">${p.fiyat} ₺</b><span style="font-size:13px;"><b style="cursor:pointer;" onclick="openOtherProfile('${p.storeEmail}')">${sat.isim}</b> ${p.ad}</span>
-                        ${commentCount > 0 ? `<div style="color:var(--text-muted); font-size:13px; margin-top:5px; cursor:pointer;" onclick="yorumPenceresi('${p.id}')">${commentCount} yorumun tümünü gör</div>` : ''}
+                        <b style="font-size:15px; margin-right:6px; font-weight:900;">${p.fiyat} ₺</b><span style="font-size:13px; font-weight:600;"><b style="cursor:pointer; font-weight:800;" onclick="openOtherProfile('${p.storeEmail}')">${sat.isim}</b> ${p.ad}</span>
+                        ${commentCount > 0 ? `<div style="color:var(--text-muted); font-size:13px; font-weight:600; margin-top:6px; cursor:pointer;" onclick="yorumPenceresi('${p.id}')">${commentCount} yorumun tümünü gör</div>` : ''}
                     </div>
                 </div>`;
             });
             document.getElementById('exploreFeed').innerHTML = `
                 <div style="padding:10px 15px;">
-                    <input type="text" id="aramaBox" placeholder="Kişi veya ürün ara..." onkeyup="kesfetCiz()" style="width:100%; padding:12px 15px; border-radius:12px; border:none; background:var(--ig-gray); color:var(--text-main); font-family:inherit; font-weight:600; outline:none;">
-                </div>` + (pH || '<p style="text-align:center; margin-top:30px; color:var(--text-muted);">Akış yenileniyor...</p>');
+                    <input type="text" id="aramaBox" placeholder="Keşfet..." onkeyup="kesfetCiz()" style="width:100%; padding:14px 18px; border-radius:14px; border:1px solid var(--border); background:var(--card-bg); color:var(--text-main); font-family:inherit; font-weight:600; outline:none; box-shadow:var(--shadow-sm);">
+                </div>` + (pH || '<p style="text-align:center; margin-top:40px; color:var(--text-muted); font-weight:600;">Akış yenileniyor...</p>');
 
             let sH = ''; let simdi = Date.now();
             appData.stories.forEach((s, i) => {
@@ -737,7 +785,7 @@
                     </div>`;
                 }
             });
-            document.getElementById('storiesFeed').innerHTML = sH || '<p style="font-size:12px; color:var(--text-muted); margin:auto;">Şu an hikaye yok</p>';
+            document.getElementById('storiesFeed').innerHTML = sH || '<p style="font-size:12px; font-weight:800; color:var(--text-muted); margin:auto;">Şu an hikaye yok</p>';
         }
 
         function linkUret(pId) { showToast("Satış Linkiniz Panoya Kopyalandı!"); }
@@ -747,12 +795,12 @@
             let h = ''; let t = 0;
             sepet.forEach((x,i) => {
                 t+=x.fiyat;
-                h += `<div style="display:flex; justify-content:space-between; padding:15px 0; border-bottom:1px solid var(--border);">
-                        <div><b style="font-size:14px;">${x.ad}</b><br><small style="color:var(--text-muted);">${appData.users[x.satici]?appData.users[x.satici].isim:'Mağaza'}</small></div>
-                        <div style="text-align:right;"><b style="font-size:16px;">${x.fiyat} ₺</b></div>
+                h += `<div style="display:flex; justify-content:space-between; align-items:center; padding:18px 0; border-bottom:1px solid var(--border);">
+                        <div><b style="font-size:15px; font-weight:800;">${x.ad}</b><br><small style="color:var(--text-muted); font-weight:600; margin-top:4px; display:block;">${appData.users[x.satici]?appData.users[x.satici].isim:'Mağaza'}</small></div>
+                        <div style="text-align:right;"><b style="font-size:18px; font-weight:900;">${x.fiyat} ₺</b></div>
                       </div>`;
             });
-            document.getElementById('cartItemsContainer').innerHTML = h || '<p style="text-align:center; color:var(--text-muted); margin-top:40px;">Sepetin boş.</p>';
+            document.getElementById('cartItemsContainer').innerHTML = h || '<p style="text-align:center; color:var(--text-muted); font-weight:600; margin-top:50px;">Sepetin boş.</p>';
             safeText('cartTotal', t + " ₺");
         }
 
@@ -764,7 +812,7 @@
             sepet.forEach(item => {
                 let f = item.fiyat; let ePayi = f * 0.80; let sMarj = f * 0.20; let vPay = 0;
                 if(u.sponsor && appData.users[u.sponsor] && appData.users[u.sponsor].rol==='promoter') {
-                    let lvl = appData.users[u.sponsor].seviye; let oran = appData.plans[lvl] ? appData.plans[lvl].oran : 0.10;
+                    let lvl = appData.users[u.sponsor].seviye; let oran = appData.plans[lvl] ? appData.plans[lvl].oran : 0.07;
                     vPay = f * oran; appData.users[u.sponsor].bakiye += vPay;
                 }
                 if(appData.users[item.satici]) appData.users[item.satici].bakiye += ePayi;
@@ -777,7 +825,7 @@
         function profilGridCiz(u, containerId, userEmail) {
             let h='';
             if(u.rol==='store') { appData.products.forEach(p=>{ if(p.storeEmail===userEmail) h+=`<div class="ig-grid-item" style="background-image:url('${p.resim}')"></div>`; }); }
-            else if(u.rol==='promoter') { appData.vouchers.forEach(v=>{ if(v.owner===userEmail && v.status==='active') h+=`<div style="background:linear-gradient(135deg, #10b981, #059669); color:white; display:flex; flex-direction:column; justify-content:center; align-items:center; aspect-ratio:1/1;"><p style="margin:0; font-size:9px; opacity:0.8;">ÇEK</p><b style="font-size:16px; margin:2px 0;">${v.amount}₺</b><p style="margin:0; font-size:10px; font-weight:900;">${v.code}</p></div>`; }); }
+            else if(u.rol==='promoter') { appData.vouchers.forEach(v=>{ if(v.owner===userEmail && v.status==='active') h+=`<div style="background:var(--primary-grad); color:white; display:flex; flex-direction:column; justify-content:center; align-items:center; aspect-ratio:1/1;"><p style="margin:0; font-size:10px; opacity:0.8; font-weight:800; letter-spacing:1px;">ÇEK</p><b style="font-size:18px; margin:4px 0; font-weight:900;">${v.amount}₺</b><p style="margin:0; font-size:10px; font-weight:900; letter-spacing:0.5px;">${v.code}</p></div>`; }); }
             let pg = document.getElementById(containerId); if(pg) pg.innerHTML = h;
         }
 
@@ -826,10 +874,10 @@
                     let u = appData.users[otherEmail]; if(!u) continue;
                     let msgs = appData.chats[cId]; let lastMsg = msgs[msgs.length-1].m;
                     let av = u.avatar ? `background-image:url('${u.avatar}'); color:transparent; border:none;` : '';
-                    h += `<div style="display:flex; align-items:center; gap:15px; padding:15px; cursor:pointer;" onclick="openChat('${otherEmail}')"><div class="post-avatar" style="${av}; width:50px; height:50px; flex-shrink:0;">${u.isim[0]}</div><div style="flex:1; overflow:hidden;"><b style="font-size:14px; color:var(--text-main);">${u.isim}</b><br><span style="font-size:13px; color:var(--text-muted); white-space:nowrap; text-overflow:ellipsis; display:block; overflow:hidden;">${lastMsg}</span></div></div>`;
+                    h += `<div style="display:flex; align-items:center; gap:15px; padding:15px 20px; cursor:pointer; border-bottom:1px solid var(--border);" onclick="openChat('${otherEmail}')"><div class="post-avatar" style="${av}; width:52px; height:52px; flex-shrink:0;">${u.isim[0]}</div><div style="flex:1; overflow:hidden;"><b style="font-size:15px; color:var(--text-main); font-weight:800;">${u.isim}</b><br><span style="font-size:13px; color:var(--text-muted); font-weight:600; white-space:nowrap; text-overflow:ellipsis; display:block; overflow:hidden; margin-top:4px;">${lastMsg}</span></div></div>`;
                 }
             }
-            document.getElementById('messagesContainer').innerHTML = h || '<p style="text-align:center; color:var(--text-muted); margin-top:30px;">Henüz mesajın yok.</p>';
+            document.getElementById('messagesContainer').innerHTML = h || '<p style="text-align:center; color:var(--text-muted); font-weight:600; margin-top:40px;">Henüz mesajın yok.</p>';
         }
 
         function sohbetCiz() {
@@ -837,8 +885,8 @@
             let cId = [aktifKullaniciEmail, activeChatEmail].sort().join('_'); let msgs = appData.chats[cId] || []; let h = '';
             msgs.forEach(m => {
                 let isMe = m.s === aktifKullaniciEmail;
-                if(isMe) h += `<div style="display:flex; justify-content:flex-end; margin-bottom:10px;"><div style="background:var(--primary-grad); color:white; padding:12px 16px; border-radius:20px 20px 4px 20px; max-width:75%; font-size:14px;">${m.m}</div></div>`;
-                else h += `<div style="display:flex; justify-content:flex-start; margin-bottom:10px;"><div style="background:var(--ig-gray); color:var(--text-main); padding:12px 16px; border-radius:20px 20px 20px 4px; max-width:75%; font-size:14px;">${m.m}</div></div>`;
+                if(isMe) h += `<div style="display:flex; justify-content:flex-end; margin-bottom:12px;"><div style="background:var(--primary-grad); color:white; padding:14px 18px; border-radius:24px 24px 6px 24px; max-width:75%; font-size:14px; font-weight:600; box-shadow:var(--shadow-sm);">${m.m}</div></div>`;
+                else h += `<div style="display:flex; justify-content:flex-start; margin-bottom:12px;"><div style="background:var(--card-bg); border:1px solid var(--border); color:var(--text-main); padding:14px 18px; border-radius:24px 24px 24px 6px; max-width:75%; font-size:14px; font-weight:600; box-shadow:var(--shadow-sm);">${m.m}</div></div>`;
             });
             let box = document.getElementById('chatMessagesBox'); box.innerHTML = h; box.scrollTop = box.scrollHeight;
         }
@@ -867,7 +915,7 @@
             let h=''; let keys = Object.keys(appData.plans).sort((a,b)=>parseInt(a)-parseInt(b));
             for(let k of keys) { 
                 let p = appData.plans[k]; 
-                h+=`<div style="padding:15px; border:1px solid var(--border); border-radius:12px; margin-bottom:10px; display:flex; justify-content:space-between; align-items:center; background:var(--bg-color);"><div><b style="color:var(--text-main); font-size:15px;">${p.ad}</b><p style="margin:4px 0 0 0; font-size:12px; color:var(--text-muted); font-weight:600;">%${p.oran*100} Komisyon</p></div><button class="btn-primary" style="width:auto; padding:8px 15px;" onclick="buyVip('${k}',${p.fiyat})">${p.fiyat} ₺</button></div>`; 
+                h+=`<div style="padding:18px; border:1px solid var(--border); border-radius:16px; margin-bottom:12px; display:flex; justify-content:space-between; align-items:center; background:var(--ig-gray);"><div><b style="color:var(--text-main); font-size:15px; font-weight:900;">${p.ad}</b><p style="margin:6px 0 0 0; font-size:12px; color:var(--text-muted); font-weight:800; letter-spacing:0.5px;">%${p.oran*100} KOMİSYON</p></div><button class="btn-primary" style="width:auto; padding:10px 18px;" onclick="buyVip('${k}',${p.fiyat})">${p.fiyat} ₺</button></div>`; 
             }
             document.getElementById('vipPlansContainer').innerHTML = h; openModal('vipModal');
         }
@@ -936,12 +984,12 @@
             for(let k in appData.users) {
                 let u=appData.users[k];
                 if(q && !k.toLowerCase().includes(q) && !u.isim.toLowerCase().includes(q)) continue;
-                let rColor = u.rol==='store' ? '#fbbf24' : (u.rol==='promoter' ? '#38bdf8' : '#94a3b8');
+                let rColor = u.rol==='store' ? 'var(--warning)' : (u.rol==='promoter' ? 'var(--blue-tick)' : 'var(--text-muted)');
                 h+=`<div class="god-list-item">
-                    <div><b style="font-size:15px;">${u.isim}</b> <small style="background:rgba(255,255,255,0.1); padding:2px 6px; border-radius:4px; color:${rColor}; font-weight:800; font-size:10px;">${u.rol.toUpperCase()}</small><p style="margin:4px 0 0 0; font-size:11px; color:#64748b;">${k}</p><b style="font-size:14px; color:#10b981; display:block; margin-top:4px;">${u.bakiye} ₺</b></div>
+                    <div><b style="font-size:15px; font-weight:900;">${u.isim}</b> <small style="background:var(--bg-color); padding:4px 8px; border-radius:6px; color:${rColor}; font-weight:800; font-size:10px; margin-left:5px;">${u.rol.toUpperCase()}</small><p style="margin:6px 0 0 0; font-size:11px; color:var(--text-muted); font-weight:600;">${k}</p><b style="font-size:15px; color:var(--success); display:block; margin-top:8px; font-weight:900;">${u.bakiye} ₺</b></div>
                     <div style="display:flex; flex-direction:column; gap:8px;">
-                        <button style="background:#38bdf8; color:#020617; padding:6px 10px; font-size:11px;" onclick="adminAddPara('${k}')">Bakiye Ekle</button>
-                        ${u.rol !== 'store' ? `<button style="background:#fbbf24; color:#020617; padding:6px 10px; font-size:11px;" onclick="adminMakeStore('${k}')">Esnaf Yap</button>` : ''}
+                        <button style="background:var(--text-main); color:var(--bg-color); padding:8px 12px; font-size:11px; border-radius:10px; font-weight:800; border:none; cursor:pointer;" onclick="adminAddPara('${k}')">Bakiye Ekle</button>
+                        ${u.rol !== 'store' ? `<button style="background:var(--border); color:var(--text-main); padding:8px 12px; font-size:11px; border-radius:10px; font-weight:800; border:none; cursor:pointer;" onclick="adminMakeStore('${k}')">Esnaf Yap</button>` : ''}
                     </div>
                 </div>`;
             }
@@ -954,16 +1002,16 @@
                 if(w.durum === 'bekliyor') { 
                     count++;
                     h+=`<div class="god-list-item" style="flex-direction:column; align-items:flex-start;">
-                        <b>${w.ad}</b><p style="margin:4px 0 8px 0; font-size:12px; color:#94a3b8;">IBAN: <span style="user-select:all; color:#f8fafc;">${w.iban}</span></p>
+                        <b style="font-weight:900;">${w.ad}</b><p style="margin:6px 0 10px 0; font-size:12px; color:var(--text-muted); font-weight:600;">IBAN: <span style="user-select:all; color:var(--text-main); font-weight:800;">${w.iban}</span></p>
                         <div style="display:flex; justify-content:space-between; width:100%; align-items:center;">
-                            <b style="color:#ef4444; font-size:18px;">${w.tutar} ₺</b>
-                            <button style="background:#10b981; color:white; padding:8px 15px; font-size:12px;" onclick="adminOdemeYap(${i})">Ödendi İşaretle</button>
+                            <b style="color:var(--danger); font-size:20px; font-weight:900;">${w.tutar} ₺</b>
+                            <button style="background:var(--success); color:white; padding:10px 18px; font-size:12px; border-radius:10px; border:none; font-weight:800; cursor:pointer;" onclick="adminOdemeYap(${i})">Ödendi İşaretle</button>
                         </div>
                     </div>`; 
                 }
             });
             safeText('godReqCount', count);
-            document.getElementById('adminWithdrawList').innerHTML = h || '<p style="text-align:center; font-size:12px; color:#64748b;">Bekleyen ödeme talebi yok.</p>';
+            document.getElementById('adminWithdrawList').innerHTML = h || '<p style="text-align:center; font-size:13px; font-weight:600; color:var(--text-muted); margin-top:20px;">Bekleyen ödeme talebi yok.</p>';
         }
 
         function adminOdemeYap(i) { appData.withdrawals[i].durum = 'odendi'; db.collection('kapinda').doc('withdrawals').set({list: appData.withdrawals}); showToast("Ödeme Onaylandı!"); adminWithdrawDraw(); }
@@ -996,12 +1044,12 @@
             let h = ''; let keys = Object.keys(appData.plans).sort((a,b)=>parseInt(a)-parseInt(b));
             for(let k of keys) { 
                 let p = appData.plans[k]; 
-                h += `<div class="god-list-item" style="padding:12px;">
-                        <div><b style="font-size:14px; color:#38bdf8;">${p.ad} (S${k})</b><br><small style="color:#94a3b8; font-weight:600; font-size:11px;">${p.fiyat} ₺ | %${p.oran*100} Kms.</small></div> 
-                        <button style="background:#ef4444; color:white; padding:8px 12px; border-radius:8px;" onclick="adminDelPlan('${k}')"><i class="fa-solid fa-trash"></i></button>
+                h += `<div class="god-list-item" style="padding:15px; border-radius:14px;">
+                        <div><b style="font-size:15px; color:var(--text-main); font-weight:900;">${p.ad} (S${k})</b><br><small style="color:var(--text-muted); font-weight:800; font-size:11px; margin-top:4px; display:block;">${p.fiyat} ₺ | %${p.oran*100} Kms.</small></div> 
+                        <button style="background:var(--danger); color:white; padding:10px 14px; border-radius:10px; border:none; cursor:pointer;" onclick="adminDelPlan('${k}')"><i class="fa-solid fa-trash"></i></button>
                       </div>`; 
             }
-            document.getElementById('adminPlansList').innerHTML = h || '<p style="text-align:center; color:#64748b;">Paket bulunmuyor.</p>';
+            document.getElementById('adminPlansList').innerHTML = h || '<p style="text-align:center; color:var(--text-muted); font-weight:600;">Paket bulunmuyor.</p>';
         }
         
         function adminAddPlan() {
