@@ -9,24 +9,25 @@
     
     <script src="https://www.gstatic.com/firebasejs/10.8.1/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.8.1/firebase-firestore-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.8.1/firebase-auth-compat.js"></script>
 
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;800;900&display=swap');
         
         /* INSTAGRAM VIBRANT COLOR PALETTE */
         :root { 
-            --primary: #dc2743; /* Core IG Red/Pink */
+            --primary: #dc2743; 
             --primary-grad: linear-gradient(45deg, #f09433 0%, #e6683c 25%, #dc2743 50%, #cc2366 75%, #bc1888 100%);
             --secondary: #a1a1aa; 
-            --bg-color: #fafafa; /* IG Off-white */
+            --bg-color: #fafafa; 
             --card-bg: #ffffff; 
-            --text-main: #262626; /* IG Dark Text */
-            --text-muted: #8e8e8e; /* IG Light Text */
+            --text-main: #262626; 
+            --text-muted: #8e8e8e; 
             --danger: #ed4956; 
             --success: #10b981; 
             --warning: #f59e0b; 
-            --border: #dbdbdb; /* IG Border Color */
-            --blue-tick: #0095f6; /* IG Verified Blue */
+            --border: #dbdbdb; 
+            --blue-tick: #0095f6; 
             --vip-gold: linear-gradient(135deg, #bf953f, #fcf6ba, #b38728, #fbf5b7); 
             --ig-gray: #efefef; 
             --glass-bg: rgba(250, 250, 250, 0.85);
@@ -56,15 +57,12 @@
         .app-shell { width: 100%; height: 100dvh; background: var(--bg-color); position: relative; overflow: hidden; display: flex; flex-direction: column; transition: background 0.3s;}
         @media (min-width: 480px) { .app-shell { max-width: 414px; max-height: 90vh; border-radius: 40px; box-shadow: 0 25px 50px -12px rgba(0,0,0,0.5); border: 8px solid #000; } }
         
-        /* TEXT GRADIENT UTILITY */
         .text-gradient { background: var(--primary-grad); -webkit-background-clip: text; -webkit-text-fill-color: transparent; display: inline-block; }
 
-        /* LOADING SCREEN */
         #serverLoading { position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: var(--bg-color); z-index: 9999; display: flex; flex-direction: column; justify-content: center; align-items: center; color: var(--text-main); cursor: pointer; transition: opacity 0.6s ease-in-out;}
         .premium-spinner { width: 50px; height: 50px; border: 3px solid var(--border); border-top: 3px solid var(--primary); border-radius: 50%; animation: spin 0.8s cubic-bezier(0.4, 0, 0.2, 1) infinite; margin-bottom: 20px; }
         @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
 
-        /* HEADER */
         .header { background: var(--glass-bg); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px); padding: 15px 20px; display: flex; justify-content: space-between; align-items: center; z-index: 20; border-bottom: 1px solid var(--border); transition: 0.3s; position: absolute; top:0; width: 100%;}
         .header h2 { font-size: 24px; font-weight: 900; letter-spacing: -1px; text-transform: uppercase;}
         .cart-badge { position: absolute; top: -5px; right: -8px; background: var(--danger); color: white; font-size: 10px; width: 18px; height: 18px; border-radius: 50%; display: flex; justify-content: center; align-items: center; font-weight: bold; border: 2px solid var(--bg-color); }
@@ -73,7 +71,6 @@
         .view { position: absolute; top: 0; left: 0; width: 100%; height: 100%; overflow-y: auto; padding-bottom: 100px; opacity: 0; pointer-events: none; transition: 0.3s ease; background: var(--bg-color);}
         .view.active { opacity: 1; pointer-events: all; z-index: 5; }
 
-        /* POST CARDS */
         .post-card { background: var(--card-bg); margin-bottom: 12px; border-bottom: 1px solid var(--border); }
         .post-header { display: flex; align-items: center; padding: 14px 15px; gap: 12px; cursor: pointer; justify-content: space-between;}
         .post-avatar { width:38px; height:38px; border-radius:50%; background:var(--primary-grad); color:white; display:flex; justify-content:center; align-items:center; font-weight:bold; background-size:cover; background-position:center; }
@@ -85,7 +82,6 @@
         .post-content { padding: 0 15px 15px 15px; color: var(--text-main); }
         .like-count { font-size: 13px; font-weight: 800; margin-bottom: 6px; display: block;}
 
-        /* STORIES */
         .stories-container { display: flex; gap: 15px; padding: 15px; overflow-x: auto; background: var(--card-bg); border-bottom: 1px solid var(--border); scrollbar-width: none; }
         .story-item { display: flex; flex-direction: column; align-items: center; gap: 6px; cursor: pointer; flex-shrink: 0;}
         .story-ring { width: 72px; height: 72px; border-radius: 50%; background: var(--primary-grad); padding: 3px; }
@@ -93,7 +89,6 @@
         .stories-container::-webkit-scrollbar { display: none; }
         .story-name { font-size: 11px; color: var(--text-main); font-weight: 600; max-width: 68px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 
-        /* PROFILE */
         .profile-header { background: var(--card-bg); padding: 25px 20px; border-bottom: 1px solid var(--border); }
         .profile-stats { display: flex; justify-content: space-around; align-items: center; flex: 1; margin-left: 20px;}
         .stat-box { text-align: center; color: var(--text-main); }
@@ -103,7 +98,6 @@
         .level-badge { display:inline-flex; align-items:center; gap:5px; background: var(--ig-gray); color: var(--text-main); padding: 6px 12px; border-radius: 8px; font-size: 12px; font-weight: 800; cursor: pointer; transition:0.2s; margin-top: 8px;}
         .level-badge.vip { background: var(--primary-grad); color: #fff; box-shadow: 0 4px 15px rgba(220, 39, 67, 0.3); border: none;}
 
-        /* INPUTS & BUTTONS */
         .input-group { margin-bottom: 15px; padding: 0; }
         .input-group input, .input-group select, .input-group textarea { width: 100%; padding: 16px; border: 1px solid var(--border); border-radius: 14px; font-family: inherit; font-weight: 600; background: var(--ig-gray); font-size: 14px; color: var(--text-main); transition: all 0.3s ease;}
         .input-group input:focus, .input-group textarea:focus { border-color: var(--primary); background: var(--card-bg); box-shadow: var(--shadow-sm);}
@@ -118,13 +112,11 @@
         .btn-action { flex: 1; padding: 10px; border-radius: 10px; font-size: 13px; font-weight: 800; background: var(--ig-gray); color: var(--text-main); transition: 0.2s;}
         .btn-action:hover { background: var(--border); }
 
-        /* BOTTOM NAV */
         .bottom-nav { position: absolute; bottom: 0; width: 100%; background: var(--glass-bg); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px); border-top: 1px solid var(--border); display: flex; padding: 15px 0 calc(15px + env(safe-area-inset-bottom)) 0; z-index: 30; justify-content: space-around; transition: 0.3s;}
         .nav-item { color: var(--text-main); font-size: 24px; cursor: pointer; display:none; padding: 5px 20px; transition: transform 0.2s; opacity: 0.3;}
         .nav-item:active { transform: scale(0.85); }
         .nav-item.active { opacity: 1; color: var(--text-main); }
 
-        /* MODALS */
         .modal-overlay { position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.6); backdrop-filter: blur(4px); -webkit-backdrop-filter: blur(4px); z-index: 100; opacity: 0; pointer-events: none; transition: 0.3s; display: flex; justify-content: center; align-items: flex-end;}
         .modal-overlay.active { opacity: 1; pointer-events: all; }
         .modal-card { background: var(--card-bg); width: 100%; border-radius: 30px 30px 0 0; padding: 30px 25px; position:relative; max-height:85vh; overflow-y:auto; transform: translateY(100%); transition: 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.1); color: var(--text-main); box-shadow: var(--shadow-md);}
@@ -134,7 +126,6 @@
         #toast { position: absolute; top: 70px; left: 50%; transform: translateX(-50%) translateY(-20px); background: var(--text-main); color: var(--bg-color); padding: 14px 28px; border-radius: 30px; font-size: 13px; font-weight:bold; z-index: 1000; opacity: 0; transition: 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); pointer-events: none; white-space:nowrap; box-shadow: var(--shadow-md);}
         #toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
         
-        /* ADMIN GOD MODE */
         #adminDashboardView { background: var(--bg-color); color: var(--text-main); margin-top:-60px; height:calc(100% + 60px); padding-bottom:100px;}
         .god-header { padding: 30px 20px 20px 20px; background: var(--card-bg); border-bottom: 1px solid var(--border); display:flex; justify-content:space-between; align-items:center;}
         .god-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; padding: 20px; }
@@ -152,7 +143,6 @@
         .ig-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 2px; }
         .ig-grid-item { aspect-ratio: 1/1; background-size: cover; background-position: center; background-color: var(--ig-gray); cursor: pointer;}
         
-        /* TOGGLE SWITCH */
         .toggle-switch { position: relative; display: inline-block; width: 50px; height: 28px; }
         .toggle-switch input { opacity: 0; width: 0; height: 0; }
         .slider { position: absolute; cursor: pointer; top: 0; left: 0; right: 0; bottom: 0; background-color: var(--border); transition: .4s; border-radius: 30px; }
@@ -160,7 +150,6 @@
         input:checked + .slider { background: var(--primary-grad); }
         input:checked + .slider:before { transform: translateX(22px); background-color: #fff;}
 
-        /* YORUMLAR */
         .comment-item { display:flex; gap:12px; margin-bottom: 15px; align-items: flex-start;}
         .comment-av { width:32px; height:32px; border-radius:50%; background:var(--ig-gray); flex-shrink:0; background-size:cover; display:flex; justify-content:center; align-items:center; font-size:12px; font-weight:bold; color:var(--text-main);}
         .comment-body { background: var(--ig-gray); padding: 12px 16px; border-radius: 0 16px 16px 16px; font-size: 13px; color: var(--text-main); flex:1;}
@@ -264,8 +253,8 @@
                         <div style="flex:1; text-align:center; padding:14px; font-size:13px; font-weight:800; border-radius:12px; cursor:pointer; color:var(--text-muted);" id="tabRegisterBtn" onclick="authModSwitch('register')">Hesap Aç</div>
                     </div>
                     <div id="loginFormBlock">
-                        <div class="input-group"><input type="text" id="lEmail" placeholder="E-posta" value="admin.com"></div>
-                        <div class="input-group"><input type="password" id="lPass" placeholder="Şifre" value="1"></div>
+                        <div class="input-group"><input type="text" id="lEmail" placeholder="E-posta" value="admin@kapinda.com"></div>
+                        <div class="input-group"><input type="password" id="lPass" placeholder="Şifre" value="123456"></div>
                         <button class="btn-primary" style="margin-top:10px;" onclick="girisYap()">Sisteme Gir</button>
                     </div>
                     <div id="registerFormBlock" style="display:none;">
@@ -518,7 +507,6 @@
                 let saved = localStorage.getItem('kapinda_session'); if(saved) aktifKullaniciEmail = saved;
                 listenToCloud(); 
                 
-                // Fallback timer: Eğer 3 saniye içinde veri gelmezse, ekranı zorla aç ki kullanıcı sonsuz beklemesin.
                 fallbackTimer = setTimeout(()=>{ hideLoadingScreen(); }, 3000);
             } catch(e) { 
                 console.error(e); 
@@ -549,7 +537,7 @@
 
         function listenToCloud() {
             db.collection('kapinda').doc('users').onSnapshot(doc => { 
-                hideLoadingScreen(); // Veri geldiği an yükleme ekranı kalkar.
+                hideLoadingScreen(); 
                 if(doc.exists) { 
                     appData.users = doc.data(); 
                     if(aktifKullaniciEmail && appData.users[aktifKullaniciEmail] && currentView === 'authView') {
@@ -560,10 +548,6 @@
                     }
                     renderUI(); 
                 } 
-                else if(!appData.users['admin.com']) { 
-                    let u = { 'admin.com': { rol: 'admin', isim: 'Yönetici', sifre: '1', bakiye: 0, seviye: '0', refKod: 'ADMIN' } };
-                    db.collection('kapinda').doc('users').set(u); 
-                }
             });
             db.collection('kapinda').doc('products').onSnapshot(doc => { if(doc.exists) { appData.products = doc.data().list || []; renderUI(); } });
             db.collection('kapinda').doc('stats').onSnapshot(doc => { if(doc.exists) { appData.stats = doc.data(); renderUI(); } });
@@ -600,26 +584,85 @@
         function closeModal(id) { let m = document.getElementById(id); if(m) m.classList.remove('active'); }
         function resimOku(input, tId) { if(input.files && input.files[0]) { let r = new FileReader(); r.onload = function(e) { document.getElementById(tId).value = e.target.result; }; r.readAsDataURL(input.files[0]); } }
 
+        // --- YENİ GÜVENLİ GİRİŞ/KAYIT/ÇIKIŞ SİSTEMİ ---
+
         function girisYap() {
-            const e = document.getElementById('lEmail').value.trim(); const p = document.getElementById('lPass').value.trim();
-            if(!db || Object.keys(appData.users).length === 0) return showToast("Bağlantı kuruluyor, bekleyin...", true);
-            const u = appData.users[e];
-            if (u && u.sifre === p) {
-                aktifKullaniciEmail = e; localStorage.setItem('kapinda_session', e);
-                document.getElementById('appHeader').style.display = 'flex'; document.getElementById('appNav').style.display = 'flex';
-                setupNavRoles(u); switchView(u.rol === 'admin' ? 'adminDashboardView' : 'homeView');
-            } else { showToast("Bilgiler Hatalı!", true); }
+            const e = document.getElementById('lEmail').value.trim(); 
+            const p = document.getElementById('lPass').value.trim();
+            if(!e || !p) return showToast("Eksik bilgi!", true);
+            
+            showToast("Giriş yapılıyor...");
+            firebase.auth().signInWithEmailAndPassword(e, p)
+                .then((userCredential) => {
+                    aktifKullaniciEmail = userCredential.user.email;
+                    localStorage.setItem('kapinda_session', aktifKullaniciEmail);
+                    showToast("Giriş Başarılı!");
+                    
+                    let u = appData.users[aktifKullaniciEmail];
+                    if(u) {
+                        document.getElementById('appHeader').style.display = 'flex'; 
+                        document.getElementById('appNav').style.display = 'flex';
+                        setupNavRoles(u); 
+                        switchView(u.rol === 'admin' ? 'adminDashboardView' : 'homeView');
+                    } else {
+                        switchView('homeView');
+                    }
+                })
+                .catch((error) => {
+                    showToast("Hata: Bilgiler yanlış veya kayıt yok!", true);
+                    console.error(error);
+                });
         }
+
         function kayitOl() {
-            const ad = document.getElementById('rName').value.trim(); const e = document.getElementById('rEmail').value.trim(); const p = document.getElementById('rPass').value.trim();
-            if(!ad || !e || !p) return showToast("Eksik bilgi!", true); if(appData.users[e]) return showToast("Kayıtlı e-posta!", true);
-            const sp = document.getElementById('rSponsor').value.trim().toUpperCase(); let spMail = '';
+            const ad = document.getElementById('rName').value.trim(); 
+            const e = document.getElementById('rEmail').value.trim(); 
+            const p = document.getElementById('rPass').value.trim();
+            if(!ad || !e || !p) return showToast("Eksik bilgi!", true); 
+            
+            const sp = document.getElementById('rSponsor').value.trim().toUpperCase(); 
+            let spMail = '';
             if(sp) { for(let k in appData.users) { if(appData.users[k].refKod === sp) spMail = k; } }
-            appData.users[e] = { isim: ad, sifre: p, rol: 'customer', bakiye: 0, seviye: '0', refKod: 'VIP'+Math.floor(Math.random()*9000), sponsor: spMail, takipEttikleri: [] };
-            db.collection('kapinda').doc('users').set(appData.users);
-            showToast("Kayıt Tamam!"); authModSwitch('login'); document.getElementById('lEmail').value = e; document.getElementById('lPass').value = p;
+
+            showToast("Hesap oluşturuluyor...");
+            firebase.auth().createUserWithEmailAndPassword(e, p)
+                .then((userCredential) => {
+                    // Veritabanına kullanıcının genel bilgilerini kaydet (şifre hariç)
+                    appData.users[e] = { 
+                        isim: ad, 
+                        rol: 'customer', 
+                        bakiye: 0, 
+                        seviye: '0', 
+                        refKod: 'VIP'+Math.floor(Math.random()*9000), 
+                        sponsor: spMail, 
+                        takipEttikleri: [] 
+                    };
+                    db.collection('kapinda').doc('users').set(appData.users);
+                    
+                    showToast("Kayıt Tamam! Lütfen giriş yapın."); 
+                    authModSwitch('login'); 
+                    document.getElementById('lEmail').value = e; 
+                    document.getElementById('lPass').value = '';
+                })
+                .catch((error) => {
+                    showToast("Hata: " + error.message, true);
+                });
         }
-        function cikisYap() { localStorage.removeItem('kapinda_session'); location.reload(); }
+
+        function cikisYap() { 
+            if(firebase.auth) {
+                firebase.auth().signOut().then(() => {
+                    aktifKullaniciEmail = null;
+                    localStorage.removeItem('kapinda_session'); 
+                    location.reload(); 
+                });
+            } else {
+                localStorage.removeItem('kapinda_session'); 
+                location.reload(); 
+            }
+        }
+
+        // --- /YENİ SİSTEM BİTİŞ ---
 
         function switchView(tId) {
             document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
