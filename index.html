@@ -14,7 +14,6 @@
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;800;900&display=swap');
         
-        /* INSTAGRAM VIBRANT COLOR PALETTE */
         :root { 
             --primary: #dc2743; 
             --primary-grad: linear-gradient(45deg, #f09433 0%, #e6683c 25%, #dc2743 50%, #cc2366 75%, #bc1888 100%);
@@ -35,7 +34,6 @@
             --shadow-md: 0 10px 30px rgba(0, 0, 0, 0.08);
         }
 
-        /* IG DARK MODE */
         body.dark-mode {
             --bg-color: #000000; 
             --card-bg: #000000; 
@@ -141,7 +139,8 @@
         
         .chat-input-bar { position:absolute; bottom:0; width:100%; background:var(--card-bg); padding:15px; border-top:1px solid var(--border); display:flex; gap:12px; align-items:center;}
         .ig-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 2px; }
-        .ig-grid-item { aspect-ratio: 1/1; background-size: cover; background-position: center; background-color: var(--ig-gray); cursor: pointer;}
+        .ig-grid-item { aspect-ratio: 1/1; background-size: cover; background-position: center; background-color: var(--ig-gray); cursor: pointer; position:relative;}
+        .admin-del-btn { position:absolute; top:5px; right:5px; background:var(--danger); color:white; border-radius:50%; width:24px; height:24px; display:flex; justify-content:center; align-items:center; font-size:12px; z-index:10; border:none;}
         
         .toggle-switch { position: relative; display: inline-block; width: 50px; height: 28px; }
         .toggle-switch input { opacity: 0; width: 0; height: 0; }
@@ -165,6 +164,17 @@
         </div>
 
         <div id="toast">Bildirim</div>
+
+        <div class="modal-overlay" id="transferModal">
+            <div class="modal-card">
+                <div class="close-bar" onclick="closeModal('transferModal')"></div>
+                <h3 style="margin:0 0 5px 0; text-align:center; font-weight:900;" class="text-gradient">Para Gönder</h3>
+                <p style="font-size:12px; color:var(--text-muted); text-align:center; margin-bottom:25px; font-weight:600;">Kapında No (KN ID) ile ücretsiz ve anında transfer.</p>
+                <div class="input-group"><input type="text" id="tKnId" placeholder="Alıcı Kapında No (Örn: KN-123456)" style="text-transform: uppercase;"></div>
+                <div class="input-group"><input type="number" id="tTutar" placeholder="Gönderilecek Tutar (₺)"></div>
+                <button class="btn-primary" onclick="paraGonder()"><i class="fa-solid fa-paper-plane"></i> Şimdi Gönder</button>
+            </div>
+        </div>
 
         <div class="modal-overlay" id="commentsModal">
             <div class="modal-card" style="max-height: 90vh;">
@@ -285,6 +295,8 @@
                     
                     <div style="margin-top: 20px;">
                         <h2 id="pName" style="margin:0; font-size:16px; color:var(--text-main); font-weight:900;">İsim</h2>
+                        <div id="pKnId" style="font-size:12px; font-weight:800; color:var(--text-muted); margin-top:4px; letter-spacing:1px; cursor:pointer;" onclick="kopyalaKnId()">KN-XXXXXX <i class="fa-regular fa-copy"></i></div>
+                        
                         <div id="pLevelBadge" class="level-badge" onclick="openVipModal()">Seviye 0</div>
                         <p id="pBioText" style="font-size: 13px; color: var(--text-main); margin-top: 10px; font-weight: 500; line-height:1.4;"></p>
                     </div>
@@ -292,7 +304,7 @@
                     <div style="display:flex; gap:10px; margin-top:20px;">
                         <button class="btn-action" onclick="openModal('editProfileModal')">Profili Düzenle</button>
                         <button class="btn-action" onclick="window.open('https://www.shopier.com/kapindavip', '_blank')">Bakiye Yükle</button>
-                        <button class="btn-action" id="btnCekYap" style="display:none;" onclick="convertToVoucher()">Çek Üret</button>
+                        <button class="btn-action" style="background:var(--primary-grad); color:white;" onclick="openModal('transferModal')">Para Gönder</button>
                     </div>
 
                     <div style="display:flex; gap:10px; margin-top:10px;">
@@ -324,6 +336,7 @@
                     
                     <div style="margin-top: 20px;">
                         <h2 id="opName" style="margin:0; font-size:16px; color:var(--text-main); font-weight:900;">İsim</h2>
+                        <div id="opKnId" style="font-size:12px; font-weight:800; color:var(--primary); margin-top:4px; letter-spacing:1px;">KN-XXXXXX</div>
                         <p id="opBio" style="font-size: 13px; color: var(--text-main); margin-top: 10px; font-weight: 500;">Bio...</p>
                     </div>
 
@@ -387,8 +400,10 @@
                 <div class="god-tabs">
                     <div class="god-tab active" onclick="godTab('analiz', this)">Analizler</div>
                     <div class="god-tab" onclick="godTab('uyeler', this)">Kullanıcılar</div>
+                    <div class="god-tab" onclick="godTab('urunler', this)">Ürünler</div>
+                    <div class="god-tab" onclick="godTab('transferler', this)">Transferler</div>
                     <div class="god-tab" onclick="godTab('odemeler', this)">Talepler <span id="godReqCount" style="background:var(--danger); color:white; border-radius:6px; padding:2px 8px; font-size:10px; margin-left:6px;">0</span></div>
-                    <div class="god-tab" onclick="godTab('saas', this)">SaaS Abonelik</div>
+                    <div class="god-tab" onclick="godTab('saas', this)">SaaS</div>
                 </div>
 
                 <div id="godTabAnaliz">
@@ -422,8 +437,16 @@
                 </div>
 
                 <div id="godTabUyeler" style="display:none; padding: 0 20px;">
-                    <input type="text" id="adminUserSearch" placeholder="Üye ID, İsim ara..." onkeyup="adminUsersDraw()" style="width:100%; padding:16px; border-radius:16px; border:1px solid var(--border); background:var(--card-bg); color:var(--text-main); margin-bottom:15px; outline:none; font-family:inherit; font-weight:600; box-shadow:var(--shadow-sm);">
+                    <input type="text" id="adminUserSearch" placeholder="Üye KN ID, İsim ara..." onkeyup="adminUsersDraw()" style="width:100%; padding:16px; border-radius:16px; border:1px solid var(--border); background:var(--card-bg); color:var(--text-main); margin-bottom:15px; outline:none; font-family:inherit; font-weight:600; box-shadow:var(--shadow-sm);">
                     <div id="adminUserList"></div>
+                </div>
+
+                <div id="godTabUrunler" style="display:none; padding: 0 20px;">
+                    <div class="ig-grid" id="adminProductsList"></div>
+                </div>
+
+                <div id="godTabTransferler" style="display:none; padding: 0 20px;">
+                    <div id="adminTransfersList"></div>
                 </div>
 
                 <div id="godTabOdemeler" style="display:none; padding: 0 20px;">
@@ -495,7 +518,9 @@
         const firebaseConfig = { apiKey: "AIzaSyBWSlha9fD_q3zHXaRJ3ocJdtALqkrW-LU", authDomain: "kapinda-8d3ef.firebaseapp.com", projectId: "kapinda-8d3ef", storageBucket: "kapinda-8d3ef.firebasestorage.app", messagingSenderId: "246456710881", appId: "1:246456710881:web:c2a7bdb5e3b9065d1829a0" };
         let db = null;
         
-        let appData = { users: {}, products: [], stats: {totalCiro:0, netKar:0}, plans: {1:{fiyat:500, oran:0.07, ad:'Seviye 1 Başlangıç'}, 2:{fiyat:1000, oran:0.10, ad:'Seviye 2 Bronz'}, 3:{fiyat:1500, oran:0.15, ad:'Seviye 3 Gümüş'}, 4:{fiyat:2000, oran:0.18, ad:'Seviye 4 Altın'}}, vouchers: [], stories: [], withdrawals: [], chats: {} };
+        // YENİ EKLENEN: transfers dizisi
+        let appData = { users: {}, products: [], stats: {totalCiro:0, netKar:0}, plans: {1:{fiyat:500, oran:0.07, ad:'Seviye 1 Başlangıç'}, 2:{fiyat:1000, oran:0.10, ad:'Seviye 2 Bronz'}, 3:{fiyat:1500, oran:0.15, ad:'Seviye 3 Gümüş'}, 4:{fiyat:2000, oran:0.18, ad:'Seviye 4 Altın'}}, vouchers: [], stories: [], withdrawals: [], chats: {}, transfers: [] };
+        
         let aktifKullaniciEmail = null; let sepet = []; let currentView = 'authView'; let storyTimer = null; 
         let viewingEmail = null; let activeChatEmail = null; let isFirebaseLoaded = false; let fallbackTimer = null;
 
@@ -523,8 +548,6 @@
             if(s) { s.style.opacity = '0'; setTimeout(()=> { s.style.display = 'none'; }, 600); }
         }
 
-        function zorlaAc() { hideLoadingScreen(); if(typeof listenToCloud === 'function' && !db) { try{ firebase.initializeApp(firebaseConfig); db = firebase.firestore(); listenToCloud(); }catch(e){} } }
-
         function checkTheme() {
             let isDark = localStorage.getItem('kapinda_dark') === 'true';
             if(isDark) { document.body.classList.add('dark-mode'); let t = document.getElementById('darkModeToggle'); if(t) t.checked = true; }
@@ -540,6 +563,17 @@
                 hideLoadingScreen(); 
                 if(doc.exists) { 
                     appData.users = doc.data(); 
+                    
+                    // Geçmişteki kullanıcıların KN ID'si yoksa otomatik üret (Fallback)
+                    let needsUpdate = false;
+                    for(let k in appData.users) {
+                        if(!appData.users[k].knId) {
+                            appData.users[k].knId = 'KN-' + Math.floor(100000 + Math.random() * 900000);
+                            needsUpdate = true;
+                        }
+                    }
+                    if(needsUpdate) db.collection('kapinda').doc('users').set(appData.users);
+
                     if(aktifKullaniciEmail && appData.users[aktifKullaniciEmail] && currentView === 'authView') {
                         let u = appData.users[aktifKullaniciEmail];
                         document.getElementById('appHeader').style.display = 'flex'; document.getElementById('appNav').style.display = 'flex';
@@ -556,6 +590,8 @@
             db.collection('kapinda').doc('withdrawals').onSnapshot(doc => { if(doc.exists) { appData.withdrawals = doc.data().list || []; renderUI(); } });
             db.collection('kapinda').doc('vouchers').onSnapshot(doc => { if(doc.exists) { appData.vouchers = doc.data().list || []; renderUI(); } });
             db.collection('kapinda').doc('chats').onSnapshot(doc => { if(doc.exists) { appData.chats = doc.data() || {}; if(currentView==='messagesView') mesajListesiCiz(); if(currentView==='chatDetailView') sohbetCiz(); } });
+            // Yeni Transferleri Dinle
+            db.collection('kapinda').doc('transfers').onSnapshot(doc => { if(doc.exists) { appData.transfers = doc.data().list || []; renderUI(); } });
         }
 
         function setupNavRoles(u) {
@@ -612,25 +648,23 @@
                 });
         }
 
-        // --- GÜNCELLENEN FONKSİYON 1: YENİ KAYIT SİSTEMİ (REFERANS KONTROLLÜ) ---
+        // YENİ: KAYIT OLURKEN OTOMATİK "KN ID" ÜRETİYORUZ
         function kayitOl() {
             const ad = document.getElementById('rName').value.trim(); 
             const e = document.getElementById('rEmail').value.trim(); 
             const p = document.getElementById('rPass').value.trim();
             if(!ad || !e || !p) return showToast("Eksik bilgi!", true); 
             
-            // Girdiği referans kodunu sistemde arıyoruz
             const sp = document.getElementById('rSponsor').value.trim().toUpperCase(); 
             let spMail = '';
             if(sp) { 
                 for(let k in appData.users) { 
-                    if(appData.users[k].refKod === sp) {
-                        spMail = k; 
-                        break; // Sponsoru bulduk!
-                    }
+                    if(appData.users[k].refKod === sp) { spMail = k; break; }
                 }
                 if(!spMail) return showToast("Geçersiz Referans Kodu!", true);
             }
+
+            let newKnId = 'KN-' + Math.floor(100000 + Math.random() * 900000);
 
             showToast("Hesap oluşturuluyor...");
             firebase.auth().createUserWithEmailAndPassword(e, p)
@@ -641,7 +675,8 @@
                         bakiye: 0, 
                         seviye: '0', 
                         refKod: 'VIP'+Math.floor(1000 + Math.random()*9000), 
-                        sponsor: spMail, // Sponsorun mailini buraya mühürledik
+                        knId: newKnId, // Sosyal Cüzdan No Eklendi
+                        sponsor: spMail,
                         takipEttikleri: [] 
                     };
                     db.collection('kapinda').doc('users').set(appData.users);
@@ -682,12 +717,71 @@
             renderUI();
         }
 
+        // YENİ: KN ID KOPYALAMA FONKSİYONU
+        function kopyalaKnId() {
+            const u = appData.users[aktifKullaniciEmail];
+            if(u && u.knId) {
+                navigator.clipboard.writeText(u.knId).then(() => {
+                    showToast("Kapında No Kopyalandı!");
+                });
+            }
+        }
+
+        // YENİ: CÜZDANDAN CÜZDANA PARA GÖNDERME MOTORU
+        function paraGonder() {
+            let aliciKn = document.getElementById('tKnId').value.toUpperCase().trim();
+            let tutar = parseInt(document.getElementById('tTutar').value);
+            let gonderen = appData.users[aktifKullaniciEmail];
+
+            if(!aliciKn || !tutar || isNaN(tutar) || tutar <= 0) return showToast("Lütfen geçerli bilgi girin!", true);
+            if(gonderen.bakiye < tutar) return showToast("Bakiye yetersiz!", true);
+
+            // Alıcıyı KN ID ile bulalım
+            let aliciEmail = null;
+            for(let k in appData.users) {
+                if(appData.users[k].knId === aliciKn) { aliciEmail = k; break; }
+            }
+
+            if(!aliciEmail) return showToast("Bu Kapında Numarası sistemde bulunamadı!", true);
+            if(aliciEmail === aktifKullaniciEmail) return showToast("Kendinize para gönderemezsiniz!", true);
+
+            // Bakiyeleri ayarla
+            gonderen.bakiye -= tutar;
+            appData.users[aliciEmail].bakiye += tutar;
+
+            // Log kaydını tut (Admin Panelinde Görünecek)
+            let islem = {
+                id: 'TRX-' + Date.now(),
+                gonderenEmail: aktifKullaniciEmail,
+                gonderenAd: gonderen.isim,
+                gonderenKn: gonderen.knId,
+                aliciEmail: aliciEmail,
+                aliciAd: appData.users[aliciEmail].isim,
+                aliciKn: aliciKn,
+                tutar: tutar,
+                tarih: new Date().toLocaleString('tr-TR')
+            };
+            appData.transfers.unshift(islem);
+
+            // Veritabanını kaydet
+            db.collection('kapinda').doc('users').set(appData.users);
+            db.collection('kapinda').doc('transfers').set({list: appData.transfers});
+
+            // Ekranı temizle
+            document.getElementById('tKnId').value = '';
+            document.getElementById('tTutar').value = '';
+            closeModal('transferModal');
+            showToast("Transfer Başarılı!");
+            renderUI();
+        }
+
         function renderUI() {
             if(!aktifKullaniciEmail || !appData.users[aktifKullaniciEmail]) return;
             const u = appData.users[aktifKullaniciEmail];
             
             safeText('pName', u.isim + (u.rol==='store'?' ✓':'')); safeText('pBalance', (u.bakiye || 0) + " ₺");
             if(u.bio) safeText('pBioText', u.bio);
+            if(u.knId) { safeText('pKnId', u.knId + " 📋"); } // Profilde KN ID Göster
             
             let badge = document.getElementById('pLevelBadge');
             if(u.rol==='store' || u.rol==='admin') { badge.style.display='none'; }
@@ -852,7 +946,6 @@
             safeText('cartTotal', t + " ₺");
         }
 
-        // --- GÜNCELLENEN FONKSİYON 2: SİPARİŞ VER VE KOMİSYON DAĞIT ---
         function siparisVer() {
             if(!sepet.length) return showToast("Sepetiniz boş!", true);
             const u = appData.users[aktifKullaniciEmail]; 
@@ -861,38 +954,32 @@
             
             if(u.bakiye < t) return showToast("Bakiye Yetersiz! Lütfen yükleme yapın.", true);
             
-            // Müşteriden parayı kestik
             u.bakiye -= t; 
             
             sepet.forEach(item => {
                 let f = item.fiyat; 
-                let esnafPayi = f * 0.80; // Esnafa %80
-                let sistemMarji = f * 0.20; // Platformda kalan %20 brüt kâr
+                let esnafPayi = f * 0.80; 
+                let sistemMarji = f * 0.20; 
                 let vipKomisyonu = 0;
 
-                // Müşterinin bir sponsoru varsa ve sponsor VIP/Admin ise komisyon öde
                 if(u.sponsor && appData.users[u.sponsor]) {
                     let sponsorUye = appData.users[u.sponsor];
                     if(sponsorUye.rol === 'promoter' || sponsorUye.rol === 'admin') {
                         let lvl = sponsorUye.seviye; 
-                        // Seviyeye göre oranı bul (Yoksa %7 varsayılan)
                         let oran = appData.plans[lvl] ? appData.plans[lvl].oran : 0.07;
                         vipKomisyonu = f * oran; 
-                        sponsorUye.bakiye += vipKomisyonu; // Sponsorun cüzdanına parayı yatır
+                        sponsorUye.bakiye += vipKomisyonu; 
                     }
                 }
 
-                // Esnafın cüzdanına parayı yatır
                 if(appData.users[item.satici]) {
                     appData.users[item.satici].bakiye += esnafPayi;
                 }
 
-                // Sistemin net kârını hesapla ve God Mode için istatistiklere ekle
                 appData.stats.totalCiro += f; 
                 appData.stats.netKar += (sistemMarji - vipKomisyonu); 
             });
 
-            // Veritabanını güncelle
             db.collection('kapinda').doc('users').set(appData.users); 
             db.collection('kapinda').doc('stats').set(appData.stats);
             
@@ -916,6 +1003,8 @@
             
             safeText('opName', t.isim + (t.rol==='store'?' ✓':''));
             safeText('opHeaderName', t.isim);
+            if(t.knId) safeText('opKnId', t.knId); // Görüntülenen profilin KN ID'si
+            
             let av = document.getElementById('opAvatar');
             if(t.avatar) { av.style.backgroundImage = `url('${t.avatar}')`; av.innerText=''; av.style.border='none';} else { av.style.backgroundImage='none'; av.innerText=t.isim[0]; }
             safeText('opBio', t.bio || '');
@@ -1049,14 +1138,20 @@
             db.collection('kapinda').doc('users').set(appData.users); closeModal('editProfileModal'); showToast("Profil Kaydedildi");
         }
 
-        // --- GOD MODE (ADMIN) SCRIPTS ---
+        // --- GÜNCEL GOD MODE (ADMIN) SCRIPTS ---
         function godTab(t, el) {
             document.querySelectorAll('.god-tab').forEach(x=>x.classList.remove('active')); if(el) el.classList.add('active');
             safeDisplay('godTabAnaliz', t==='analiz'?'block':'none');
             safeDisplay('godTabUyeler', t==='uyeler'?'block':'none'); 
             safeDisplay('godTabSaas', t==='saas'?'block':'none'); 
             safeDisplay('godTabOdemeler', t==='odemeler'?'block':'none');
-            if(t==='saas') adminPlansDraw(); if(t==='odemeler') adminWithdrawDraw();
+            safeDisplay('godTabUrunler', t==='urunler'?'block':'none'); // YENİ
+            safeDisplay('godTabTransferler', t==='transferler'?'block':'none'); // YENİ
+            
+            if(t==='saas') adminPlansDraw(); 
+            if(t==='odemeler') adminWithdrawDraw();
+            if(t==='urunler') adminProductsDraw();
+            if(t==='transferler') adminTransfersDraw();
         }
 
         function adminUsersDraw() {
@@ -1064,17 +1159,65 @@
             let h='';
             for(let k in appData.users) {
                 let u=appData.users[k];
-                if(q && !k.toLowerCase().includes(q) && !u.isim.toLowerCase().includes(q)) continue;
+                let searchStr = (u.isim + " " + (u.knId || '')).toLowerCase();
+                if(q && !searchStr.includes(q)) continue;
                 let rColor = u.rol==='store' ? 'var(--warning)' : (u.rol==='promoter' ? 'var(--blue-tick)' : 'var(--text-muted)');
                 h+=`<div class="god-list-item">
-                    <div><b style="font-size:15px; font-weight:900;">${u.isim}</b> <small style="background:var(--bg-color); padding:4px 8px; border-radius:6px; color:${rColor}; font-weight:800; font-size:10px; margin-left:5px;">${u.rol.toUpperCase()}</small><p style="margin:6px 0 0 0; font-size:11px; color:var(--text-muted); font-weight:600;">${k}</p><b style="font-size:15px; color:var(--success); display:block; margin-top:8px; font-weight:900;">${u.bakiye} ₺</b></div>
+                    <div><b style="font-size:15px; font-weight:900;">${u.isim}</b> <small style="background:var(--bg-color); padding:4px 8px; border-radius:6px; color:${rColor}; font-weight:800; font-size:10px; margin-left:5px;">${u.rol.toUpperCase()}</small><p style="margin:6px 0 0 0; font-size:11px; color:var(--text-muted); font-weight:600;">KN ID: <b style="color:var(--text-main);">${u.knId || 'YOK'}</b></p><b style="font-size:15px; color:var(--success); display:block; margin-top:8px; font-weight:900;">${u.bakiye} ₺</b></div>
                     <div style="display:flex; flex-direction:column; gap:8px;">
-                        <button style="background:var(--text-main); color:var(--bg-color); padding:8px 12px; font-size:11px; border-radius:10px; font-weight:800; border:none; cursor:pointer;" onclick="adminAddPara('${k}')">Bakiye Ekle</button>
+                        <button style="background:var(--text-main); color:var(--bg-color); padding:8px 12px; font-size:11px; border-radius:10px; font-weight:800; border:none; cursor:pointer;" onclick="adminAddPara('${k}')">Bakiye Değiştir</button>
                         ${u.rol !== 'store' ? `<button style="background:var(--border); color:var(--text-main); padding:8px 12px; font-size:11px; border-radius:10px; font-weight:800; border:none; cursor:pointer;" onclick="adminMakeStore('${k}')">Esnaf Yap</button>` : ''}
                     </div>
                 </div>`;
             }
             document.getElementById('adminUserList').innerHTML = h;
+        }
+
+        // YENİ: ADMIN ÜRÜN SİLME TABLOSU
+        function adminProductsDraw() {
+            let h = '';
+            [...appData.products].reverse().forEach(p => {
+                let sat = appData.users[p.storeEmail] ? appData.users[p.storeEmail].isim : 'Bilinmeyen';
+                h += `<div class="ig-grid-item" style="background-image:url('${p.resim}'); border-radius:8px;">
+                        <button class="admin-del-btn" onclick="adminDeleteProduct('${p.id}')"><i class="fa-solid fa-trash"></i></button>
+                        <div style="position:absolute; bottom:0; width:100%; background:rgba(0,0,0,0.7); color:white; font-size:9px; padding:4px; text-align:center; font-weight:800; border-radius:0 0 8px 8px;">${sat}</div>
+                      </div>`;
+            });
+            document.getElementById('adminProductsList').innerHTML = h || '<p style="grid-column: span 3; text-align:center; font-size:12px; color:var(--text-muted); font-weight:800; margin-top:20px;">Sistemde ürün yok.</p>';
+        }
+
+        function adminDeleteProduct(id) {
+            if(!confirm("Bu ürünü sistemden kalıcı olarak silmek istiyor musunuz?")) return;
+            let idx = appData.products.findIndex(x => x.id === id);
+            if(idx > -1) {
+                appData.products.splice(idx, 1);
+                db.collection('kapinda').doc('products').set({list: appData.products});
+                showToast("Ürün silindi!");
+                adminProductsDraw();
+            }
+        }
+
+        // YENİ: ADMIN TRANSFER LOGLARI EKRANI
+        function adminTransfersDraw() {
+            let h = '';
+            appData.transfers.forEach(t => {
+                h += `<div class="god-list-item" style="flex-direction:column; align-items:flex-start;">
+                        <div style="display:flex; justify-content:space-between; width:100%;">
+                            <span style="font-size:10px; color:var(--text-muted); font-weight:800;">${t.tarih}</span>
+                            <span style="font-size:10px; background:var(--ig-gray); padding:3px 6px; border-radius:4px; font-weight:800;">${t.id}</span>
+                        </div>
+                        <div style="display:flex; align-items:center; width:100%; margin-top:10px; justify-content:space-between;">
+                            <div style="text-align:left; width:40%;">
+                                <b style="font-size:13px;">${t.gonderenAd}</b><br><small style="font-size:10px; color:var(--text-muted);">${t.gonderenKn}</small>
+                            </div>
+                            <div style="color:var(--success); font-weight:900; font-size:15px;"><i class="fa-solid fa-arrow-right"></i> ${t.tutar} ₺</div>
+                            <div style="text-align:right; width:40%;">
+                                <b style="font-size:13px;">${t.aliciAd}</b><br><small style="font-size:10px; color:var(--text-muted);">${t.aliciKn}</small>
+                            </div>
+                        </div>
+                      </div>`;
+            });
+            document.getElementById('adminTransfersList').innerHTML = h || '<p style="text-align:center; font-size:13px; font-weight:600; color:var(--text-muted); margin-top:20px;">Henüz transfer yapılmadı.</p>';
         }
 
         function adminWithdrawDraw() {
@@ -1118,7 +1261,17 @@
             let wc = 0; appData.withdrawals.forEach(w=>{if(w.durum==='bekliyor') wc++;}); safeText('godReqCount', wc);
         }
 
-        function adminAddPara(e) { let m=prompt("Cüzdana Yüklenecek Tutar (TL):"); if(m && !isNaN(m)) { appData.users[e].bakiye+=parseInt(m); db.collection('kapinda').doc('users').set(appData.users); showToast("Bakiye Yüklendi!");} }
+        // YENİ: ADMIN İSTEDİĞİ KİŞİNİN BAKİYESİNİ DÜZELTEBİLİR
+        function adminAddPara(e) { 
+            let u = appData.users[e];
+            let m = prompt(`Mevcut Bakiye: ${u.bakiye} ₺\nYeni olmasını istediğiniz tam bakiye tutarını girin (TL):`); 
+            if(m && !isNaN(m)) { 
+                u.bakiye = parseInt(m); 
+                db.collection('kapinda').doc('users').set(appData.users); 
+                showToast("Bakiye Güncellendi!");
+                adminUsersDraw();
+            } 
+        }
         function adminMakeStore(e) { appData.users[e].rol='store'; db.collection('kapinda').doc('users').set(appData.users); showToast("Kullanıcı Esnaf Yapıldı!"); }
         
         function adminPlansDraw() {
