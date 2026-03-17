@@ -584,8 +584,6 @@
         function closeModal(id) { let m = document.getElementById(id); if(m) m.classList.remove('active'); }
         function resimOku(input, tId) { if(input.files && input.files[0]) { let r = new FileReader(); r.onload = function(e) { document.getElementById(tId).value = e.target.result; }; r.readAsDataURL(input.files[0]); } }
 
-        // --- YENİ GÜVENLİ GİRİŞ/KAYIT/ÇIKIŞ SİSTEMİ ---
-
         function girisYap() {
             const e = document.getElementById('lEmail').value.trim(); 
             const p = document.getElementById('lPass').value.trim();
@@ -614,27 +612,36 @@
                 });
         }
 
+        // --- GÜNCELLENEN FONKSİYON 1: YENİ KAYIT SİSTEMİ (REFERANS KONTROLLÜ) ---
         function kayitOl() {
             const ad = document.getElementById('rName').value.trim(); 
             const e = document.getElementById('rEmail').value.trim(); 
             const p = document.getElementById('rPass').value.trim();
             if(!ad || !e || !p) return showToast("Eksik bilgi!", true); 
             
+            // Girdiği referans kodunu sistemde arıyoruz
             const sp = document.getElementById('rSponsor').value.trim().toUpperCase(); 
             let spMail = '';
-            if(sp) { for(let k in appData.users) { if(appData.users[k].refKod === sp) spMail = k; } }
+            if(sp) { 
+                for(let k in appData.users) { 
+                    if(appData.users[k].refKod === sp) {
+                        spMail = k; 
+                        break; // Sponsoru bulduk!
+                    }
+                }
+                if(!spMail) return showToast("Geçersiz Referans Kodu!", true);
+            }
 
             showToast("Hesap oluşturuluyor...");
             firebase.auth().createUserWithEmailAndPassword(e, p)
                 .then((userCredential) => {
-                    // Veritabanına kullanıcının genel bilgilerini kaydet (şifre hariç)
                     appData.users[e] = { 
                         isim: ad, 
                         rol: 'customer', 
                         bakiye: 0, 
                         seviye: '0', 
-                        refKod: 'VIP'+Math.floor(Math.random()*9000), 
-                        sponsor: spMail, 
+                        refKod: 'VIP'+Math.floor(1000 + Math.random()*9000), 
+                        sponsor: spMail, // Sponsorun mailini buraya mühürledik
                         takipEttikleri: [] 
                     };
                     db.collection('kapinda').doc('users').set(appData.users);
@@ -661,8 +668,6 @@
                 location.reload(); 
             }
         }
-
-        // --- /YENİ SİSTEM BİTİŞ ---
 
         function switchView(tId) {
             document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
@@ -847,22 +852,55 @@
             safeText('cartTotal', t + " ₺");
         }
 
+        // --- GÜNCELLENEN FONKSİYON 2: SİPARİŞ VER VE KOMİSYON DAĞIT ---
         function siparisVer() {
             if(!sepet.length) return showToast("Sepetiniz boş!", true);
-            const u = appData.users[aktifKullaniciEmail]; let t = 0; sepet.forEach(x=>t+=x.fiyat);
-            if(u.bakiye < t) return showToast("Bakiye Yetersiz!", true);
+            const u = appData.users[aktifKullaniciEmail]; 
+            let t = 0; 
+            sepet.forEach(x => t += x.fiyat);
+            
+            if(u.bakiye < t) return showToast("Bakiye Yetersiz! Lütfen yükleme yapın.", true);
+            
+            // Müşteriden parayı kestik
             u.bakiye -= t; 
+            
             sepet.forEach(item => {
-                let f = item.fiyat; let ePayi = f * 0.80; let sMarj = f * 0.20; let vPay = 0;
-                if(u.sponsor && appData.users[u.sponsor] && appData.users[u.sponsor].rol==='promoter') {
-                    let lvl = appData.users[u.sponsor].seviye; let oran = appData.plans[lvl] ? appData.plans[lvl].oran : 0.07;
-                    vPay = f * oran; appData.users[u.sponsor].bakiye += vPay;
+                let f = item.fiyat; 
+                let esnafPayi = f * 0.80; // Esnafa %80
+                let sistemMarji = f * 0.20; // Platformda kalan %20 brüt kâr
+                let vipKomisyonu = 0;
+
+                // Müşterinin bir sponsoru varsa ve sponsor VIP/Admin ise komisyon öde
+                if(u.sponsor && appData.users[u.sponsor]) {
+                    let sponsorUye = appData.users[u.sponsor];
+                    if(sponsorUye.rol === 'promoter' || sponsorUye.rol === 'admin') {
+                        let lvl = sponsorUye.seviye; 
+                        // Seviyeye göre oranı bul (Yoksa %7 varsayılan)
+                        let oran = appData.plans[lvl] ? appData.plans[lvl].oran : 0.07;
+                        vipKomisyonu = f * oran; 
+                        sponsorUye.bakiye += vipKomisyonu; // Sponsorun cüzdanına parayı yatır
+                    }
                 }
-                if(appData.users[item.satici]) appData.users[item.satici].bakiye += ePayi;
-                appData.stats.totalCiro += f; appData.stats.netKar += (sMarj - vPay); 
+
+                // Esnafın cüzdanına parayı yatır
+                if(appData.users[item.satici]) {
+                    appData.users[item.satici].bakiye += esnafPayi;
+                }
+
+                // Sistemin net kârını hesapla ve God Mode için istatistiklere ekle
+                appData.stats.totalCiro += f; 
+                appData.stats.netKar += (sistemMarji - vipKomisyonu); 
             });
-            db.collection('kapinda').doc('users').set(appData.users); db.collection('kapinda').doc('stats').set(appData.stats);
-            sepet = []; safeText('cartCount', '0'); document.getElementById('cartCount').style.display='none'; switchView('profileView'); showToast("Sipariş Onaylandı!");
+
+            // Veritabanını güncelle
+            db.collection('kapinda').doc('users').set(appData.users); 
+            db.collection('kapinda').doc('stats').set(appData.stats);
+            
+            sepet = []; 
+            safeText('cartCount', '0'); 
+            document.getElementById('cartCount').style.display = 'none'; 
+            switchView('profileView'); 
+            showToast("Sipariş Onaylandı! Kazançlar dağıtıldı.");
         }
 
         function profilGridCiz(u, containerId, userEmail) {
