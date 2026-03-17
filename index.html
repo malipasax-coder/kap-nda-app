@@ -3,15 +3,13 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-    <title>Kapında Social - Base Network</title>
+    <title>Kapında Social V46 - Pure Social</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     
     <script src="https://www.gstatic.com/firebasejs/10.8.1/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.8.1/firebase-firestore-compat.js"></script>
 
     <script>
-        let clickCount = 0;
-        function zorlaAc() { clickCount++; if(clickCount >= 3) { let s = document.getElementById('serverLoading'); if(s) s.style.display = 'none'; if(typeof listenToCloud === 'function') listenToCloud(); } }
         function authModSwitch(mod) {
             document.getElementById('tabLoginBtn').className = 'auth-tab ' + (mod==='login'?'active':'');
             document.getElementById('tabRegisterBtn').className = 'auth-tab ' + (mod==='register'?'active':'');
@@ -22,7 +20,7 @@
 
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;800;900&display=swap');
-        :root { --primary: #2563eb; --primary-dark: #1d4ed8; --secondary: #0f172a; --bg-color: #f8fafc; --card-bg: #ffffff; --text-main: #0f172a; --text-muted: #64748b; --danger: #ef4444; --success: #10b981; --warning: #f59e0b; --border: #e2e8f0; --blue-tick: #1d9bf0; --vip-gold: #fbbf24;}
+        :root { --primary: #2563eb; --secondary: #0f172a; --bg-color: #f8fafc; --card-bg: #ffffff; --text-main: #0f172a; --text-muted: #64748b; --danger: #ef4444; --success: #10b981; --warning: #f59e0b; --border: #e2e8f0; --blue-tick: #1d9bf0; --vip-gold: #fbbf24;}
         
         * { box-sizing: border-box; outline: none; -webkit-tap-highlight-color: transparent;}
         body { font-family: 'Plus Jakarta Sans', sans-serif; background: #cbd5e1; margin: 0; display: flex; justify-content: center; align-items: center; min-height: 100vh; overflow: hidden; }
@@ -30,12 +28,8 @@
         .app-shell { width: 100%; height: 100dvh; background: var(--bg-color); position: relative; overflow: hidden; display: flex; flex-direction: column; }
         @media (min-width: 480px) { .app-shell { max-width: 414px; max-height: 90vh; border-radius: 40px; box-shadow: 0 25px 50px -12px rgba(0,0,0,0.4); border: 12px solid #1e293b; } }
         
-        #serverLoading { position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: var(--secondary); z-index: 9999; display: flex; flex-direction: column; justify-content: center; align-items: center; color: white; cursor: pointer; }
-        .spinner { width: 50px; height: 50px; border: 4px solid rgba(255,255,255,0.1); border-top: 4px solid var(--primary); border-radius: 50%; animation: spin 1s linear infinite; margin-bottom: 20px; }
-        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
-
         .header { background: rgba(255, 255, 255, 0.95); backdrop-filter: blur(10px); padding: 15px 20px; display: flex; justify-content: space-between; align-items: center; z-index: 20; border-bottom: 1px solid var(--border); }
-        .header h2 { margin: 0; font-size: 22px; font-weight: 900; letter-spacing: -0.5px;}
+        .header h2 { margin: 0; font-size: 22px; font-weight: 900; letter-spacing: -0.5px; color: var(--primary);}
         .cart-badge { position: absolute; top: -6px; right: -6px; background: var(--danger); color: white; font-size: 10px; width: 18px; height: 18px; border-radius: 50%; display: flex; justify-content: center; align-items: center; font-weight: bold; border: 2px solid var(--card-bg); }
 
         .view-container { flex: 1; position: relative; overflow: hidden; background: var(--bg-color); }
@@ -43,7 +37,7 @@
         .view.active { opacity: 1; pointer-events: all; z-index: 5; }
 
         .post-card { background: white; margin: 15px; border-radius: 20px; box-shadow: 0 4px 15px rgba(0,0,0,0.03); overflow: hidden; }
-        .post-header { display: flex; align-items: center; padding: 15px; gap: 12px; cursor:pointer; }
+        .post-header { display: flex; align-items: center; padding: 15px; gap: 12px; cursor: pointer; }
         .post-avatar { width:40px; height:40px; border-radius:50%; background:var(--primary); color:white; display:flex; justify-content:center; align-items:center; font-weight:bold; background-size:cover; background-position:center;}
         .post-image { width: 100%; height: 350px; background-size: cover; background-position: center; background-color:#e2e8f0; }
         .post-actions { padding: 15px; display: flex; justify-content: space-between; align-items: center; gap:10px; }
@@ -52,40 +46,42 @@
         .level-badge { display:inline-flex; align-items:center; gap:5px; background: rgba(37, 99, 235, 0.1); color: var(--primary); padding: 4px 12px; border-radius: 12px; font-size: 11px; font-weight: 800; cursor: pointer; margin-top:5px; transition:0.2s;}
         .level-badge.vip { background: rgba(251, 191, 36, 0.2); color: #854d0e; }
 
-        .admin-god-card { background: linear-gradient(135deg, #1e293b, #0f172a); color: white; border-radius: 24px; padding: 25px; margin: 15px; position: relative; box-shadow: 0 10px 25px rgba(15,23,42,0.3);}
-        .list-item { display: flex; justify-content: space-between; align-items: center; padding: 15px 20px; background: white; border-bottom: 1px solid var(--border); transition: background 0.2s;}
+        .admin-god-card { background: linear-gradient(135deg, #1e293b, #0f172a); color: white; border-radius: 24px; padding: 25px; margin: 15px; position: relative;}
+        .list-item { display: flex; justify-content: space-between; align-items: center; padding: 15px 20px; background: white; border-bottom: 1px solid var(--border); }
 
         .input-group { margin-bottom: 15px; padding: 0; }
-        .input-group input, .input-group select, .input-group textarea { width: 100%; padding: 16px; border: 2px solid transparent; border-radius: 16px; font-family: inherit; font-weight: 600; background: #f1f5f9; transition: all 0.3s ease; font-size: 14px;}
-        .input-group input:focus, .input-group textarea:focus { border: 2px solid var(--primary); background: white; box-shadow: 0 0 0 4px rgba(37,99,235,0.1); }
-
-        button { border: none; padding: 16px; border-radius: 16px; font-weight: 800; cursor: pointer; width: 100%; font-family: inherit; display:flex; justify-content:center; align-items:center; gap:8px; transition: all 0.2s; font-size: 14px;}
-        button:active { transform: translateY(2px) scale(0.97); }
-        .btn-primary { background: linear-gradient(135deg, var(--primary), var(--primary-dark)); color: white; }
-        .btn-success { background: linear-gradient(135deg, #10b981, #059669); color: white; }
-        .btn-warning { background: linear-gradient(135deg, #f59e0b, #d97706); color: white; }
-        .btn-danger { background: linear-gradient(135deg, #ef4444, #b91c1c); color: white; }
+        .input-group input, .input-group select, .input-group textarea { width: 100%; padding: 16px; border: 2px solid transparent; border-radius: 16px; font-family: inherit; font-weight: 600; background: #f1f5f9; font-size: 14px;}
+        
+        button { border: none; padding: 16px; border-radius: 16px; font-weight: 800; cursor: pointer; width: 100%; font-family: inherit; display:flex; justify-content:center; align-items:center; gap:8px; font-size: 14px;}
+        .btn-primary { background: var(--primary); color: white; }
+        .btn-success { background: var(--success); color: white; }
+        .btn-warning { background: var(--warning); color: white; }
+        .btn-danger { background: var(--danger); color: white; }
         .btn-outline { background: transparent; border: 2px solid var(--border); color: var(--text-main); }
-        .btn-action { flex: 1; padding: 12px; border: none; border-radius: 14px; font-size: 13px; font-weight: 800; box-shadow: 0 4px 12px rgba(0,0,0,0.05); }
+        .btn-action { flex: 1; padding: 12px; border: none; border-radius: 14px; font-size: 13px; font-weight: 800; }
 
         .bottom-nav { position: absolute; bottom: 0; width: 100%; background: rgba(255,255,255,0.95); backdrop-filter: blur(10px); border-top: none; display: flex; padding: 15px 0 calc(15px + env(safe-area-inset-bottom)) 0; z-index: 30; justify-content: space-around; box-shadow: 0 -5px 25px rgba(0,0,0,0.05); border-radius: 24px 24px 0 0;}
         .nav-item { color: var(--text-muted); font-size: 22px; cursor: pointer; display:none; padding: 10px;}
         .nav-item.active { color: var(--primary); }
 
-        .modal-overlay { position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: rgba(15,23,42,0.8); backdrop-filter: blur(5px); z-index: 100; opacity: 0; pointer-events: none; transition: 0.3s; display: flex; justify-content: center; align-items: center; padding: 20px;}
+        .modal-overlay { position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: rgba(15,23,42,0.8); z-index: 100; opacity: 0; pointer-events: none; transition: 0.3s; display: flex; justify-content: center; align-items: center; padding: 20px;}
         .modal-overlay.active { opacity: 1; pointer-events: all; }
-        .modal-card { background: white; width: 100%; border-radius: 28px; padding: 25px; position:relative; max-height:85vh; overflow-y:auto; transform: scale(0.95); transition: 0.3s;}
-        .modal-overlay.active .modal-card { transform: scale(1); }
-        .close-btn { position:absolute; top:15px; right:15px; width:36px; height:36px; background:var(--bg-color); border-radius:50%; display:flex; justify-content:center; align-items:center; cursor:pointer; color:var(--text-muted);}
+        .modal-card { background: white; width: 100%; border-radius: 28px; padding: 25px; position:relative; max-height:85vh; overflow-y:auto; }
+        .close-btn { position:absolute; top:15px; right:15px; width:36px; height:36px; background:var(--bg-color); border-radius:50%; display:flex; justify-content:center; align-items:center; cursor:pointer;}
 
-        #toast { position: absolute; top: 40px; left: 50%; transform: translateX(-50%) translateY(-20px); background: rgba(15,23,42,0.95); backdrop-filter:blur(10px); color: white; padding: 14px 28px; border-radius: 30px; font-size: 13px; font-weight:bold; z-index: 1000; opacity: 0; transition: 0.4s; pointer-events: none; white-space:nowrap; box-shadow: 0 10px 25px rgba(0,0,0,0.2);}
+        #toast { position: absolute; top: 40px; left: 50%; transform: translateX(-50%) translateY(-20px); background: rgba(15,23,42,0.95); color: white; padding: 14px 28px; border-radius: 30px; font-size: 13px; font-weight:bold; z-index: 1000; opacity: 0; transition: 0.4s; pointer-events: none; white-space:nowrap;}
         #toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
-        
-        .auth-tabs { display: flex; margin: 0 0 20px 0; background: #f1f5f9; border-radius: 16px; padding: 6px; }
-        .auth-tab { flex: 1; text-align: center; padding: 14px; font-size: 14px; font-weight: 800; color: var(--text-muted); cursor: pointer; border-radius: 12px; transition: 0.3s; }
-        .auth-tab.active { background: white; color: var(--primary); box-shadow: 0 4px 10px rgba(0,0,0,0.05); }
 
-        /* HİKAYE VE MESAJ EKRANLARI */
+        .auth-tabs { display: flex; margin: 0 0 20px 0; background: #f1f5f9; border-radius: 16px; padding: 6px; }
+        .auth-tab { flex: 1; text-align: center; padding: 14px; font-size: 14px; font-weight: 800; color: var(--text-muted); cursor: pointer; border-radius: 12px; }
+        .auth-tab.active { background: white; color: var(--primary); box-shadow: 0 4px 10px rgba(0,0,0,0.05); }
+        .cart-floating-bar { position: absolute; bottom: 85px; left: 15px; right: 15px; background: white; padding: 20px; border-radius: 24px; box-shadow: 0 10px 30px rgba(0,0,0,0.1); z-index: 25; border: 1px solid var(--border);}
+        
+        .admin-tabs { display: flex; margin: 0 15px 10px 15px; border-bottom: 1px solid var(--border); overflow-x: auto; scrollbar-width: none;}
+        .admin-tab { padding: 12px 15px; font-size: 12px; font-weight: 800; color: var(--text-muted); cursor: pointer; white-space: nowrap; }
+        .admin-tab.active { color: var(--primary); border-bottom: 2px solid var(--primary); }
+
+        /* HİKAYE VE CHAT EKRANLARI */
         .story-viewer { position:fixed; top:0; left:0; width:100%; height:100%; background:#0f172a; z-index:99999; display:flex; flex-direction:column; opacity:0; pointer-events:none; transition:0.3s; }
         .story-viewer.active { opacity:1; pointer-events:all; }
         .story-progress-bg { height:3px; background:rgba(255,255,255,0.3); margin:15px 15px 10px 15px; border-radius:3px; overflow:hidden; }
@@ -98,27 +94,15 @@
         .story-item { display: flex; flex-direction: column; align-items: center; gap: 5px; cursor: pointer; flex-shrink: 0;}
         .story-ring { width: 66px; height: 66px; border-radius: 50%; background: linear-gradient(45deg, #f09433 0%, #e6683c 25%, #dc2743 50%, #cc2366 75%, #bc1888 100%); padding: 3px; }
         .story-avatar { width: 100%; height: 100%; background: var(--border); border-radius: 50%; border: 2px solid white; display:flex; justify-content:center; align-items:center; color:var(--secondary); font-weight:bold; font-size:20px; background-size:cover; background-position:center;}
-        .stories-container::-webkit-scrollbar { display: none; }
 
         .chat-container { display:flex; flex-direction:column; height:100%; }
         .chat-messages { flex:1; overflow-y:auto; padding:20px; padding-bottom:90px; }
         .chat-input-bar { position:absolute; bottom:0; width:100%; background:white; padding:15px; border-top:1px solid var(--border); display:flex; gap:10px; align-items:center;}
-        .cart-floating-bar { position: absolute; bottom: 85px; left: 15px; right: 15px; background: white; padding: 20px; border-radius: 24px; box-shadow: 0 10px 30px rgba(0,0,0,0.1); z-index: 25; border: 1px solid var(--border);}
-        
-        .admin-tabs { display: flex; margin: 0 15px 10px 15px; border-bottom: 1px solid var(--border); overflow-x: auto; scrollbar-width: none;}
-        .admin-tab { padding: 12px 15px; font-size: 12px; font-weight: 800; color: var(--text-muted); cursor: pointer; white-space: nowrap; }
-        .admin-tab.active { color: var(--primary); border-bottom: 2px solid var(--primary); }
     </style>
 </head>
 <body>
 
     <div class="app-shell">
-        <div id="serverLoading" onclick="zorlaAc()">
-            <div class="spinner"></div>
-            <h2 style="margin:0;">Kapında Social</h2>
-            <p style="font-size:11px; margin-top:10px; opacity:0.7;">Bağlantı Kuruluyor...</p>
-        </div>
-
         <div id="toast">Bildirim</div>
 
         <div class="story-viewer" id="storyViewerScreen">
@@ -142,15 +126,15 @@
                 <div class="input-group"><input type="text" id="wAd" placeholder="Ad Soyad / Firma Adı"></div>
                 <div class="input-group"><input type="text" id="wIban" placeholder="TR ile başlayan IBAN"></div>
                 <div class="input-group"><input type="number" id="wTutar" placeholder="Çekilecek Tutar (₺)"></div>
-                <button class="btn-success" onclick="paraCekTalebi()"><i class="fa-solid fa-paper-plane"></i> Çekim Talebi Gönder</button>
+                <button class="btn-success" onclick="paraCekTalebi()">Çekim Talebi Gönder</button>
             </div>
         </div>
 
         <div class="modal-overlay" id="vipModal">
             <div class="modal-card">
                 <div class="close-btn" onclick="closeModal('vipModal')"><i class="fa-solid fa-xmark"></i></div>
-                <h3 style="margin:0 0 10px 0; text-align:center;"><i class="fa-solid fa-crown" style="color:var(--vip-gold); font-size:24px;"></i><br>VIP / Abonelik</h3>
-                <p style="font-size:12px; color:var(--text-muted); text-align:center; margin-bottom:20px;">Bir pakete abone olarak ağınızı kurabilir, ürün paylaşabilir ve komisyon kazanabilirsiniz.</p>
+                <h3 style="margin:0 0 10px 0; text-align:center;"><i class="fa-solid fa-crown" style="color:var(--vip-gold); font-size:24px;"></i><br>VIP & Abonelik</h3>
+                <p style="font-size:12px; color:var(--text-muted); text-align:center; margin-bottom:20px;">Ağınızı kurun ve satışlardan otomatik komisyon kazanın!</p>
                 <div id="vipPlansContainer"></div>
             </div>
         </div>
@@ -177,7 +161,7 @@
         </div>
 
         <div class="header" id="appHeader" style="display:none;">
-            <h2 id="headerTitle" style="font-family:cursive; color:var(--primary);">Kapında</h2>
+            <h2 id="headerTitle">Kapında</h2>
             <div style="display:flex; gap:20px; align-items:center;">
                 <div class="header-action" onclick="switchView('messagesView')" style="font-size:20px; color:var(--secondary); cursor:pointer;">
                     <i class="fa-solid fa-envelope"></i>
@@ -192,24 +176,24 @@
             <div class="view active" id="authView" style="background:white;">
                 <div style="height:100%; display:flex; flex-direction:column; justify-content:center; padding: 0 25px;">
                     <div style="text-align:center; margin-bottom:40px;">
-                        <h1 style="margin:0; font-family:cursive; font-size:48px; color:var(--primary); letter-spacing:-2px;">Kapında</h1>
-                        <p style="font-size:14px; font-weight:600; color:var(--text-muted); margin-top:5px;">Ağını Kur, Kazanmaya Başla</p>
+                        <h1 style="margin:0; font-family:cursive; font-size:48px; color:var(--primary);">Kapında</h1>
+                        <p style="font-size:14px; font-weight:600; color:var(--text-muted); margin-top:5px;">Bağlan, Paylaş, Kazan</p>
                     </div>
                     <div class="auth-tabs">
                         <div class="auth-tab active" id="tabLoginBtn" onclick="authModSwitch('login')">Giriş Yap</div>
                         <div class="auth-tab" id="tabRegisterBtn" onclick="authModSwitch('register')">Ücretsiz Kayıt</div>
                     </div>
                     <div id="loginFormBlock">
-                        <div class="input-group"><input type="text" id="lEmail" placeholder="E-posta Adresi"></div>
-                        <div class="input-group"><input type="password" id="lPass" placeholder="Şifre"></div>
-                        <button class="btn-primary" style="margin-top:10px;" onclick="girisYap()"><i class="fa-solid fa-arrow-right-to-bracket"></i> Sisteme Bağlan</button>
+                        <div class="input-group"><input type="text" id="lEmail" placeholder="E-posta Adresi" value="admin.com"></div>
+                        <div class="input-group"><input type="password" id="lPass" placeholder="Şifre" value="1"></div>
+                        <button class="btn-primary" style="margin-top:10px;" onclick="girisYap()">Sisteme Bağlan</button>
                     </div>
                     <div id="registerFormBlock" style="display:none;">
                         <div class="input-group"><input type="text" id="rName" placeholder="Ad Soyad"></div>
                         <div class="input-group"><input type="email" id="rEmail" placeholder="E-posta Adresi"></div>
                         <div class="input-group"><input type="password" id="rPass" placeholder="Şifre Belirle"></div>
-                        <div class="input-group"><input type="text" id="rSponsor" placeholder="Abonelik Davet Kodu (Opsiyonel)"></div>
-                        <button class="btn-success" style="margin-top:10px;" onclick="kayitOl()"><i class="fa-solid fa-user-plus"></i> Aramıza Katıl</button>
+                        <div class="input-group"><input type="text" id="rSponsor" placeholder="Abonelik Kodu (İsteğe Bağlı)"></div>
+                        <button class="btn-success" style="margin-top:10px;" onclick="kayitOl()">Aramıza Katıl</button>
                     </div>
                 </div>
             </div>
@@ -219,7 +203,7 @@
                 <div style="padding:15px 15px 5px 15px;">
                     <div style="position:relative;">
                         <i class="fa-solid fa-magnifying-glass" style="position:absolute; left:16px; top:18px; color:var(--text-muted);"></i>
-                        <input type="text" id="aramaBox" placeholder="Ürün veya Mağaza ara..." onkeyup="kesfetCiz()" style="width:100%; padding:16px 16px 16px 45px; border-radius:16px; border:none; background:white; font-family:inherit; font-weight:600; box-shadow:0 4px 15px rgba(0,0,0,0.03);">
+                        <input type="text" id="aramaBox" placeholder="Ürün veya Kişi ara..." onkeyup="kesfetCiz()" style="width:100%; padding:16px 16px 16px 45px; border-radius:16px; border:none; background:white; font-family:inherit; font-weight:600; box-shadow:0 4px 15px rgba(0,0,0,0.03);">
                     </div>
                 </div>
                 <div id="exploreFeed"></div>
@@ -227,7 +211,7 @@
 
             <div class="view" id="profileView">
                 <div class="profile-header">
-                    <div id="pAvatar" style="width:90px; height:90px; background:linear-gradient(135deg, var(--primary), var(--primary-dark)); border-radius:50%; margin:0 auto 15px auto; color:white; display:flex; justify-content:center; align-items:center; font-size:36px; font-weight:900; background-size:cover; box-shadow:0 10px 20px rgba(37,99,235,0.2);">A</div>
+                    <div id="pAvatar" style="width:90px; height:90px; background:linear-gradient(135deg, var(--primary), var(--primary-dark)); border-radius:50%; margin:0 auto 15px auto; color:white; display:flex; justify-content:center; align-items:center; font-size:36px; font-weight:900; background-size:cover;">A</div>
                     <h2 id="pName" style="margin:0; font-size:24px;">İsim</h2>
                     <div id="pLevelBadge" class="level-badge" onclick="openVipModal()">Seviye 0 <i class="fa-solid fa-arrow-up-right-dots"></i></div>
                     
@@ -238,17 +222,17 @@
                     </div>
 
                     <div style="display:flex; gap:12px; margin-top:25px;">
-                        <button class="btn-action" style="background:var(--bg-color); color:var(--primary);" onclick="window.open('https://www.shopier.com/kapindavip', '_blank')"><i class="fa-solid fa-wallet" style="font-size:16px;"></i><br>Bakiye Yükle</button>
-                        <button class="btn-action" id="btnCekYap" style="display:none; background:linear-gradient(135deg, #10b981, #059669); color:white;" onclick="convertToVoucher()"><i class="fa-solid fa-ticket" style="font-size:16px;"></i><br>Çek Üret</button>
-                        <button class="btn-action" style="background:var(--bg-color); color:var(--text-main);" onclick="openModal('editProfileModal')"><i class="fa-solid fa-gear" style="font-size:16px;"></i><br>Ayarlar</button>
+                        <button class="btn-action" style="background:var(--bg-color); color:var(--primary);" onclick="window.open('https://www.shopier.com/kapindavip', '_blank')"><i class="fa-solid fa-wallet"></i> Bakiye Yükle</button>
+                        <button class="btn-action" id="btnCekYap" style="display:none; background:linear-gradient(135deg, #10b981, #059669); color:white;" onclick="convertToVoucher()"><i class="fa-solid fa-ticket"></i> Çek Üret</button>
+                        <button class="btn-action" style="background:var(--bg-color); color:var(--text-main);" onclick="openModal('editProfileModal')"><i class="fa-solid fa-gear"></i> Ayarlar</button>
                     </div>
 
                     <div style="display:flex; gap:12px; margin-top:12px;">
-                        <button class="btn-action" id="btnUrunEkle" style="display:none; background:var(--primary); color:white;" onclick="switchView('storeAddProdView')"><i class="fa-solid fa-plus"></i> Ürün Ekle</button>
-                        <button class="btn-action" id="btnHikaye" style="display:none; background:linear-gradient(45deg, #f09433, #dc2743); color:white;" onclick="openModal('storyModal')"><i class="fa-solid fa-camera"></i> Hikaye At</button>
-                        <button class="btn-action" id="btnKasa" style="display:none; background:var(--warning); color:white;" onclick="switchView('storePosView')"><i class="fa-solid fa-cash-register"></i> Kasam</button>
+                        <button class="btn-action" id="btnUrunEkle" style="display:none; background:var(--primary); color:white;" onclick="switchView('storeAddProdView')">Ürün Ekle</button>
+                        <button class="btn-action" id="btnHikaye" style="display:none; background:linear-gradient(45deg, #f09433, #dc2743); color:white;" onclick="openModal('storyModal')">Hikaye At</button>
+                        <button class="btn-action" id="btnKasa" style="display:none; background:var(--warning); color:white;" onclick="switchView('storePosView')">Kasam</button>
                     </div>
-                    <button class="btn-outline" style="margin-top:25px; border:2px solid #fee2e2; color:var(--danger); border-radius:16px;" onclick="cikisYap()"><i class="fa-solid fa-power-off"></i> Hesaptan Çıkış</button>
+                    <button class="btn-outline" style="margin-top:25px; border:2px solid #fee2e2; color:var(--danger); border-radius:16px;" onclick="cikisYap()">Hesaptan Çıkış</button>
                 </div>
                 <div id="profileGrid" style="display:grid; grid-template-columns: repeat(3, 1fr); gap:3px; margin-top:3px;"></div>
             </div>
@@ -266,7 +250,7 @@
 
                     <div style="display:flex; gap:10px; margin-top:25px;">
                         <button class="btn-primary" id="btnTakipEt" onclick="toggleTakip()">Takip Et</button>
-                        <button class="btn-outline" onclick="openChat(window.viewingEmail)"><i class="fa-solid fa-paper-plane"></i> Mesaj At</button>
+                        <button class="btn-outline" onclick="openChat(viewingEmail)">Mesaj At</button>
                     </div>
                 </div>
                 <div id="opGrid" style="display:grid; grid-template-columns: repeat(3, 1fr); gap:3px; margin-top:3px;"></div>
@@ -301,7 +285,7 @@
                         <span style="font-weight:800; font-size:16px; color:var(--text-muted);">Ödenecek Tutar</span>
                         <span id="cartTotal" style="font-size:28px; font-weight:900; color:var(--text-main);">0 ₺</span>
                     </div>
-                    <button class="btn-primary" style="padding:18px; font-size:16px;" onclick="siparisVer()"><i class="fa-solid fa-shield-halved"></i> Güvenli Ödemeyi Onayla</button>
+                    <button class="btn-primary" style="padding:18px; font-size:16px;" onclick="siparisVer()">Güvenli Ödemeyi Onayla</button>
                 </div>
             </div>
 
@@ -311,7 +295,7 @@
                     <div class="input-group"><input type="text" id="upAd" placeholder="Ürün Adı"></div>
                     <div class="input-group"><input type="number" id="upFiyat" placeholder="Müşteri Satış Fiyatı (₺)"></div>
                     <div class="input-group"><input type="file" accept="image/*" onchange="resimOku(this, 'upResBase64')" style="background:white; border:2px dashed var(--border);"><input type="hidden" id="upResBase64"></div>
-                    <button class="btn-primary" style="margin-top:10px;" onclick="urunKaydet()"><i class="fa-solid fa-cloud-arrow-up"></i> Vitrine Ekle</button>
+                    <button class="btn-primary" style="margin-top:10px;" onclick="urunKaydet()">Vitrine Ekle</button>
                 </div>
             </div>
 
@@ -322,13 +306,13 @@
                         <p style="margin:0; font-size:12px; font-weight:800; opacity:0.9;">SİSTEMDEN KESİN ALACAĞIM</p>
                         <h1 id="sKasaBakiye" style="margin:10px 0 0 0; font-size:42px;">0 ₺</h1>
                     </div>
-                    <button class="btn-success" style="margin-bottom:20px; font-size:15px; padding:16px;" onclick="paraCekModalAc()"><i class="fa-solid fa-building-columns"></i> Kazancı IBAN'a Çek</button>
+                    <button class="btn-success" style="margin-bottom:20px; font-size:15px; padding:16px;" onclick="document.getElementById('wBakiyeGoster').innerText = appData.users[aktifKullaniciEmail].bakiye + ' ₺'; openModal('withdrawModal');">Kazancı IBAN'a Çek</button>
 
                     <div style="background:white; padding:25px; border-radius:24px; border:2px dashed var(--warning); text-align:center;">
                         <div style="width:60px; height:60px; background:rgba(245,158,11,0.1); color:var(--warning); border-radius:50%; display:flex; justify-content:center; align-items:center; font-size:24px; margin:0 auto 15px auto;"><i class="fa-solid fa-ticket"></i></div>
                         <h4 style="margin:0 0 10px 0; font-size:18px;">Çek Bozdur</h4>
                         <div class="input-group" style="padding:0;"><input type="text" id="bozdurKod" placeholder="CEK-XXXX" style="text-align:center; font-size:22px; letter-spacing:2px; font-weight:900;"></div>
-                        <button class="btn-warning" onclick="cekBozdur()"><i class="fa-solid fa-check-double"></i> Kodu Doğrula ve Bozdur</button>
+                        <button class="btn-warning" onclick="cekBozdur()">Kodu Doğrula ve Bozdur</button>
                     </div>
                 </div>
             </div>
@@ -385,52 +369,68 @@
         let aktifKullaniciEmail = null; let sepet = []; let currentView = 'authView'; let storyTimer = null; 
         let viewingEmail = null; let activeChatEmail = null;
 
-        window.onload = () => { listenToCloud(); setTimeout(()=> { let s=document.getElementById('serverLoading'); if(s) s.style.display='none'; }, 2000); };
+        // Sayfa Yüklenince DB'yi Dinle ve Varsa Oturum Aç
+        window.onload = () => { 
+            let saved = localStorage.getItem('kapinda_session'); if(saved) aktifKullaniciEmail = saved;
+            listenToCloud(); 
+        };
 
         function listenToCloud() {
-            db.collection('kapinda').doc('users').onSnapshot(doc => { if(doc.exists) appData.users = doc.data(); renderUI(); });
-            db.collection('kapinda').doc('products').onSnapshot(doc => { if(doc.exists) appData.products = doc.data().list || []; renderUI(); });
-            db.collection('kapinda').doc('stats').onSnapshot(doc => { if(doc.exists) appData.stats = doc.data(); renderUI(); });
-            db.collection('kapinda').doc('plans').onSnapshot(doc => { if(doc.exists) appData.plans = doc.data(); renderUI(); });
-            db.collection('kapinda').doc('stories').onSnapshot(doc => { if(doc.exists) appData.stories = doc.data().list || []; renderUI(); });
-            db.collection('kapinda').doc('withdrawals').onSnapshot(doc => { if(doc.exists) appData.withdrawals = doc.data().list || []; renderUI(); });
+            db.collection('kapinda').doc('users').onSnapshot(doc => { 
+                if(doc.exists) {
+                    appData.users = doc.data(); 
+                    if(aktifKullaniciEmail && appData.users[aktifKullaniciEmail] && currentView === 'authView') {
+                        // Otomatik Giriş
+                        let u = appData.users[aktifKullaniciEmail];
+                        document.getElementById('appHeader').style.display = 'flex'; document.getElementById('appNav').style.display = 'flex';
+                        document.getElementById('nav-home').style.display = (u.rol === 'admin' ? 'none' : 'block');
+                        document.getElementById('nav-cart').style.display = (u.rol === 'admin' ? 'none' : 'block');
+                        document.getElementById('nav-admin').style.display = (u.rol === 'admin' ? 'block' : 'none');
+                        document.getElementById('nav-profile').style.display = 'block';
+                        switchView(u.rol === 'admin' ? 'adminDashboardView' : 'homeView');
+                    }
+                    renderUI(); 
+                } else if(!appData.users['admin.com']) {
+                    db.collection('kapinda').doc('users').set({ 'admin.com': { rol: 'admin', isim: 'Yönetici', sifre: '1', bakiye: 0, seviye: '0', refKod: 'ADMIN' } }); 
+                }
+            });
+            db.collection('kapinda').doc('products').onSnapshot(doc => { if(doc.exists) { appData.products = doc.data().list || []; renderUI(); } });
+            db.collection('kapinda').doc('stats').onSnapshot(doc => { if(doc.exists) { appData.stats = doc.data(); renderUI(); } });
+            db.collection('kapinda').doc('plans').onSnapshot(doc => { if(doc.exists) { appData.plans = doc.data(); renderUI(); } });
+            db.collection('kapinda').doc('stories').onSnapshot(doc => { if(doc.exists) { appData.stories = doc.data().list || []; renderUI(); } });
+            db.collection('kapinda').doc('withdrawals').onSnapshot(doc => { if(doc.exists) { appData.withdrawals = doc.data().list || []; renderUI(); } });
+            db.collection('kapinda').doc('vouchers').onSnapshot(doc => { if(doc.exists) { appData.vouchers = doc.data().list || []; renderUI(); } });
             db.collection('kapinda').doc('chats').onSnapshot(doc => { 
                 if(doc.exists) { appData.chats = doc.data(); if(currentView==='messagesView') mesajListesiCiz(); if(currentView==='chatDetailView') sohbetCiz(); } 
             });
         }
 
-        // V36'NIN KUSURSUZ GİRİŞ FONKSİYONU
         function girisYap() {
-            const e = document.getElementById('lEmail').value.trim();
-            const p = document.getElementById('lPass').value.trim();
-            const u = appData.users[e];
-            
+            const e = document.getElementById('lEmail').value.trim(); const p = document.getElementById('lPass').value.trim(); const u = appData.users[e];
+            if(Object.keys(appData.users).length === 0) return showToast("Bağlantı kuruluyor, tekrar basınız...", true);
             if (u && u.sifre === p) {
-                aktifKullaniciEmail = e;
-                document.getElementById('appHeader').style.display = 'flex';
-                document.getElementById('appNav').style.display = 'flex';
-                
+                aktifKullaniciEmail = e; localStorage.setItem('kapinda_session', e);
+                document.getElementById('appHeader').style.display = 'flex'; document.getElementById('appNav').style.display = 'flex';
                 document.getElementById('nav-home').style.display = (u.rol === 'admin' ? 'none' : 'block');
                 document.getElementById('nav-cart').style.display = (u.rol === 'admin' ? 'none' : 'block');
                 document.getElementById('nav-admin').style.display = (u.rol === 'admin' ? 'block' : 'none');
                 document.getElementById('nav-profile').style.display = 'block';
-
-                switchView(u.rol === 'admin' ? 'adminDashboardView' : 'homeView');
+                switchView(u.rol === 'admin' ? 'adminDashboardView' : 'homeView'); showToast("Hoş Geldin!");
             } else { showToast("Bilgiler Hatalı!", true); }
         }
 
         function kayitOl() {
             const ad = document.getElementById('rName').value.trim(); const e = document.getElementById('rEmail').value.trim(); const p = document.getElementById('rPass').value.trim();
-            if(!ad || !e || !p) return showToast("Eksik bilgi!", true); if(appData.users[e]) return showToast("Kayıtlı e-posta!", true);
+            if(!ad || !e || !p) return showToast("Eksik bilgi!", true); if(appData.users[e]) return showToast("Bu e-posta kayıtlı!", true);
             const sp = document.getElementById('rSponsor').value.trim().toUpperCase(); let spMail = '';
             if(sp) { for(let k in appData.users) { if(appData.users[k].refKod === sp) spMail = k; } }
 
             appData.users[e] = { isim: ad, sifre: p, rol: 'customer', bakiye: 0, seviye: '0', refKod: 'VIP'+Math.floor(Math.random()*9000), sponsor: spMail, takipEttikleri: [] };
             db.collection('kapinda').doc('users').set(appData.users);
-            showToast("Kayıt Tamam!"); authModSwitch('login');
+            showToast("Kayıt Tamam! Giriş yapabilirsiniz."); authModSwitch('login'); document.getElementById('lEmail').value = e; document.getElementById('lPass').value = p;
         }
 
-        function cikisYap() { location.reload(); }
+        function cikisYap() { localStorage.removeItem('kapinda_session'); location.reload(); }
 
         function switchView(tId) {
             document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
@@ -440,11 +440,11 @@
             if(document.getElementById(nId)) document.getElementById(nId).classList.add('active');
             
             currentView = tId;
-            if(tId === 'homeView') safeText('headerTitle', 'Keşfet');
-            else if(tId === 'cartView') safeText('headerTitle', 'Sepetim');
-            else if(tId === 'messagesView') safeText('headerTitle', 'Mesajlarım');
-            else if(tId === 'profileView' && appData.users[aktifKullaniciEmail]) safeText('headerTitle', appData.users[aktifKullaniciEmail].isim);
-            else if(tId === 'adminDashboardView') safeText('headerTitle', 'Tanrı Modu');
+            if(tId === 'homeView') document.getElementById('headerTitle').innerText = 'Keşfet';
+            else if(tId === 'cartView') document.getElementById('headerTitle').innerText = 'Sepetim';
+            else if(tId === 'messagesView') document.getElementById('headerTitle').innerText = 'Mesajlarım';
+            else if(tId === 'profileView' && appData.users[aktifKullaniciEmail]) document.getElementById('headerTitle').innerText = appData.users[aktifKullaniciEmail].isim;
+            else if(tId === 'adminDashboardView') document.getElementById('headerTitle').innerText = 'Tanrı Modu';
             renderUI();
         }
 
@@ -452,8 +452,8 @@
             if(!aktifKullaniciEmail) return;
             const u = appData.users[aktifKullaniciEmail];
             
-            safeText('pName', u.isim + (u.rol==='store'?' ✓':''));
-            safeText('pBalance', (u.bakiye || 0) + " ₺");
+            document.getElementById('pName').innerText = u.isim + (u.rol==='store'?' ✓':'');
+            document.getElementById('pBalance').innerText = (u.bakiye || 0) + " ₺";
             
             let badge = document.getElementById('pLevelBadge');
             if(u.rol==='store' || u.rol==='admin') { badge.style.display='none'; }
@@ -467,7 +467,7 @@
                 if(appData.users[k].sponsor === aktifKullaniciEmail) ekip++; 
                 if(appData.users[k].takipEttikleri && appData.users[k].takipEttikleri.includes(aktifKullaniciEmail)) takipci++;
             }
-            safeText('pFollowers', takipci); safeText('pTeam', ekip);
+            document.getElementById('pFollowers').innerText = takipci; document.getElementById('pTeam').innerText = ekip;
 
             document.getElementById('btnUrunEkle').style.display = (u.rol==='store'?'block':'none');
             document.getElementById('btnHikaye').style.display = (u.rol==='store'?'block':'none');
@@ -482,39 +482,38 @@
             if(currentView === 'adminDashboardView' && u.rol==='admin') godModeCiz();
         }
 
-        // DİĞER PROFİL VE TAKİP SİSTEMİ
-        window.openOtherProfile = function(email) {
+        // SOSYAL AĞ ÖZELLİKLERİ
+        function openOtherProfile(email) {
             if(email === aktifKullaniciEmail) { switchView('profileView'); return; }
             viewingEmail = email; let t = appData.users[email]; if(!t) return;
             
-            safeText('opName', t.isim + (t.rol==='store'?' ✓':''));
+            document.getElementById('opName').innerText = t.isim + (t.rol==='store'?' ✓':'');
             let av = document.getElementById('opAvatar');
             if(t.avatar) { av.style.backgroundImage = `url('${t.avatar}')`; av.innerText=''; } else { av.style.backgroundImage='none'; av.innerText=t.isim[0]; }
-            safeText('opBio', t.bio || 'Merhaba!');
+            document.getElementById('opBio').innerText = t.bio || 'Merhaba!';
             
             let takipciler=0; for(let k in appData.users) { if(appData.users[k].takipEttikleri && appData.users[k].takipEttikleri.includes(email)) takipciler++; }
-            safeText('opFollowers', takipciler);
+            document.getElementById('opFollowers').innerText = takipciler;
 
             let u = appData.users[aktifKullaniciEmail]; if(!u.takipEttikleri) u.takipEttikleri = [];
             let isFollowing = u.takipEttikleri.includes(email);
             let btn = document.getElementById('btnTakipEt');
-            btn.innerText = isFollowing ? "Takibi Bırak" : "Takip Et";
-            btn.className = isFollowing ? "btn-outline" : "btn-primary";
+            btn.innerText = isFollowing ? "Takibi Bırak" : "Takip Et"; btn.className = isFollowing ? "btn-outline" : "btn-primary";
 
             profilGridCiz(t, 'opGrid', email);
-            safeText('headerTitle', t.isim); switchView('otherProfileView');
-        };
+            document.getElementById('headerTitle').innerText = t.isim; switchView('otherProfileView');
+        }
 
-        window.toggleTakip = function() {
+        function toggleTakip() {
             let u = appData.users[aktifKullaniciEmail]; if(!u.takipEttikleri) u.takipEttikleri = [];
             let idx = u.takipEttikleri.indexOf(viewingEmail);
             if(idx > -1) u.takipEttikleri.splice(idx, 1); else u.takipEttikleri.push(viewingEmail);
             db.collection('kapinda').doc('users').set(appData.users); openOtherProfile(viewingEmail);
-        };
+        }
 
         // MESAJLAŞMA
-        window.openChat = function(email) { activeChatEmail = email; safeText('chatPartnerName', appData.users[email].isim); switchView('chatDetailView'); sohbetCiz(); };
-        window.mesajListesiCiz = function() {
+        function openChat(email) { activeChatEmail = email; document.getElementById('chatPartnerName').innerText = appData.users[email].isim; switchView('chatDetailView'); sohbetCiz(); }
+        function mesajListesiCiz() {
             let h = ''; let added = [];
             for(let cId in appData.chats) {
                 if(cId.includes(aktifKullaniciEmail)) {
@@ -528,8 +527,8 @@
                 }
             }
             document.getElementById('messagesContainer').innerHTML = h || '<p style="text-align:center; color:var(--text-muted); margin-top:30px;">Henüz mesajınız yok.</p>';
-        };
-        window.sohbetCiz = function() {
+        }
+        function sohbetCiz() {
             if(!activeChatEmail) return;
             let cId = [aktifKullaniciEmail, activeChatEmail].sort().join('_'); let msgs = appData.chats[cId] || []; let h = '';
             msgs.forEach(m => {
@@ -538,20 +537,19 @@
                 else h += `<div style="display:flex; justify-content:flex-start; margin-bottom:10px;"><div style="background:white; color:var(--text-main); border:1px solid var(--border); padding:10px 15px; border-radius:16px 16px 16px 0; max-width:75%; font-size:13px;">${m.m}</div></div>`;
             });
             let box = document.getElementById('chatMessagesBox'); box.innerHTML = h; box.scrollTop = box.scrollHeight;
-        };
-        window.mesajGonder = function() {
+        }
+        function mesajGonder() {
             let txt = document.getElementById('chatInput').value.trim(); if(!txt) return;
             let cId = [aktifKullaniciEmail, activeChatEmail].sort().join('_');
             if(!appData.chats[cId]) appData.chats[cId] = [];
             appData.chats[cId].push({ s: aktifKullaniciEmail, m: txt, t: Date.now() });
             db.collection('kapinda').doc('chats').set(appData.chats);
             document.getElementById('chatInput').value = ''; sohbetCiz();
-        };
+        }
 
         // KEŞFET VE DİĞERLERİ
         function kesfetCiz() {
-            let cu = appData.users[aktifKullaniciEmail];
-            let arama = document.getElementById('aramaBox').value.toLowerCase();
+            let cu = appData.users[aktifKullaniciEmail]; let arama = document.getElementById('aramaBox') ? document.getElementById('aramaBox').value.toLowerCase() : '';
             let pH = ''; let list = [...appData.products].reverse();
             list.forEach(p => {
                 let sat = appData.users[p.storeEmail] || {isim:'Mağaza', rol:'customer'};
@@ -562,7 +560,7 @@
                 
                 let btnHtml = '';
                 if(cu.rol === 'store') btnHtml = `<button class="btn-outline" style="max-width:120px; font-size:12px; cursor:default;" disabled>Mağaza Modu</button>`;
-                else if(cu.rol === 'promoter') btnHtml = `<div style="display:flex; gap:8px; align-items:center;"><button class="btn-primary" style="padding:12px; font-size:12px; white-space:nowrap;" onclick="linkUret()"><i class="fa-solid fa-link"></i> Link Oluştur</button><div style="width:40px; height:40px; border-radius:12px; background:var(--bg-color); color:var(--text-main); display:flex; justify-content:center; align-items:center; cursor:pointer;" onclick="sepeteEkle('${p.id}','${p.ad}',${p.fiyat},'${p.storeEmail}')"><i class="fa-solid fa-cart-plus"></i></div></div>`;
+                else if(cu.rol === 'promoter') btnHtml = `<div style="display:flex; gap:8px; align-items:center;"><button class="btn-primary" style="padding:12px; font-size:12px; white-space:nowrap;" onclick="linkUret('${p.id}')"><i class="fa-solid fa-link"></i> Satış Linki</button><div style="width:40px; height:40px; border-radius:12px; background:var(--bg-color); color:var(--text-main); display:flex; justify-content:center; align-items:center; cursor:pointer;" onclick="sepeteEkle('${p.id}','${p.ad}',${p.fiyat},'${p.storeEmail}')"><i class="fa-solid fa-cart-plus"></i></div></div>`;
                 else btnHtml = `<button class="btn-primary" style="max-width:140px; padding:12px; font-size:13px;" onclick="sepeteEkle('${p.id}','${p.ad}',${p.fiyat},'${p.storeEmail}')">Sepete Ekle</button>`;
 
                 pH += `<div class="post-card"><div class="post-header" style="cursor:pointer;" onclick="openOtherProfile('${p.storeEmail}')"><div class="post-avatar" style="${av}">${sat.isim[0]}</div><b style="font-size:14px; color:var(--text-main);">${sat.isim} ${tik}</b></div><div class="post-image" style="background-image:url('${p.resim}')"></div><div style="padding:15px 20px 5px 20px;"><h4 style="margin:0; font-size:16px;">${p.ad}</h4></div><div class="post-actions"><b style="font-size:22px; font-weight:900;">${p.fiyat} ₺</b> ${btnHtml} </div></div>`;
@@ -579,80 +577,12 @@
             document.getElementById('storiesFeed').innerHTML = sH || '<p style="font-size:11px; color:var(--text-muted); padding:10px; margin:0;">Hikaye Yok</p>';
         }
 
-        function linkUret() { showToast("Satış Linkiniz Kopyalandı!"); }
+        function linkUret(pId) { showToast("Satış Linkiniz Kopyalandı!"); }
         function openStory(idx) {
-            let s = appData.stories[idx]; let st = appData.users[s.store]; safeText('vStoryName', st.isim);
+            let s = appData.stories[idx]; let st = appData.users[s.store]; document.getElementById('vStoryName').innerText = st.isim;
             let av = document.getElementById('vStoryAvatar'); if(st.avatar) { av.style.backgroundImage=`url('${st.avatar}')`; av.innerText=''; } else { av.style.backgroundImage='none'; av.innerText=st.isim[0]; }
-            document.getElementById('vStoryImg').style.backgroundImage = `url('${s.resim}')`; safeText('vStoryText', s.baslik);
+            document.getElementById('vStoryImg').style.backgroundImage = `url('${s.resim}')`; document.getElementById('vStoryText').innerText = s.baslik;
             document.getElementById('storyViewerScreen').classList.add('active');
             let bar = document.getElementById('sProgressBar'); bar.style.transition = 'none'; bar.style.width = '0%';
             setTimeout(()=>{ bar.style.transition = 'width 5s linear'; bar.style.width = '100%'; }, 50);
-            clearTimeout(storyTimer); storyTimer = setTimeout(()=>{ closeStory(); }, 5000);
-        }
-        function closeStory() { clearTimeout(storyTimer); document.getElementById('storyViewerScreen').classList.remove('active'); }
-
-        function paraCekModalAc() { safeText('wBakiyeGoster', appData.users[aktifKullaniciEmail].bakiye + " ₺"); openModal('withdrawModal'); }
-        function paraCekTalebi() {
-            const u = appData.users[aktifKullaniciEmail];
-            let n = document.getElementById('wAd').value.trim(); let i = document.getElementById('wIban').value.trim(); let t = parseInt(document.getElementById('wTutar').value);
-            if(!n || !i || !t) return showToast("Tüm alanları doldurun!", true); if(t > u.bakiye) return showToast("Bakiye yetersiz!", true);
-            u.bakiye -= t; appData.withdrawals.unshift({ id: 'W'+Date.now(), email: aktifKullaniciEmail, ad: n, iban: i, tutar: t, tarih: new Date().toLocaleDateString(), durum: 'bekliyor' });
-            db.collection('kapinda').doc('users').set(appData.users); db.collection('kapinda').doc('withdrawals').set({list: appData.withdrawals});
-            closeModal('withdrawModal'); showToast("Çekim talebi alındı!"); renderUI();
-        }
-
-        function sepeteEkle(id, ad, f, s) { sepet.push({id:id, ad:ad, fiyat:f, satici:s}); safeText('cartCount', sepet.length); showToast("Sepete Eklendi!"); }
-        function siparisVer() {
-            if(!sepet.length) return showToast("Sepetiniz boş!", true);
-            const u = appData.users[aktifKullaniciEmail]; let t = 0; sepet.forEach(x=>t+=x.fiyat);
-            if(u.bakiye < t) return showToast("Cüzdan Bakiyesi Yetersiz!", true);
-            u.bakiye -= t; 
-            sepet.forEach(item => {
-                let f = item.fiyat; let ePayi = f * 0.80; let sMarj = f * 0.20; let vPay = 0;
-                if(u.sponsor && appData.users[u.sponsor] && appData.users[u.sponsor].rol==='promoter') {
-                    let lvl = appData.users[u.sponsor].seviye; let oran = appData.plans[lvl] ? appData.plans[lvl].oran : 0.10;
-                    vPay = f * oran; appData.users[u.sponsor].bakiye += vPay;
-                }
-                if(appData.users[item.satici]) appData.users[item.satici].bakiye += ePayi;
-                appData.stats.totalCiro += f; appData.stats.netKar += (sMarj - vPay); 
-            });
-            db.collection('kapinda').doc('users').set(appData.users); db.collection('kapinda').doc('stats').set(appData.stats);
-            sepet = []; safeText('cartCount', '0'); switchView('profileView'); showToast("Sipariş Onaylandı!");
-        }
-
-        function openVipModal() {
-            let h=''; let keys = Object.keys(appData.plans).sort((a,b)=>parseInt(a)-parseInt(b));
-            for(let k of keys) { 
-                let p = appData.plans[k]; 
-                h+=`<div style="padding:20px; border:2px solid var(--bg-color); border-radius:20px; margin-bottom:12px; display:flex; justify-content:space-between; align-items:center; background:#f8fafc;"><div><b style="color:var(--primary); font-size:16px;">${p.ad}</b><p style="margin:4px 0 0 0; font-size:12px; color:var(--text-muted); font-weight:600;"><i class="fa-solid fa-bolt" style="color:var(--warning);"></i> %${p.oran*100} Komisyon</p></div><button class="btn-primary" style="width:auto; padding:12px 20px; box-shadow:none;" onclick="buyVip('${k}',${p.fiyat})">${p.fiyat} ₺</button></div>`; 
-            }
-            document.getElementById('vipPlansContainer').innerHTML = h; openModal('vipModal');
-        }
-        function buyVip(lvl, f) {
-            const u = appData.users[aktifKullaniciEmail]; if(u.bakiye < f) return showToast("Cüzdan Bakiyesi Yetersiz!", true);
-            u.bakiye -= f; u.rol = 'promoter'; u.seviye = lvl; appData.stats.totalCiro += f; appData.stats.netKar += f;
-            db.collection('kapinda').doc('users').set(appData.users); db.collection('kapinda').doc('stats').set(appData.stats);
-            closeModal('vipModal'); showToast(`Tebrikler! Seviye ${lvl} Aktif.`);
-        }
-
-        function urunKaydet() {
-            const a=document.getElementById('upAd').value; const f=parseInt(document.getElementById('upFiyat').value); const r=document.getElementById('upResBase64').value;
-            if(!a||!f||!r) return showToast("Tüm alanları doldurun!", true);
-            appData.products.push({id:'p'+Date.now(), ad:a, fiyat:f, resim:r, storeEmail:aktifKullaniciEmail});
-            db.collection('kapinda').doc('products').set({list:appData.products}); switchView('profileView');
-        }
-        function hikayeAt() {
-            const b=document.getElementById('sBaslik').value; const r=document.getElementById('sRes').value;
-            if(!r) return showToast("Resim Seçin!", true);
-            appData.stories.unshift({store:aktifKullaniciEmail, baslik:b, resim:r, time:Date.now()});
-            db.collection('kapinda').doc('stories').set({list:appData.stories}); closeModal('storyModal'); showToast("Flaş Hikaye Yayında!");
-        }
-        function convertToVoucher() {
-            const u = appData.users[aktifKullaniciEmail]; if(u.bakiye<=0) return showToast("Bakiye yok!", true);
-            let k = "CEK-"+Math.floor(1000+Math.random()*9000);
-            appData.vouchers.unshift({code:k, amount:u.bakiye, owner:aktifKullaniciEmail, status:'active'});
-            u.bakiye = 0; db.collection('kapinda').doc('users').set(appData.users); db.collection('kapinda').doc('vouchers').set({list:appData.vouchers}); showToast("Hediye Çeki Üretildi!");
-        }
-        function cekBozdur() {
-            let k = document.getElementById('bozdurKod').value.toUpperCase().trim(); if(!k) return;
-            let ix = -1; for(let i=0; i<appData.vouchers.length; i++) { if(appData.vouchers[i].
+            clearTimeout(storyTimer); storyTimer = setTimeout(()=>{ closeStory();
