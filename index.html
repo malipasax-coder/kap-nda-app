@@ -263,8 +263,8 @@
                         <div style="flex:1; text-align:center; padding:14px; font-size:13px; font-weight:800; border-radius:12px; cursor:pointer; color:var(--text-muted);" id="tabRegisterBtn" onclick="authModSwitch('register')">Hesap Aç</div>
                     </div>
                     <div id="loginFormBlock">
-                        <div class="input-group"><input type="text" id="lEmail" placeholder="E-posta" value="admin@kapinda.com"></div>
-                        <div class="input-group"><input type="password" id="lPass" placeholder="Şifre" value="123456"></div>
+                        <div class="input-group"><input type="text" id="lEmail" placeholder="E-posta" autocomplete="off"></div>
+                        <div class="input-group"><input type="password" id="lPass" placeholder="Şifre" autocomplete="new-password"></div>
                         <button class="btn-primary" style="margin-top:10px;" onclick="girisYap()">Sisteme Gir</button>
                     </div>
                     <div id="registerFormBlock" style="display:none;">
