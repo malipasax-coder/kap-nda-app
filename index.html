@@ -399,41 +399,105 @@ function switchView(tId){
 
 function authModSwitch(m){document.getElementById('loginFormBlock').style.display=m==='login'?'block':'none';document.getElementById('registerFormBlock').style.display=m==='register'?'block':'none';document.getElementById('tabLoginBtn').style.background=m==='login'?'var(--card-bg)':'transparent';document.getElementById('tabLoginBtn').style.color=m==='login'?'var(--text-main)':'var(--text-muted)';document.getElementById('tabRegisterBtn').style.background=m==='register'?'var(--card-bg)':'transparent';document.getElementById('tabRegisterBtn').style.color=m==='register'?'var(--text-main)':'var(--text-muted)';}
 
-// --- GİRİŞ YAPMA VE HATA YAKALAMA FONKSİYONU GÜNCELLENDİ ---
-function girisYap(){
-    let input=document.getElementById('lEmail')?.value?.trim()?.toLowerCase();
-    let p=document.getElementById('lPass')?.value?.trim();
-    if(!input||!p)return showToast("Eksik bilgi!",true);
+// --- YENİ ADIM ADIM GİRİŞ YAPMA FONKSİYONU ---
+async function girisYap() {
+    let input = document.getElementById('lEmail')?.value?.trim()?.toLowerCase();
+    let p = document.getElementById('lPass')?.value?.trim();
+    if (!input || !p) return showToast("Eksik bilgi!", true);
     
     let btn = document.getElementById('btnGirisYap');
-    let originalText = btn.innerText;
-    btn.innerText = "Yükleniyor...";
+    btn.innerText = "Lütfen Bekleyin...";
     btn.disabled = true;
 
-    let loginFn=(em,pw)=>{
-        firebase.auth().signInWithEmailAndPassword(em,pw).then(c=>{
-            akEmail=c.user.email.toLowerCase(); localStorage.setItem('evinde_session',akEmail);
-            btn.innerText = originalText; btn.disabled = false;
-            listenToUser(); listenToAllUsers(); listenToProds();
-        }).catch((error)=>{
-            btn.innerText = originalText; btn.disabled = false;
-            showToast("Giriş Hatası: " + (error.message || "Bilgiler yanlış!"), true);
-        });
-    };
-
-    if(input.includes('@')){ 
-        loginFn(input,p); 
-    } else {
-        db.collection('users').where('username','==',input).get().then(s=>{
-            if(s.empty) {
-                btn.innerText = originalText; btn.disabled = false;
-                return showToast("Kullanıcı adı bulunamadı!",true);
+    try {
+        let loginEmail = input;
+        
+        // 1. ADIM: Eğer e-posta yerine kullanıcı adı girildiyse veritabanında ara
+        if (!input.includes('@')) {
+            showToast("Veritabanında aranıyor...");
+            let snap = await db.collection('users').where('username', '==', input).get();
+            if (snap.empty) {
+                btn.innerText = "Sisteme Gir"; btn.disabled = false;
+                return showToast("Kullanıcı adı bulunamadı!", true);
             }
-            loginFn(s.docs[0].id,p);
-        }).catch((error)=>{
-            btn.innerText = originalText; btn.disabled = false;
-            showToast("Veritabanı Hatası: " + (error.message || "Bağlantı koptu!"), true);
+            loginEmail = snap.docs[0].id;
+        }
+
+        // 2. ADIM: E-posta ve şifre ile giriş yap
+        showToast("Bağlantı kuruluyor...");
+        let cred = await firebase.auth().signInWithEmailAndPassword(loginEmail, p);
+        
+        // 3. ADIM: Başarılı giriş
+        akEmail = cred.user.email.toLowerCase();
+        localStorage.setItem('evinde_session', akEmail);
+        
+        btn.innerText = "Sisteme Gir"; btn.disabled = false;
+        showToast("Giriş Başarılı!");
+        
+        listenToUser(); 
+        listenToAllUsers(); 
+        listenToProds();
+    } catch (error) {
+        btn.innerText = "Sisteme Gir"; btn.disabled = false;
+        showToast("Hata: " + error.message, true);
+        console.error("Giriş Hatası:", error);
+    }
+}
+
+// --- YENİ ADIM ADIM KAYIT OLMA FONKSİYONU ---
+async function kayitOl() {
+    let ad = document.getElementById('rName')?.value?.trim();
+    let un = document.getElementById('rUsername')?.value?.trim()?.toLowerCase();
+    let em = document.getElementById('rEmail')?.value?.trim()?.toLowerCase();
+    let p = document.getElementById('rPass')?.value?.trim();
+    let sp = document.getElementById('rSponsor')?.value?.trim()?.toUpperCase();
+    
+    if (!ad || !un || !em || !p) return showToast("Eksik bilgi!", true);
+    if (un.includes(' ')) return showToast("Kullanıcı adında boşluk olamaz!", true);
+    if (un.length < 3) return showToast("Kullanıcı adı çok kısa!", true);
+    
+    let btn = document.getElementById('btnKayitOl');
+    btn.innerText = "İşleniyor...";
+    btn.disabled = true;
+
+    try {
+        let nId = 'EN-' + Math.floor(100000 + Math.random() * 900000);
+        
+        showToast("Kullanıcı adı kontrol ediliyor...");
+        let snap = await db.collection('users').where('username', '==', un).get();
+        if (!snap.empty) {
+            btn.innerText = "Hesap Oluştur"; btn.disabled = false;
+            return showToast("Bu kullanıcı adı zaten alınmış!", true);
+        }
+
+        let finalSponsor = null;
+        if (sp) {
+            showToast("Sponsor kontrol ediliyor...");
+            let spSnap = await db.collection('users').where("knId", "==", sp).get();
+            if (spSnap.empty) {
+                btn.innerText = "Hesap Oluştur"; btn.disabled = false;
+                return showToast("Sponsor ID hatalı!", true);
+            }
+            finalSponsor = spSnap.docs[0].id;
+        }
+
+        showToast("Hesap oluşturuluyor...");
+        await firebase.auth().createUserWithEmailAndPassword(em, p);
+
+        showToast("Veritabanına kaydediliyor...");
+        await db.collection('users').doc(em).set({
+            isim: ad, username: un, rol: 'customer', bakiye: 0, knId: nId, seviye: '0', sponsor: finalSponsor, category: ''
         });
+
+        showToast("Kayıt Tamamlandı!");
+        authModSwitch('login');
+        document.getElementById('lEmail').value = un;
+        btn.innerText = "Hesap Oluştur"; btn.disabled = false;
+
+    } catch (error) {
+        btn.innerText = "Hesap Oluştur"; btn.disabled = false;
+        showToast("Kayıt Hatası: " + error.message, true);
+        console.error("Kayıt Hatası:", error);
     }
 }
 
@@ -451,7 +515,7 @@ function listenToUser(){
         }else{ showToast("Hesap verisi bulunamadı!",true); cikisYap(); }
     }, err => {
         hideLS();
-        showToast("Veri okuma hatası! Kuralları kontrol et.", true);
+        showToast("Veri okuma hatası! Firestore kurallarını kontrol edin.", true);
     });
 }
 
@@ -481,52 +545,6 @@ function listenToProds(){
 
 function setupNav(){document.getElementById('nav-home').style.display='flex';document.getElementById('nav-explore').style.display='flex';document.getElementById('nav-cart').style.display='flex';document.getElementById('nav-profile').style.display='flex';document.getElementById('nav-admin').style.display=(cuData?.rol==='admin')?'flex':'none';let p=document.getElementById('navProfilePic');if(cuData?.avatar){p.style.backgroundImage=`url('${cuData.avatar}')`;p.innerText='';p.style.border='none';}else{p.innerText=cuData?.isim?.[0]||'A';p.style.display="flex";p.style.justifyContent="center";p.style.alignItems="center";p.style.fontWeight="900";p.style.fontSize="12px";p.style.color="var(--text-main)";p.style.border='2px solid var(--border)';}}
 
-// --- KAYIT OLMA VE HATA YAKALAMA FONKSİYONU GÜNCELLENDİ ---
-function kayitOl(){
-    let ad=document.getElementById('rName')?.value?.trim();let un=document.getElementById('rUsername')?.value?.trim()?.toLowerCase();let em=document.getElementById('rEmail')?.value?.trim()?.toLowerCase();let p=document.getElementById('rPass')?.value?.trim();let sp=document.getElementById('rSponsor')?.value?.trim()?.toUpperCase();
-    if(!ad||!un||!em||!p) return showToast("Eksik bilgi!",true);
-    if(un.includes(' ')) return showToast("Kullanıcı adında boşluk olamaz!",true);
-    if(un.length < 3) return showToast("Kullanıcı adı çok kısa!",true);
-    
-    let btn = document.getElementById('btnKayitOl');
-    let originalText = btn.innerText;
-    btn.innerText = "Yükleniyor...";
-    btn.disabled = true;
-
-    let nId='EN-'+Math.floor(100000+Math.random()*900000);
-    db.collection('users').where('username','==',un).get().then(snap => {
-        if(!snap.empty) {
-            btn.innerText = originalText; btn.disabled = false;
-            return showToast("Bu ad alınmış!", true);
-        }
-        let fn=(spE)=>{
-            firebase.auth().createUserWithEmailAndPassword(em,p).then(()=>{
-                db.collection('users').doc(em).set({isim:ad,username:un,rol:'customer',bakiye:0,knId:nId,seviye:'0',sponsor:spE,category:''}).then(()=>{
-                    showToast("Kayıt Tamam!"); authModSwitch('login'); document.getElementById('lEmail').value=un;
-                    btn.innerText = originalText; btn.disabled = false;
-                });
-            }).catch(e=>{
-                btn.innerText = originalText; btn.disabled = false;
-                showToast("Kayıt Hatası: " + e.message,true);
-            });
-        };
-        if(sp){
-            db.collection('users').where("knId","==",sp).get().then(s=>{
-                if(s.empty) {
-                    btn.innerText = originalText; btn.disabled = false;
-                    return showToast("Sponsor EN hatalı!",true);
-                }
-                fn(s.docs[0].id);
-            });
-        }else{
-            fn(null);
-        }
-    }).catch(e => {
-        btn.innerText = originalText; btn.disabled = false;
-        showToast("Veritabanı Hatası: " + e.message, true);
-    });
-}
-
 function cikisYap(){firebase.auth().signOut().then(()=>{localStorage.removeItem('evinde_session');location.reload();});}
 
 function openModal(id) {
@@ -543,6 +561,7 @@ function openModal(id) {
 }
 function closeModal(id) {document.getElementById(id).classList.remove('active');}
 
+// --- PROFİL FOTOSU KAYDETME (IMGBB İLE) ---
 async function saveProfile() {
     let btn=document.getElementById('btnSaveProfile'); btn.innerText="Yükleniyor..."; btn.disabled=true;
     let n=document.getElementById('eName')?.value?.trim(); let un=document.getElementById('eUsername')?.value?.trim()?.toLowerCase();
@@ -587,6 +606,7 @@ async function saveProfile() {
 function renderCatsUI(){let h=`<div class="cat-pill ${currCat==='all'?'active':''}" onclick="selCat('all')">Tümü</div>`;allCats.forEach(c=>h+=`<div class="cat-pill ${currCat===c.id?'active':''}" onclick="selCat('${c.id}')">${c.name}</div>`);let el=document.getElementById('catScroller');if(el)el.innerHTML=h;}
 function selCat(id){currCat=id;renderCatsUI();renderExplore();}
 
+// --- ÜRÜN YÜKLEME (IMGBB İLE) ---
 async function urunKaydet() {
     let a = document.getElementById('upAd')?.value?.trim();
     let f = parseInt(document.getElementById('upFiyat')?.value || "0");
@@ -700,4 +720,11 @@ function adminProductsDraw(){let h='';allProds.forEach(p=>h+=`<div class="ig-gri
 function adminDeleteProduct(id){db.collection('products').doc(id).delete();}
 function adminWithdrawDraw(){let h='',c=0;allWith.forEach(w=>{if(w.durum==='bekliyor'){c++;h+=`<div class="god-list-item" style="flex-direction:column; align-items:flex-start; gap:8px;"><div><b style="font-size:15px">${w.ad}</b> <span style="color:var(--danger); font-weight:900">- ${w.tutar} ₺</span><br><small style="color:var(--text-muted); font-weight:600; word-break:break-all">${w.iban}</small></div><button class="btn-success" style="padding:10px; font-size:13px;" onclick="adminOdemeYap('${w.id}')">Ödendi Olarak İşaretle</button></div>`;}});document.getElementById('godReqCount').innerText=c;document.getElementById('adminWithdrawList').innerHTML=h||'<p>Bekleyen talep yok.</p>';}
 function adminOdemeYap(id){db.collection('withdrawals').doc(id).update({durum:'odendi'});}
-function adminPlans
+function adminPlansDraw(){let h='';Object.keys(allPlans).sort((a,b)=>a-b).forEach(k=>h+=`<div class="god-list-item"><b>${allPlans[k].ad}</b><button style="background:var(--danger); color:#fff; border-radius:8px; padding:6px 12px" onclick="adminDelPlan('${k}')">Sil</button></div>`);document.getElementById('adminPlansList').innerHTML=h;}
+function adminAddPlan(){let l=document.getElementById('npLvl').value,a=document.getElementById('npAd').value,f=parseInt(document.getElementById('npFiyat').value),o=parseFloat(document.getElementById('npOran').value)/100;db.collection('plans').doc(l).set({ad:a,fiyat:f,oran:o});}
+function adminDelPlan(k){db.collection('plans').doc(k).delete();}
+function adminTransfersDraw(){let h='';allTrans.forEach(t=>h+=`<div class="god-list-item" style="font-size:13px"><div style="flex:1"><b style="color:var(--primary)">${t.gN}</b> <i class="fa-solid fa-arrow-right" style="color:var(--text-muted); font-size:10px; margin:0 4px"></i> <b style="color:var(--text-main)">${t.aN}</b></div><b style="color:var(--danger)">${t.t} ₺</b></div>`);document.getElementById('adminTransfersList').innerHTML=h;}
+function godModeCiz(){document.getElementById('godTotalCiro').innerText=(sysStats.totalCiro||0)+" ₺";document.getElementById('godProfit').innerText=(sysStats.netKar||0)+" ₺";let cm=0,ce=0,cv=0;for(let k in allUsers){if(allUsers[k].rol==='customer')cm++;else if(allUsers[k].rol==='store')ce++;else if(allUsers[k].rol==='promoter')cv++;}document.getElementById('godCountMusteri').innerText=cm;document.getElementById('godCountEsnaf').innerText=ce;document.getElementById('godCountVip').innerText=cv;adminUsersDraw();adminProductsDraw();adminWithdrawDraw();}
+</script>
+</body>
+</html>
