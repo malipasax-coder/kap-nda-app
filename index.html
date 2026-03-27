@@ -11,72 +11,133 @@
 <script src="https://www.gstatic.com/firebasejs/10.8.1/firebase-storage-compat.js"></script>
 <style>
 @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;800;900&display=swap');
-:root{--primary:#8e2de2;--primary-grad:linear-gradient(45deg,#8e2de2 0%,#4a00e0 100%);--secondary:#a1a1aa;--bg-color:#fafafa;--card-bg:#ffffff;--text-main:#262626;--text-muted:#8e8e8e;--danger:#ed4956;--success:#10b981;--warning:#f59e0b;--border:#dbdbdb;--ig-gray:#efefef;--glass-bg:rgba(250,250,250,0.85);--shadow-sm:0 4px 20px rgba(0,0,0,0.04);--shadow-md:0 10px 30px rgba(142,45,226,0.15)}
-body.dark-mode{--bg-color:#000;--card-bg:#000;--text-main:#f5f5f5;--text-muted:#a8a8a8;--border:#262626;--ig-gray:#121212;--glass-bg:rgba(0,0,0,0.85);--shadow-sm:0 4px 20px rgba(255,255,255,0.02)}
-*{box-sizing:border-box;outline:none;-webkit-tap-highlight-color:transparent;margin:0;padding:0}
-body{font-family:'Plus Jakarta Sans',sans-serif;background:#e4e4e7;display:flex;justify-content:center;align-items:center;min-height:100vh;overflow:hidden}
-.app-shell{width:100%;height:100dvh;background:var(--bg-color);position:relative;overflow:hidden;display:flex;flex-direction:column}
-@media(min-width:480px){.app-shell{max-width:414px;max-height:90vh;border-radius:40px;box-shadow:0 25px 50px -12px rgba(0,0,0,0.5);border:8px solid #000}}
-.text-gradient{background:var(--primary-grad);-webkit-background-clip:text;-webkit-text-fill-color:transparent;display:inline-block}
-#serverLoading{position:absolute;top:0;left:0;width:100%;height:100%;background:var(--bg-color);z-index:9999;display:flex;flex-direction:column;justify-content:center;align-items:center;color:var(--text-main);transition:opacity .6s}
-.premium-spinner{width:50px;height:50px;border:3px solid var(--border);border-top:3px solid var(--primary);border-radius:50%;animation:spin .8s linear infinite;margin-bottom:20px}
-@keyframes spin{0%{transform:rotate(0deg)}100%{transform:rotate(360deg)}}
-.header{background:var(--glass-bg);backdrop-filter:blur(20px);padding:15px 20px;display:flex;justify-content:space-between;align-items:center;z-index:20;border-bottom:1px solid var(--border);position:absolute;top:0;width:100%}
-.cart-badge{position:absolute;top:-5px;right:-8px;background:var(--danger);color:#fff;font-size:10px;width:18px;height:18px;border-radius:50%;display:flex;justify-content:center;align-items:center;font-weight:bold;border:2px solid var(--bg-color)}
-.view-container{flex:1;position:relative;overflow:hidden;background:var(--bg-color);margin-top:60px}
-.view{position:absolute;top:0;left:0;width:100%;height:100%;overflow-y:auto;padding-bottom:100px;opacity:0;pointer-events:none;transition:.3s;background:var(--bg-color)}
-.view.active{opacity:1;pointer-events:all;z-index:5}
-.post-card{background:var(--card-bg);margin-bottom:12px;border-bottom:1px solid var(--border);position:relative}
-.post-header{display:flex;align-items:center;padding:14px 15px;gap:12px;justify-content:space-between;cursor:pointer}
-.post-avatar{width:38px;height:38px;border-radius:50%;background:var(--primary-grad);color:#fff;display:flex;justify-content:center;align-items:center;font-weight:bold;background-size:cover;background-position:center}
-.post-image{width:100%;aspect-ratio:4/5;background-size:cover;background-position:center;background-color:var(--ig-gray)}
-.ig-action-bar{padding:12px 15px;display:flex;justify-content:space-between;align-items:center;color:var(--text-main);font-size:24px}
-.post-content{padding:0 15px 15px 15px;color:var(--text-main)}
-.profile-header{background:var(--card-bg);padding:25px 20px;border-bottom:1px solid var(--border)}
-.profile-stats{display:flex;justify-content:space-around;align-items:center;flex:1;margin-left:20px}
-.stat-box{text-align:center;color:var(--text-main)}
-.stat-box b{font-size:18px;display:block;font-weight:900}
-.stat-box small{font-size:11px;color:var(--text-muted);font-weight:600}
-.input-group{margin-bottom:15px;padding:0}
-.input-group input,.input-group textarea,.input-group select{width:100%;padding:16px;border:1px solid var(--border);border-radius:14px;font-family:inherit;font-weight:600;background:var(--ig-gray);font-size:14px;color:var(--text-main)}
-.input-group input:focus,.input-group textarea:focus{border-color:var(--primary);background:var(--card-bg);box-shadow:var(--shadow-sm)}
-button{border:none;padding:14px 20px;border-radius:14px;font-weight:800;cursor:pointer;font-family:inherit;display:inline-flex;justify-content:center;align-items:center;gap:8px;font-size:14px;transition:0.2s}
-.btn-primary{background:var(--primary-grad);color:#fff;width:100%;box-shadow:0 4px 15px rgba(142,45,226,0.2)}
-.btn-outline{background:transparent;border:1px solid var(--border);color:var(--text-main);width:100%}
-.btn-success{background:linear-gradient(135deg,#10b981,#059669);color:#fff;width:100%}
-.btn-warning{background:var(--vip-gold);color:#000;width:100%}
-.btn-action{flex:1;padding:10px;border-radius:10px;font-size:13px;font-weight:800;background:var(--ig-gray);color:var(--text-main)}
-.bottom-nav{position:absolute;bottom:0;width:100%;background:var(--glass-bg);backdrop-filter:blur(20px);border-top:1px solid var(--border);display:flex;padding:15px 0 calc(15px + env(safe-area-inset-bottom)) 0;z-index:30;justify-content:space-around}
-.nav-item{color:var(--text-main);font-size:24px;cursor:pointer;display:none;padding:5px 20px;opacity:.3;transition:.2s}
-.nav-item.active{opacity:1}
-.modal-overlay{position:absolute;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.6);backdrop-filter:blur(4px);z-index:100;opacity:0;pointer-events:none;transition:.3s;display:flex;justify-content:center;align-items:flex-end}
-.modal-overlay.active{opacity:1;pointer-events:all}
-.modal-card{background:var(--card-bg);width:100%;border-radius:30px 30px 0 0;padding:30px 25px;position:relative;max-height:85vh;overflow-y:auto;transform:translateY(100%);transition:.3s;color:var(--text-main)}
-.modal-overlay.active .modal-card{transform:translateY(0)}
-.close-bar{width:40px;height:5px;background:var(--border);border-radius:4px;margin:0 auto 25px auto}
-#toast{position:absolute;top:70px;left:50%;transform:translateX(-50%) translateY(-20px);background:var(--text-main);color:var(--bg-color);padding:14px 28px;border-radius:30px;font-size:13px;font-weight:bold;z-index:1000;opacity:0;transition:.4s;pointer-events:none;box-shadow:var(--shadow-md)}
-#toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
-.ig-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:2px}
-.ig-grid-item{aspect-ratio:1/1;background-size:cover;background-position:center;background-color:var(--ig-gray);cursor:pointer;position:relative}
-.chat-container{display:flex;flex-direction:column;height:100%}
-.chat-messages{flex:1;overflow-y:auto;padding:15px;padding-bottom:80px}
-.chat-input-bar{position:absolute;bottom:0;width:100%;background:var(--card-bg);padding:15px;border-top:1px solid var(--border);display:flex;gap:12px;align-items:center}
-.discount-badge{background:var(--danger);color:#fff;padding:4px 8px;border-radius:6px;font-size:11px;font-weight:900;position:absolute;top:10px;right:10px;z-index:2}
-.search-result-item{display:flex;align-items:center;gap:12px;padding:12px 15px;border-bottom:1px solid var(--border);cursor:pointer;color:var(--text-main)}
-.god-header{padding:30px 20px 20px 20px;background:var(--card-bg);border-bottom:1px solid var(--border);display:flex;justify-content:space-between;align-items:center}
-.god-grid{display:grid;grid-template-columns:1fr 1fr;gap:15px;padding:20px}
-.god-stat-card{background:var(--card-bg);border:1px solid var(--border);border-radius:20px;padding:20px;box-shadow:var(--shadow-sm)}
-.god-stat-title{font-size:10px;color:var(--text-muted);font-weight:800;letter-spacing:1px;margin-bottom:8px}
-.god-stat-value{font-size:26px;font-weight:900;color:var(--text-main);margin:0;letter-spacing:-.5px}
-.god-tabs{display:flex;padding:0 20px;gap:10px;margin-bottom:15px;overflow-x:auto;scrollbar-width:none}
-.god-tab{background:var(--card-bg);border:1px solid var(--border);color:var(--text-muted);padding:10px 18px;border-radius:20px;font-size:13px;font-weight:800;cursor:pointer;white-space:nowrap;transition:.3s}
-.god-tab.active{background:var(--primary-grad);color:#fff;border-color:transparent}
-.god-list-item{background:var(--card-bg);border:1px solid var(--border);border-radius:16px;padding:18px;margin-bottom:12px;display:flex;justify-content:space-between;align-items:center;color:var(--text-main)}
-.admin-del-btn{position:absolute;top:5px;right:5px;background:var(--danger);color:#fff;border-radius:50%;width:24px;height:24px;display:flex;justify-content:center;align-items:center;font-size:12px;z-index:10;border:none}
-.cat-pill{padding:8px 18px;border-radius:20px;font-size:12px;font-weight:800;cursor:pointer;background:var(--ig-gray);color:var(--text-main);white-space:nowrap;border:1px solid transparent;transition:0.2s}
-.cat-pill.active{background:var(--primary-grad);color:#fff;border:none}
-.level-badge{display:inline-flex;align-items:center;gap:5px;background:var(--ig-gray);color:var(--text-main);padding:6px 12px;border-radius:8px;font-size:12px;font-weight:800;margin-top:8px}
-.level-badge.vip{background:var(--primary-grad);color:#fff;box-shadow:0 4px 15px rgba(142,45,226,0.3);cursor:pointer}
+:root {
+    --primary: #8e2de2;
+    --primary-grad: linear-gradient(135deg, #8e2de2 0%, #4a00e0 100%);
+    --secondary: #a1a1aa;
+    --bg-color: #fafafa;
+    --card-bg: #ffffff;
+    --text-main: #18181b;
+    --text-muted: #71717a;
+    --danger: #ef4444;
+    --success: #10b981;
+    --warning: #f59e0b;
+    --border: #e4e4e7;
+    --ig-gray: #f4f4f5;
+    --glass-bg: rgba(255, 255, 255, 0.85);
+    --shadow-sm: 0 2px 10px rgba(0,0,0,0.03);
+    --shadow-md: 0 10px 30px rgba(142,45,226,0.12);
+}
+
+body.dark-mode {
+    --bg-color: #09090b;
+    --card-bg: #18181b;
+    --text-main: #f4f4f5;
+    --text-muted: #a1a1aa;
+    --border: #27272a;
+    --ig-gray: #27272a;
+    --glass-bg: rgba(9, 9, 11, 0.85);
+    --shadow-sm: 0 4px 20px rgba(0,0,0,0.3);
+}
+
+* { box-sizing: border-box; outline: none; -webkit-tap-highlight-color: transparent; margin: 0; padding: 0; }
+body { font-family: 'Plus Jakarta Sans', sans-serif; background: #d4d4d8; display: flex; justify-content: center; align-items: center; min-height: 100vh; overflow: hidden; }
+
+/* Scrollbar Gizleme */
+::-webkit-scrollbar { width: 0px; background: transparent; }
+
+.app-shell { width: 100%; height: 100dvh; background: var(--bg-color); position: relative; overflow: hidden; display: flex; flex-direction: column; transition: background 0.3s ease; }
+@media(min-width: 480px){ .app-shell { max-width: 414px; max-height: 90vh; border-radius: 40px; box-shadow: 0 25px 50px -12px rgba(0,0,0,0.5); border: 8px solid #000; } }
+
+.text-gradient { background: var(--primary-grad); -webkit-background-clip: text; -webkit-text-fill-color: transparent; display: inline-block; }
+
+#serverLoading { position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: var(--bg-color); z-index: 9999; display: flex; flex-direction: column; justify-content: center; align-items: center; color: var(--text-main); transition: opacity .6s; }
+.premium-spinner { width: 50px; height: 50px; border: 3px solid var(--border); border-top: 3px solid var(--primary); border-radius: 50%; animation: spin .8s linear infinite; margin-bottom: 20px; }
+@keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+
+.header { background: var(--glass-bg); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px); padding: 15px 20px; display: flex; justify-content: space-between; align-items: center; z-index: 20; border-bottom: 1px solid var(--border); position: absolute; top: 0; width: 100%; }
+.cart-badge { position: absolute; top: -5px; right: -8px; background: var(--danger); color: #fff; font-size: 10px; width: 18px; height: 18px; border-radius: 50%; display: flex; justify-content: center; align-items: center; font-weight: bold; border: 2px solid var(--glass-bg); }
+
+.view-container { flex: 1; position: relative; overflow: hidden; background: var(--bg-color); margin-top: 60px; }
+.view { position: absolute; top: 0; left: 0; width: 100%; height: 100%; overflow-y: auto; padding-bottom: 100px; opacity: 0; pointer-events: none; transition: .3s ease; background: var(--bg-color); }
+.view.active { opacity: 1; pointer-events: all; z-index: 5; }
+
+.post-card { background: var(--card-bg); margin-bottom: 15px; border-bottom: 1px solid var(--border); position: relative; }
+.post-header { display: flex; align-items: center; padding: 14px 15px; gap: 12px; justify-content: space-between; cursor: pointer; }
+.post-avatar { width: 40px; height: 40px; border-radius: 50%; background: var(--primary-grad); color: #fff; display: flex; justify-content: center; align-items: center; font-weight: bold; background-size: cover; background-position: center; border: 2px solid transparent; }
+.post-image { width: 100%; aspect-ratio: 4/5; background-size: cover; background-position: center; background-color: var(--ig-gray); }
+.ig-action-bar { padding: 12px 15px; display: flex; justify-content: space-between; align-items: center; color: var(--text-main); font-size: 24px; }
+.ig-icons-left { display: flex; gap: 15px; }
+.ig-icons-left i { cursor: pointer; transition: transform 0.2s; }
+.ig-icons-left i:active { transform: scale(0.8); }
+.post-content { padding: 0 15px 15px 15px; color: var(--text-main); line-height: 1.4; }
+
+.profile-header { background: var(--card-bg); padding: 25px 20px; border-bottom: 1px solid var(--border); }
+.profile-stats { display: flex; justify-content: space-around; align-items: center; flex: 1; margin-left: 20px; }
+.stat-box { text-align: center; color: var(--text-main); }
+.stat-box b { font-size: 18px; display: block; font-weight: 900; }
+.stat-box small { font-size: 12px; color: var(--text-muted); font-weight: 600; }
+
+.input-group { margin-bottom: 15px; padding: 0; }
+.input-group input, .input-group textarea, .input-group select { width: 100%; padding: 16px; border: 1px solid var(--border); border-radius: 14px; font-family: inherit; font-weight: 600; background: var(--ig-gray); font-size: 14px; color: var(--text-main); transition: all 0.3s ease; }
+.input-group input:focus, .input-group textarea:focus { border-color: var(--primary); background: var(--card-bg); box-shadow: var(--shadow-sm); }
+
+button { border: none; padding: 16px 20px; border-radius: 14px; font-weight: 800; cursor: pointer; font-family: inherit; display: inline-flex; justify-content: center; align-items: center; gap: 8px; font-size: 14px; transition: 0.2s ease; }
+button:active { transform: scale(0.97); }
+button:disabled { opacity: 0.7; cursor: not-allowed; }
+.btn-primary { background: var(--primary-grad); color: #fff; width: 100%; box-shadow: var(--shadow-md); }
+.btn-outline { background: transparent; border: 2px solid var(--border); color: var(--text-main); width: 100%; }
+.btn-success { background: linear-gradient(135deg, #10b981, #059669); color: #fff; width: 100%; }
+.btn-warning { background: linear-gradient(135deg, #f59e0b, #d97706); color: #fff; width: 100%; }
+.btn-action { flex: 1; padding: 12px; border-radius: 12px; font-size: 13px; font-weight: 800; background: var(--ig-gray); color: var(--text-main); }
+
+/* FOTOĞRAF YÜKLEME ALANLARI İÇİN YENİ CSS */
+.custom-file-upload { display: inline-flex; justify-content: center; align-items: center; gap: 8px; transition: 0.3s; cursor: pointer; }
+.avatar-preview { width: 90px; height: 90px; border-radius: 50%; object-fit: cover; border: 3px solid var(--primary); margin: 0 auto 15px auto; display: none; box-shadow: var(--shadow-sm); }
+.img-preview { width: 100%; aspect-ratio: 4/5; object-fit: cover; border-radius: 14px; border: 1px solid var(--border); display: none; margin-bottom: 15px; box-shadow: var(--shadow-sm); }
+.upload-box { background: var(--ig-gray); border: 2px dashed var(--primary); padding: 40px 20px; text-align: center; border-radius: 16px; cursor: pointer; transition: 0.3s; color: var(--text-main); font-weight: 800; display: block; width: 100%; }
+.upload-box:hover { background: var(--border); }
+
+.bottom-nav { position: absolute; bottom: 0; width: 100%; background: var(--glass-bg); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px); border-top: 1px solid var(--border); display: flex; padding: 12px 0 calc(12px + env(safe-area-inset-bottom)) 0; z-index: 30; justify-content: space-around; }
+.nav-item { color: var(--text-main); font-size: 24px; cursor: pointer; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 5px 20px; opacity: .4; transition: .3s ease; }
+.nav-item.active { opacity: 1; transform: translateY(-2px); color: var(--primary); }
+.nav-item.active i { background: var(--primary-grad); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+
+.modal-overlay { position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.6); backdrop-filter: blur(4px); -webkit-backdrop-filter: blur(4px); z-index: 100; opacity: 0; pointer-events: none; transition: .3s; display: flex; justify-content: center; align-items: flex-end; }
+.modal-overlay.active { opacity: 1; pointer-events: all; }
+.modal-card { background: var(--card-bg); width: 100%; border-radius: 30px 30px 0 0; padding: 30px 25px; position: relative; max-height: 85vh; overflow-y: auto; transform: translateY(100%); transition: transform .4s cubic-bezier(0.175, 0.885, 0.32, 1); color: var(--text-main); box-shadow: 0 -10px 40px rgba(0,0,0,0.1); }
+.modal-overlay.active .modal-card { transform: translateY(0); }
+.close-bar { width: 40px; height: 5px; background: var(--border); border-radius: 10px; margin: 0 auto 25px auto; cursor: pointer; }
+
+#toast { position: absolute; top: 70px; left: 50%; transform: translateX(-50%) translateY(-20px); background: var(--text-main); color: var(--bg-color); padding: 14px 28px; border-radius: 30px; font-size: 13px; font-weight: bold; z-index: 1000; opacity: 0; transition: .4s cubic-bezier(0.175, 0.885, 0.32, 1.275); pointer-events: none; box-shadow: var(--shadow-md); white-space: nowrap; }
+#toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+
+.ig-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 2px; }
+.ig-grid-item { aspect-ratio: 1/1; background-size: cover; background-position: center; background-color: var(--ig-gray); cursor: pointer; position: relative; transition: filter 0.2s; }
+.ig-grid-item:active { filter: brightness(0.8); }
+
+.chat-container { display: flex; flex-direction: column; height: 100%; }
+.chat-messages { flex: 1; overflow-y: auto; padding: 15px; padding-bottom: 90px; }
+.chat-input-bar { position: absolute; bottom: 0; width: 100%; background: var(--glass-bg); backdrop-filter: blur(10px); padding: 15px; border-top: 1px solid var(--border); display: flex; gap: 12px; align-items: center; }
+
+.discount-badge { background: var(--danger); color: #fff; padding: 4px 8px; border-radius: 6px; font-size: 11px; font-weight: 900; position: absolute; top: 10px; right: 10px; z-index: 2; box-shadow: 0 2px 10px rgba(239, 68, 68, 0.3); }
+.search-result-item { display: flex; align-items: center; gap: 12px; padding: 12px 15px; border-bottom: 1px solid var(--border); cursor: pointer; color: var(--text-main); transition: background 0.2s; }
+.search-result-item:hover { background: var(--ig-gray); }
+
+.god-header { padding: 30px 20px 20px 20px; background: var(--card-bg); border-bottom: 1px solid var(--border); display: flex; justify-content: space-between; align-items: center; }
+.god-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; padding: 20px; }
+.god-stat-card { background: var(--card-bg); border: 1px solid var(--border); border-radius: 20px; padding: 20px; box-shadow: var(--shadow-sm); }
+.god-stat-title { font-size: 10px; color: var(--text-muted); font-weight: 800; letter-spacing: 1px; margin-bottom: 8px; }
+.god-stat-value { font-size: 26px; font-weight: 900; color: var(--text-main); margin: 0; letter-spacing: -.5px; }
+.god-tabs { display: flex; padding: 0 20px; gap: 10px; margin-bottom: 15px; overflow-x: auto; scrollbar-width: none; }
+.god-tab { background: var(--card-bg); border: 1px solid var(--border); color: var(--text-muted); padding: 10px 18px; border-radius: 20px; font-size: 13px; font-weight: 800; cursor: pointer; white-space: nowrap; transition: .3s; }
+.god-tab.active { background: var(--primary-grad); color: #fff; border-color: transparent; }
+.god-list-item { background: var(--card-bg); border: 1px solid var(--border); border-radius: 16px; padding: 18px; margin-bottom: 12px; display: flex; justify-content: space-between; align-items: center; color: var(--text-main); }
+
+.cat-pill { padding: 8px 18px; border-radius: 20px; font-size: 13px; font-weight: 800; cursor: pointer; background: var(--ig-gray); color: var(--text-main); white-space: nowrap; border: 1px solid transparent; transition: 0.2s; }
+.cat-pill.active { background: var(--text-main); color: var(--bg-color); border: none; }
+.level-badge { display: inline-flex; align-items: center; gap: 5px; background: var(--ig-gray); color: var(--text-main); padding: 6px 12px; border-radius: 8px; font-size: 12px; font-weight: 800; margin-top: 8px; }
+.level-badge.vip { background: var(--primary-grad); color: #fff; box-shadow: 0 4px 15px rgba(142,45,226,0.3); cursor: pointer; }
 </style>
 </head>
 <body>
@@ -86,7 +147,7 @@ button{border:none;padding:14px 20px;border-radius:14px;font-weight:800;cursor:p
     <div id="serverLoading">
         <div class="premium-spinner"></div>
         <h1 class="text-gradient" style="font-size:28px;font-weight:900;margin:0">EVİNDE</h1>
-        <p style="font-size:11px;font-weight:800;color:var(--text-muted);margin-top:8px">BAĞLANIYOR</p>
+        <p style="font-size:11px;font-weight:800;color:var(--text-muted);margin-top:8px; letter-spacing: 2px;">BAĞLANIYOR</p>
     </div>
 
     <script>
@@ -101,22 +162,51 @@ button{border:none;padding:14px 20px;border-radius:14px;font-weight:800;cursor:p
 
     <div id="toast">Bildirim</div>
 
-    <div class="modal-overlay" id="transferModal"><div class="modal-card"><div class="close-bar" onclick="closeModal('transferModal')"></div><h3 style="margin:0 0 5px 0;text-align:center;font-weight:900" class="text-gradient">Para Gönder</h3><div class="input-group"><input type="text" id="tKnId" placeholder="Alıcı Evinde No (EN-123456)" style="text-transform:uppercase"></div><div class="input-group"><input type="number" id="tTutar" placeholder="Tutar (₺)"></div><button class="btn-primary" onclick="paraGonder()">Gönder</button></div></div>
-    <div class="modal-overlay" id="withdrawModal"><div class="modal-card"><div class="close-bar" onclick="closeModal('withdrawModal')"></div><h3 style="margin:0 0 5px 0;text-align:center;font-weight:900">Hesaba Aktar (Sadece Esnaf)</h3><p style="text-align:center;font-size:12px;font-weight:600;color:var(--text-muted);margin-bottom:20px">Mevcut: <b id="wBakiyeGoster" class="text-gradient">0 ₺</b></p><div class="input-group"><input type="text" id="wAd" placeholder="Banka Alıcı Ad Soyad"></div><div class="input-group"><input type="text" id="wIban" placeholder="TR... IBAN Numarası"></div><div class="input-group"><input type="number" id="wTutar" placeholder="Çekilecek Tutar (₺)"></div><button class="btn-success" onclick="paraCekTalebi()">Banka Talebi Oluştur</button></div></div>
-    <div class="modal-overlay" id="vipModal"><div class="modal-card"><div class="close-bar" onclick="closeModal('vipModal')"></div><h3 style="margin:0 0 15px 0;text-align:center;font-weight:900" class="text-gradient">VIP Paketler</h3><div id="vipPlansContainer"></div></div></div>
-    <div class="modal-overlay" id="editProfileModal"><div class="modal-card"><div class="close-bar" onclick="closeModal('editProfileModal')"></div><h3 style="margin:0 0 25px 0;text-align:center;font-weight:900">Ayarlar</h3><div style="display:flex;justify-content:space-between;align-items:center;padding:20px 0;border-bottom:1px solid var(--border);margin-bottom:20px"><b style="font-size:15px;font-weight:800">Karanlık Mod</b><input type="checkbox" id="darkModeToggle" onchange="toggleDarkMode()" style="width:20px;height:20px"></div><div class="input-group"><input type="text" id="eName" placeholder="Ad Soyad"></div><div class="input-group"><input type="text" id="eUsername" placeholder="Kullanıcı Adı (Örn: mali.dev)"></div><div class="input-group"><textarea id="eBio" rows="2" placeholder="Biyografi..."></textarea></div><div class="input-group"><input type="password" id="ePass" placeholder="Yeni Şifre (Boş bırakabilirsiniz)"></div><div class="input-group"><input type="file" id="eAvFile" accept="image/*" style="background:var(--card-bg)"></div><button class="btn-primary" onclick="saveProfile()" id="btnSaveProfile">Ayarları Kaydet</button><button class="btn-outline" style="margin-top:12px;color:var(--danger);border-color:var(--danger)" onclick="cikisYap()">Çıkış Yap</button></div></div>
-    <div class="modal-overlay" id="commentsModal"><div class="modal-card" style="height:70vh;display:flex;flex-direction:column"><div class="close-bar" onclick="closeModal('commentsModal')"></div><h3 style="margin:0 0 15px 0;text-align:center;font-weight:900">Yorumlar</h3><div id="commentsList" style="flex:1;overflow-y:auto;margin-bottom:15px"></div><div class="chat-input-bar" style="position:relative;border-radius:14px;padding:10px;bottom:auto"><input type="text" id="newCommentInput" placeholder="Yorum ekle..." style="flex:1;padding:12px;border-radius:20px;border:1px solid var(--border);background:var(--ig-gray);color:var(--text-main);outline:none"><button style="width:40px;height:40px;border-radius:50%;background:var(--primary-grad);color:#fff;border:none" onclick="addComment()"><i class="fa-solid fa-paper-plane"></i></button><input type="hidden" id="activePostId"></div></div></div>
+    <div class="modal-overlay" id="transferModal"><div class="modal-card"><div class="close-bar" onclick="closeModal('transferModal')"></div><h3 style="margin:0 0 15px 0;text-align:center;font-weight:900" class="text-gradient">Para Gönder</h3><div class="input-group"><input type="text" id="tKnId" placeholder="Alıcı Evinde No (EN-123456)" style="text-transform:uppercase"></div><div class="input-group"><input type="number" id="tTutar" placeholder="Tutar (₺)"></div><button class="btn-primary" onclick="paraGonder()">Gönder</button></div></div>
+    
+    <div class="modal-overlay" id="withdrawModal"><div class="modal-card"><div class="close-bar" onclick="closeModal('withdrawModal')"></div><h3 style="margin:0 0 5px 0;text-align:center;font-weight:900">Hesaba Aktar</h3><p style="text-align:center;font-size:12px;font-weight:600;color:var(--text-muted);margin-bottom:20px">Mevcut: <b id="wBakiyeGoster" class="text-gradient">0 ₺</b></p><div class="input-group"><input type="text" id="wAd" placeholder="Banka Alıcı Ad Soyad"></div><div class="input-group"><input type="text" id="wIban" placeholder="TR... IBAN Numarası"></div><div class="input-group"><input type="number" id="wTutar" placeholder="Çekilecek Tutar (₺)"></div><button class="btn-success" onclick="paraCekTalebi()">Banka Talebi Oluştur</button></div></div>
+    
+    <div class="modal-overlay" id="vipModal"><div class="modal-card"><div class="close-bar" onclick="closeModal('vipModal')"></div><h3 style="margin:0 0 15px 0;text-align:center;font-weight:900" class="text-gradient"><i class="fa-solid fa-crown"></i> VIP Paketler</h3><div id="vipPlansContainer"></div></div></div>
+    
+    <div class="modal-overlay" id="editProfileModal">
+        <div class="modal-card">
+            <div class="close-bar" onclick="closeModal('editProfileModal')"></div>
+            <h3 style="margin:0 0 25px 0;text-align:center;font-weight:900">Ayarlar</h3>
+            
+            <div style="display:flex;justify-content:space-between;align-items:center;padding:15px 0;border-bottom:1px solid var(--border);margin-bottom:20px">
+                <b style="font-size:15px;font-weight:800">Karanlık Mod</b>
+                <input type="checkbox" id="darkModeToggle" onchange="toggleDarkMode()" style="width:20px;height:20px; accent-color: var(--primary);">
+            </div>
+
+            <div style="text-align: center; margin-bottom: 20px;">
+                <img id="eAvPreview" class="avatar-preview" src="">
+                <label for="eAvFile" class="btn-outline custom-file-upload" style="padding: 10px 20px; width: auto; font-size: 13px; border-radius: 20px;">
+                    <i class="fa-solid fa-camera"></i> Fotoğraf Seç
+                </label>
+                <input type="file" id="eAvFile" accept="image/*" style="display:none" onchange="previewImage(this, 'eAvPreview')">
+            </div>
+
+            <div class="input-group"><input type="text" id="eName" placeholder="Ad Soyad"></div>
+            <div class="input-group"><input type="text" id="eUsername" placeholder="Kullanıcı Adı (Örn: mali.dev)"></div>
+            <div class="input-group"><textarea id="eBio" rows="2" placeholder="Biyografi..."></textarea></div>
+            <div class="input-group"><input type="password" id="ePass" placeholder="Yeni Şifre (Boş bırakabilirsiniz)"></div>
+            
+            <button class="btn-primary" onclick="saveProfile()" id="btnSaveProfile">Ayarları Kaydet</button>
+            <button class="btn-outline" style="margin-top:12px;color:var(--danger);border-color:var(--danger)" onclick="cikisYap()">Çıkış Yap</button>
+        </div>
+    </div>
+    
+    <div class="modal-overlay" id="commentsModal"><div class="modal-card" style="height:70vh;display:flex;flex-direction:column"><div class="close-bar" onclick="closeModal('commentsModal')"></div><h3 style="margin:0 0 15px 0;text-align:center;font-weight:900">Yorumlar</h3><div id="commentsList" style="flex:1;overflow-y:auto;margin-bottom:15px"></div><div class="chat-input-bar" style="position:relative;border-radius:14px;padding:10px;bottom:auto; background: var(--ig-gray); border: none;"><input type="text" id="newCommentInput" placeholder="Yorum ekle..." style="flex:1;padding:12px;border-radius:20px;border:1px solid var(--border);background:var(--card-bg);color:var(--text-main);outline:none"><button style="width:40px;height:40px;border-radius:50%;background:var(--primary-grad);color:#fff;border:none" onclick="addComment()"><i class="fa-solid fa-paper-plane"></i></button><input type="hidden" id="activePostId"></div></div></div>
 
     <div class="header" id="appHeader" style="display:none">
-        <h2 class="text-gradient">EVİNDE</h2>
-        <i class="fa-brands fa-facebook-messenger" style="font-size:24px;color:var(--text-main);cursor:pointer" onclick="switchView('messagesView')"></i>
+        <h2 class="text-gradient" style="margin:0; font-size: 22px; font-weight: 900; letter-spacing: -0.5px;">EVİNDE</h2>
+        <i class="fa-brands fa-facebook-messenger" style="font-size:22px;color:var(--text-main);cursor:pointer" onclick="switchView('messagesView')"></i>
     </div>
 
     <div class="view-container">
-        
         <div class="view active" id="authView" style="background:var(--card-bg)">
             <div style="height:100%;display:flex;flex-direction:column;justify-content:center;padding:0 40px;margin-top:-60px">
-                <div style="text-align:center;margin-bottom:40px"><h1 class="text-gradient" style="margin:0;font-size:46px;font-weight:900">EVİNDE</h1><p style="font-size:11px;color:var(--text-muted);font-weight:800">SOSYAL TİCARET</p></div>
+                <div style="text-align:center;margin-bottom:40px"><h1 class="text-gradient" style="margin:0;font-size:46px;font-weight:900">EVİNDE</h1><p style="font-size:11px;color:var(--text-muted);font-weight:800; letter-spacing: 1px;">SOSYAL TİCARET</p></div>
                 <div style="display:flex;margin-bottom:25px;background:var(--ig-gray);border-radius:16px;padding:6px">
                     <div style="flex:1;text-align:center;padding:14px;font-size:13px;font-weight:800;border-radius:12px;cursor:pointer;background:var(--card-bg);color:var(--text-main);box-shadow:var(--shadow-sm)" id="tabLoginBtn" onclick="authModSwitch('login')">Giriş Yap</div>
                     <div style="flex:1;text-align:center;padding:14px;font-size:13px;font-weight:800;border-radius:12px;cursor:pointer;color:var(--text-muted)" id="tabRegisterBtn" onclick="authModSwitch('register')">Hesap Aç</div>
@@ -138,15 +228,47 @@ button{border:none;padding:14px 20px;border-radius:14px;font-weight:800;cursor:p
         </div>
 
         <div class="view" id="homeView"><div id="mainFeed"></div></div>
-        <div class="view" id="exploreView"><div style="padding:15px;background:var(--card-bg);position:sticky;top:0;z-index:10;border-bottom:1px solid var(--border)"><input type="text" id="searchInput" placeholder="Kişi veya Mağaza Ara (@)" onkeyup="doSearch()" style="width:100%;padding:14px 18px;border-radius:14px;border:1px solid var(--border);background:var(--ig-gray);color:var(--text-main);font-weight:600"></div><div id="catScroller" style="display:flex;gap:10px;padding:10px 15px;overflow-x:auto;scrollbar-width:none;background:var(--card-bg);border-bottom:1px solid var(--border)"></div><div id="searchResults" style="display:none;background:var(--card-bg)"></div><div style="padding:15px;text-align:center;color:var(--text-main)"><h3 style="margin:0;font-size:14px;font-weight:900"><i class="fa-solid fa-fire text-gradient"></i> İndirimli Ürünler</h3></div><div class="ig-grid" id="exploreGrid"></div></div>
-        <div class="view" id="singlePostView"><div style="padding:15px 20px;background:var(--glass-bg);border-bottom:1px solid var(--border);position:sticky;top:0;z-index:10;color:var(--text-main);display:flex;align-items:center;gap:15px"><i class="fa-solid fa-arrow-left" style="font-size:20px;cursor:pointer" onclick="backFromSinglePost()"></i><h3 style="margin:0;font-size:18px;font-weight:900">Gönderi</h3></div><div id="singlePostContainer"></div></div>
-        <div class="view" id="profileView"><div class="profile-header"><div style="display:flex;align-items:center"><div id="pAvatar" style="width:90px;height:90px;background:var(--ig-gray);border-radius:50%;color:var(--text-main);display:flex;justify-content:center;align-items:center;font-size:32px;font-weight:900;background-size:cover;border:1px solid var(--border)">A</div><div class="profile-stats"><div class="stat-box"><b id="pTeam">0</b><small>Ağım</small></div><div class="stat-box"><b id="pFollowers">0</b><small>Takipçi</small></div><div class="stat-box"><b id="pBalance" class="text-gradient">0₺</b><small>Cüzdan</small></div></div></div><div style="margin-top:20px"><h2 id="pName" style="margin:0;font-size:16px;font-weight:900;color:var(--text-main)">İsim</h2><div id="pUsername" style="color:var(--primary);font-weight:800;font-size:13px;margin-top:2px">@username</div><div id="pKnId" style="font-size:11px;font-weight:800;color:var(--text-muted);margin-top:4px;cursor:pointer" onclick="kopyalaKnId()">EN-XXXXXX <i class="fa-regular fa-copy"></i></div><div id="pLevelBadge" class="level-badge" onclick="if(cuData?.rol==='customer'||cuData?.rol==='promoter')openModal('vipModal')">Seviye 0</div><p id="pBioText" style="font-size:13px;color:var(--text-main);margin-top:10px;font-weight:500"></p></div><div style="display:flex;gap:10px;margin-top:20px"><button class="btn-action" onclick="openModal('editProfileModal')">Ayarlar</button><button class="btn-action" style="background:var(--primary-grad);color:#fff" onclick="openModal('transferModal')">Transfer</button></div><div style="display:flex;gap:10px;margin-top:10px"><button class="btn-primary" id="btnUrunEkle" style="display:none" onclick="switchView('storeAddProdView')">Ürün Ekle</button><button class="btn-warning" id="btnKasa" style="display:none" onclick="switchView('storePosView')">Kasa Yönetimi</button><button class="btn-success" id="btnParaCek" style="display:none" onclick="paraCekModalAc()">Para Çek</button></div></div><div id="profileGrid" class="ig-grid"></div></div>
-        <div class="view" id="otherProfileView"><div style="padding:15px 20px;background:var(--glass-bg);border-bottom:1px solid var(--border);position:sticky;top:0;z-index:10;color:var(--text-main);display:flex;align-items:center;gap:15px"><i class="fa-solid fa-arrow-left" style="font-size:20px;cursor:pointer" onclick="switchView('exploreView')"></i><h3 id="opHeaderName" style="margin:0;font-size:18px;font-weight:900">Profil</h3></div><div class="profile-header"><div style="display:flex;align-items:center"><div id="opAvatar" style="width:90px;height:90px;background:var(--ig-gray);border-radius:50%;color:var(--text-main);display:flex;justify-content:center;align-items:center;font-size:32px;font-weight:900;background-size:cover;border:1px solid var(--border)"></div><div class="profile-stats"><div class="stat-box"><b id="opProdCount">0</b><small>Gönderi</small></div></div></div><div style="margin-top:20px"><h2 id="opName" style="margin:0;font-size:16px;font-weight:900;color:var(--text-main)">İsim</h2><div id="opUsername" style="color:var(--primary);font-weight:800;font-size:13px;margin-top:2px">@username</div><div id="opKnId" style="font-size:11px;font-weight:800;color:var(--text-muted);margin-top:4px">EN-XXXXXX</div><p id="opBio" style="font-size:13px;color:var(--text-main);margin-top:10px;font-weight:500"></p></div><div style="display:flex;gap:10px;margin-top:20px"><button class="btn-primary" onclick="openChatFromProfile()">Mesaj Gönder</button></div></div><div id="opGrid" class="ig-grid"></div></div>
-        <div class="view" id="storeAddProdView"><div style="padding:15px 20px;display:flex;align-items:center;gap:15px;background:var(--glass-bg);border-bottom:1px solid var(--border);position:sticky;top:0;z-index:10;color:var(--text-main)"><i class="fa-solid fa-arrow-left" style="font-size:20px;cursor:pointer" onclick="switchView('profileView')"></i><h3 style="margin:0;font-size:18px;font-weight:900">Yeni Ürün Ekle</h3></div><div style="padding:25px"><div class="input-group"><input type="file" id="upResFile" accept="image/*" style="background:var(--card-bg);border:2px dashed var(--text-muted);padding:30px 15px"></div><div class="input-group"><input type="text" id="upAd" placeholder="Ürün Adı"></div><div class="input-group"><input type="number" id="upFiyat" placeholder="Satış Fiyatı (₺) - Zorunlu"></div><div class="input-group"><input type="number" id="upEskiFiyat" placeholder="Eski Fiyat (₺) - İsteğe Bağlı (İndirim İçin)"></div><button class="btn-primary" id="btnUrunKaydet" onclick="urunKaydet()">Paylaş</button></div></div>
-        <div class="view" id="storePosView"><div style="padding:15px 20px;display:flex;align-items:center;gap:15px;background:var(--glass-bg);border-bottom:1px solid var(--border);position:sticky;top:0;z-index:10;color:var(--text-main)"><i class="fa-solid fa-arrow-left" style="font-size:20px;cursor:pointer" onclick="switchView('profileView')"></i><h3 style="margin:0;font-size:18px;font-weight:900">Kasa (Esnaf Paneli)</h3></div><div style="padding:25px"><div style="background:var(--primary-grad);color:#fff;border-radius:24px;padding:30px;margin-bottom:15px;text-align:center;box-shadow:var(--shadow-md)"><p style="margin:0;font-size:11px;font-weight:800;opacity:.9;text-transform:uppercase">Net Kazanç Bakiyesi</p><h1 id="sKasaBakiye" style="margin:10px 0 0 0;font-size:46px;font-weight:900;letter-spacing:-1px">0 ₺</h1></div><button class="btn-success" style="margin-bottom:30px;padding:18px;font-size:16px" onclick="paraCekModalAc()">Bankaya Aktar (Banka Talebi)</button><div style="background:var(--card-bg);padding:30px 25px;border-radius:24px;border:1px solid var(--border);text-align:center;color:var(--text-main);box-shadow:var(--shadow-sm)"><h4 style="margin:0 0 20px 0;font-size:18px;font-weight:900">Hediye Çeki Bozdur</h4><div class="input-group"><input type="text" id="bozdurKod" placeholder="CEK-XXXX" style="text-align:center;font-weight:900;font-size:22px;letter-spacing:3px"></div><button class="btn-primary" style="padding:16px" onclick="cekBozdur()">Kodu Onayla</button></div></div></div>
-        <div class="view" id="cartView"><div style="padding:15px 20px;background:var(--glass-bg);border-bottom:1px solid var(--border);position:sticky;top:0;z-index:10;color:var(--text-main)"><h3 style="margin:0;font-size:18px;text-align:center;font-weight:900">Sepetim</h3></div><div id="cartItemsContainer" style="padding:20px;padding-bottom:200px"></div><div style="position:absolute;bottom:85px;left:15px;right:15px;background:var(--glass-bg);padding:25px;border-radius:28px;box-shadow:var(--shadow-md);border:1px solid var(--border);z-index:25;color:var(--text-main)"><div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:20px"><span style="font-weight:800;font-size:14px;color:var(--text-muted)">Ödenecek Tutar</span><span id="cartTotal" style="font-size:26px;font-weight:900">0 ₺</span></div><button class="btn-primary" onclick="siparisVer()">Güvenli Ödeme</button></div></div>
-        <div class="view" id="messagesView"><div style="padding:15px 20px;background:var(--glass-bg);border-bottom:1px solid var(--border);position:sticky;top:0;z-index:10;color:var(--text-main);display:flex;align-items:center;gap:15px"><i class="fa-solid fa-arrow-left" style="font-size:20px;cursor:pointer" onclick="switchView('homeView')"></i><h3 style="margin:0;font-size:18px;font-weight:900">Mesajlar</h3></div><div id="messagesContainer"></div></div>
-        <div class="view" id="chatDetailView"><div class="chat-container"><div style="padding:15px 20px;background:var(--glass-bg);border-bottom:1px solid var(--border);position:sticky;top:0;z-index:10;color:var(--text-main);display:flex;align-items:center;gap:15px"><i class="fa-solid fa-arrow-left" style="font-size:20px;cursor:pointer" onclick="switchView('messagesView')"></i><h3 id="chatPartnerName" style="margin:0;font-size:15px;font-weight:800">İsim</h3></div><div class="chat-messages" id="chatMessagesBox"></div><div class="chat-input-bar"><input type="text" id="chatInput" placeholder="Mesaj yaz..." style="flex:1;padding:14px;border-radius:24px;border:1px solid var(--border);background:var(--ig-gray);color:var(--text-main);outline:none;font-weight:600"><button style="width:45px;height:45px;border-radius:50%;background:var(--primary-grad);color:#fff;border:none" onclick="mesajGonder()"><i class="fa-solid fa-paper-plane"></i></button></div></div></div>
+        
+        <div class="view" id="exploreView"><div style="padding:15px;background:var(--glass-bg); backdrop-filter:blur(20px); position:sticky;top:0;z-index:10;border-bottom:1px solid var(--border)"><input type="text" id="searchInput" placeholder="Kişi veya Mağaza Ara (@)" onkeyup="doSearch()" style="width:100%;padding:14px 18px;border-radius:14px;border:1px solid var(--border);background:var(--ig-gray);color:var(--text-main);font-weight:600"></div><div id="catScroller" style="display:flex;gap:10px;padding:10px 15px;overflow-x:auto;scrollbar-width:none;background:var(--card-bg);border-bottom:1px solid var(--border)"></div><div id="searchResults" style="display:none;background:var(--card-bg)"></div><div style="padding:15px;text-align:center;color:var(--text-main)"><h3 style="margin:0;font-size:14px;font-weight:900"><i class="fa-solid fa-fire text-gradient"></i> İndirimli Ürünler</h3></div><div class="ig-grid" id="exploreGrid"></div></div>
+        
+        <div class="view" id="singlePostView"><div style="padding:15px 20px;background:var(--glass-bg);backdrop-filter:blur(20px);border-bottom:1px solid var(--border);position:sticky;top:0;z-index:10;color:var(--text-main);display:flex;align-items:center;gap:15px"><i class="fa-solid fa-arrow-left" style="font-size:20px;cursor:pointer" onclick="backFromSinglePost()"></i><h3 style="margin:0;font-size:18px;font-weight:900">Gönderi</h3></div><div id="singlePostContainer"></div></div>
+        
+        <div class="view" id="profileView"><div class="profile-header"><div style="display:flex;align-items:center"><div id="pAvatar" style="width:90px;height:90px;background:var(--ig-gray);border-radius:50%;color:var(--text-main);display:flex;justify-content:center;align-items:center;font-size:32px;font-weight:900;background-size:cover;border:2px solid var(--border)">A</div><div class="profile-stats"><div class="stat-box"><b id="pTeam">0</b><small>Ağım</small></div><div class="stat-box"><b id="pFollowers">0</b><small>Takipçi</small></div><div class="stat-box"><b id="pBalance" class="text-gradient">0₺</b><small>Cüzdan</small></div></div></div><div style="margin-top:20px"><h2 id="pName" style="margin:0;font-size:18px;font-weight:900;color:var(--text-main)">İsim</h2><div id="pUsername" style="color:var(--primary);font-weight:800;font-size:14px;margin-top:2px">@username</div><div id="pKnId" style="display:inline-block; font-size:11px;font-weight:800;color:var(--text-muted);margin-top:8px;cursor:pointer; background:var(--ig-gray); padding: 4px 10px; border-radius: 8px;" onclick="kopyalaKnId()">EN-XXXXXX <i class="fa-regular fa-copy"></i></div><br><div id="pLevelBadge" class="level-badge" onclick="if(cuData?.rol==='customer'||cuData?.rol==='promoter')openModal('vipModal')">Seviye 0</div><p id="pBioText" style="font-size:14px;color:var(--text-main);margin-top:10px;font-weight:500"></p></div><div style="display:flex;gap:10px;margin-top:20px"><button class="btn-action" onclick="openModal('editProfileModal')">Profili Düzenle</button><button class="btn-action" style="background:var(--primary-grad);color:#fff" onclick="openModal('transferModal')">Transfer</button></div><div style="display:flex;gap:10px;margin-top:10px"><button class="btn-primary" id="btnUrunEkle" style="display:none" onclick="switchView('storeAddProdView')">Ürün Ekle</button><button class="btn-warning" id="btnKasa" style="display:none" onclick="switchView('storePosView')">Kasa</button><button class="btn-success" id="btnParaCek" style="display:none" onclick="paraCekModalAc()">Para Çek</button></div></div><div id="profileGrid" class="ig-grid"></div></div>
+        
+        <div class="view" id="otherProfileView"><div style="padding:15px 20px;background:var(--glass-bg);backdrop-filter:blur(20px);border-bottom:1px solid var(--border);position:sticky;top:0;z-index:10;color:var(--text-main);display:flex;align-items:center;gap:15px"><i class="fa-solid fa-arrow-left" style="font-size:20px;cursor:pointer" onclick="switchView('exploreView')"></i><h3 id="opHeaderName" style="margin:0;font-size:18px;font-weight:900">Profil</h3></div><div class="profile-header"><div style="display:flex;align-items:center"><div id="opAvatar" style="width:90px;height:90px;background:var(--ig-gray);border-radius:50%;color:var(--text-main);display:flex;justify-content:center;align-items:center;font-size:32px;font-weight:900;background-size:cover;border:2px solid var(--border)"></div><div class="profile-stats"><div class="stat-box"><b id="opProdCount">0</b><small>Gönderi</small></div></div></div><div style="margin-top:20px"><h2 id="opName" style="margin:0;font-size:18px;font-weight:900;color:var(--text-main)">İsim</h2><div id="opUsername" style="color:var(--primary);font-weight:800;font-size:14px;margin-top:2px">@username</div><div id="opKnId" style="display:inline-block; font-size:11px;font-weight:800;color:var(--text-muted);margin-top:8px; background:var(--ig-gray); padding: 4px 10px; border-radius: 8px;">EN-XXXXXX</div><p id="opBio" style="font-size:14px;color:var(--text-main);margin-top:10px;font-weight:500"></p></div><div style="display:flex;gap:10px;margin-top:20px"><button class="btn-primary" onclick="openChatFromProfile()"><i class="fa-regular fa-envelope"></i> Mesaj Gönder</button></div></div><div id="opGrid" class="ig-grid"></div></div>
+        
+        <div class="view" id="storeAddProdView">
+            <div style="padding:15px 20px;display:flex;align-items:center;gap:15px;background:var(--glass-bg);backdrop-filter:blur(20px);border-bottom:1px solid var(--border);position:sticky;top:0;z-index:10;color:var(--text-main)">
+                <i class="fa-solid fa-arrow-left" style="font-size:20px;cursor:pointer" onclick="switchView('profileView')"></i>
+                <h3 style="margin:0;font-size:18px;font-weight:900">Yeni Ürün Ekle</h3>
+            </div>
+            <div style="padding:25px">
+                
+                <div class="input-group" style="text-align: center;">
+                    <img id="upResPreview" class="img-preview" src="">
+                    <label for="upResFile" class="upload-box" id="upResLabel">
+                        <i class="fa-solid fa-cloud-arrow-up" style="font-size:36px; color:var(--primary); margin-bottom:12px;"></i><br>
+                        Ürün Görseli Yükle (Zorunlu)
+                    </label>
+                    <input type="file" id="upResFile" accept="image/*" style="display:none" onchange="previewImage(this, 'upResPreview', 'upResLabel')">
+                </div>
+
+                <div class="input-group"><input type="text" id="upAd" placeholder="Ürün Adı"></div>
+                <div class="input-group"><input type="number" id="upFiyat" placeholder="Satış Fiyatı (₺) - Zorunlu"></div>
+                <div class="input-group"><input type="number" id="upEskiFiyat" placeholder="Eski Fiyat (₺) - İsteğe Bağlı (İndirim İçin)"></div>
+                
+                <button class="btn-primary" id="btnUrunKaydet" onclick="urunKaydet()" style="margin-top: 10px;">Paylaş</button>
+            </div>
+        </div>
+        
+        <div class="view" id="storePosView"><div style="padding:15px 20px;display:flex;align-items:center;gap:15px;background:var(--glass-bg);backdrop-filter:blur(20px);border-bottom:1px solid var(--border);position:sticky;top:0;z-index:10;color:var(--text-main)"><i class="fa-solid fa-arrow-left" style="font-size:20px;cursor:pointer" onclick="switchView('profileView')"></i><h3 style="margin:0;font-size:18px;font-weight:900">Kasa (Esnaf)</h3></div><div style="padding:25px"><div style="background:var(--primary-grad);color:#fff;border-radius:24px;padding:30px;margin-bottom:15px;text-align:center;box-shadow:var(--shadow-md)"><p style="margin:0;font-size:12px;font-weight:800;opacity:.9;text-transform:uppercase">Net Kazanç Bakiyesi</p><h1 id="sKasaBakiye" style="margin:10px 0 0 0;font-size:46px;font-weight:900;letter-spacing:-1px">0 ₺</h1></div><button class="btn-success" style="margin-bottom:30px;padding:18px;font-size:16px" onclick="paraCekModalAc()"><i class="fa-solid fa-building-columns"></i> Bankaya Aktar</button><div style="background:var(--card-bg);padding:30px 25px;border-radius:24px;border:1px solid var(--border);text-align:center;color:var(--text-main);box-shadow:var(--shadow-sm)"><h4 style="margin:0 0 20px 0;font-size:18px;font-weight:900">Hediye Çeki Bozdur</h4><div class="input-group"><input type="text" id="bozdurKod" placeholder="CEK-XXXX" style="text-align:center;font-weight:900;font-size:22px;letter-spacing:3px"></div><button class="btn-primary" style="padding:16px" onclick="cekBozdur()">Kodu Onayla</button></div></div></div>
+        
+        <div class="view" id="cartView"><div style="padding:15px 20px;background:var(--glass-bg);backdrop-filter:blur(20px);border-bottom:1px solid var(--border);position:sticky;top:0;z-index:10;color:var(--text-main)"><h3 style="margin:0;font-size:18px;text-align:center;font-weight:900">Sepetim</h3></div><div id="cartItemsContainer" style="padding:20px;padding-bottom:200px"></div><div style="position:absolute;bottom:85px;left:15px;right:15px;background:var(--glass-bg);backdrop-filter:blur(20px);padding:25px;border-radius:28px;box-shadow:var(--shadow-md);border:1px solid var(--border);z-index:25;color:var(--text-main)"><div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:20px"><span style="font-weight:800;font-size:14px;color:var(--text-muted)">Ödenecek Tutar</span><span id="cartTotal" style="font-size:26px;font-weight:900">0 ₺</span></div><button class="btn-primary" onclick="siparisVer()">Güvenli Ödeme</button></div></div>
+        
+        <div class="view" id="messagesView"><div style="padding:15px 20px;background:var(--glass-bg);backdrop-filter:blur(20px);border-bottom:1px solid var(--border);position:sticky;top:0;z-index:10;color:var(--text-main);display:flex;align-items:center;gap:15px"><i class="fa-solid fa-arrow-left" style="font-size:20px;cursor:pointer" onclick="switchView('homeView')"></i><h3 style="margin:0;font-size:18px;font-weight:900">Mesajlar</h3></div><div id="messagesContainer"></div></div>
+        
+        <div class="view" id="chatDetailView"><div class="chat-container"><div style="padding:15px 20px;background:var(--glass-bg);backdrop-filter:blur(20px);border-bottom:1px solid var(--border);position:sticky;top:0;z-index:10;color:var(--text-main);display:flex;align-items:center;gap:15px"><i class="fa-solid fa-arrow-left" style="font-size:20px;cursor:pointer" onclick="switchView('messagesView')"></i><h3 id="chatPartnerName" style="margin:0;font-size:16px;font-weight:800">İsim</h3></div><div class="chat-messages" id="chatMessagesBox"></div><div class="chat-input-bar"><input type="text" id="chatInput" placeholder="Mesaj yaz..." style="flex:1;padding:14px 20px;border-radius:24px;border:1px solid var(--border);background:var(--ig-gray);color:var(--text-main);outline:none;font-weight:600"><button style="width:45px;height:45px;border-radius:50%;background:var(--primary-grad);color:#fff;border:none;flex-shrink:0" onclick="mesajGonder()"><i class="fa-solid fa-paper-plane"></i></button></div></div></div>
+        
         <div class="view" id="adminDashboardView" style="margin-top:-60px;height:calc(100% + 60px);padding-bottom:100px"><div class="god-header"><h2 style="margin:0;font-size:20px;font-weight:900;letter-spacing:-.5px" class="text-gradient">ADMIN PANEL</h2><i class="fa-solid fa-right-from-bracket" style="color:var(--text-muted);font-size:20px;cursor:pointer" onclick="cikisYap()"></i></div><div class="god-tabs"><div class="god-tab active" onclick="godTab('analiz',this)">Analiz</div><div class="god-tab" onclick="godTab('kategoriler',this)">Kategoriler</div><div class="god-tab" onclick="godTab('uyeler',this)">Üyeler</div><div class="god-tab" onclick="godTab('urunler',this)">Ürünler</div><div class="god-tab" onclick="godTab('transferler',this)">Transfer</div><div class="god-tab" onclick="godTab('odemeler',this)">Talepler <span id="godReqCount" style="background:var(--danger);color:#fff;border-radius:6px;padding:2px 8px;font-size:10px;margin-left:4px">0</span></div><div class="god-tab" onclick="godTab('saas',this)">SaaS</div></div><div id="godTabAnaliz"><div class="god-grid"><div class="god-stat-card"><div class="god-stat-title">TOPLAM CİRO</div><div class="god-stat-value" id="godTotalCiro">0 ₺</div></div><div class="god-stat-card"><div class="god-stat-title">SİSTEM KÂRI</div><div class="god-stat-value text-gradient" id="godProfit">0 ₺</div></div></div><div style="padding:0 20px"><div style="background:var(--card-bg);border:1px solid var(--border);border-radius:20px;padding:20px;display:flex;justify-content:space-around;box-shadow:var(--shadow-sm)"><div style="text-align:center"><b style="color:var(--text-main);font-size:22px" id="godCountMusteri">0</b><br><small style="color:var(--text-muted);font-size:10px;font-weight:800">MÜŞTERİ</small></div><div style="text-align:center"><b class="text-gradient" style="font-size:22px" id="godCountVip">0</b><br><small style="color:var(--text-muted);font-size:10px;font-weight:800">VIP</small></div><div style="text-align:center"><b style="color:var(--text-main);font-size:22px" id="godCountEsnaf">0</b><br><small style="color:var(--text-muted);font-size:10px;font-weight:800">ESNAF</small></div></div></div></div><div id="godTabKategoriler" style="display:none;padding:0 20px"><div style="background:var(--card-bg);padding:25px;border-radius:20px;border:1px solid var(--border);margin-bottom:15px;box-shadow:var(--shadow-sm)"><h4 style="margin:0 0 15px 0;color:var(--text-main);font-weight:900">Kategori Ekle</h4><input type="text" id="newCatName" placeholder="Kategori Adı" style="width:100%;padding:14px;border-radius:12px;border:1px solid var(--border);background:var(--ig-gray);margin-bottom:10px;color:var(--text-main)"><button class="btn-primary" onclick="adminAddCat()">Ekle</button></div><div id="adminCatsList"></div></div><div id="godTabUyeler" style="display:none;padding:0 20px"><input type="text" id="adminUserSearch" placeholder="Üye ID veya İsim ara..." onkeyup="adminUsersDraw()" style="width:100%;padding:16px;border-radius:16px;border:1px solid var(--border);background:var(--card-bg);color:var(--text-main);margin-bottom:15px;outline:none;font-weight:600;box-shadow:var(--shadow-sm)"><div id="adminUserList"></div></div><div id="godTabUrunler" style="display:none;padding:0 20px"><div class="ig-grid" id="adminProductsList"></div></div><div id="godTabTransferler" style="display:none;padding:0 20px"><div id="adminTransfersList"></div></div><div id="godTabOdemeler" style="display:none;padding:0 20px"><div id="adminWithdrawList"></div></div><div id="godTabSaas" style="display:none;padding:0 20px"><div style="background:var(--card-bg);padding:25px;border-radius:20px;border:1px solid var(--border);margin-bottom:15px;box-shadow:var(--shadow-sm)"><h4 style="margin:0 0 20px 0;color:var(--text-main);font-weight:900">Paketler</h4><div id="adminPlansList"></div></div><div style="background:var(--card-bg);padding:25px;border-radius:20px;border:1px solid var(--border)"><h4 style="margin:0 0 20px 0;color:var(--text-main);font-weight:900" class="text-gradient">Paket Ekle</h4><input type="text" id="npLvl" placeholder="Seviye No (1, 2..)" class="input-group" style="width:100%;padding:14px;border-radius:12px;border:1px solid var(--border);background:var(--ig-gray);margin-bottom:10px"><input type="text" id="npAd" placeholder="Adı" style="width:100%;padding:14px;border-radius:12px;border:1px solid var(--border);background:var(--ig-gray);margin-bottom:10px"><input type="number" id="npFiyat" placeholder="Fiyat (₺)" style="width:100%;padding:14px;border-radius:12px;border:1px solid var(--border);background:var(--ig-gray);margin-bottom:10px"><input type="number" id="npOran" placeholder="Komisyon Oranı (Örn 15)" style="width:100%;padding:14px;border-radius:12px;border:1px solid var(--border);background:var(--ig-gray);margin-bottom:15px"><button class="btn-primary" onclick="adminAddPlan()">Ekle</button></div></div></div>
     </div>
 
@@ -160,6 +282,7 @@ button{border:none;padding:14px 20px;border-radius:14px;font-weight:800;cursor:p
 </div>
 
 <script>
+// Firebase Config
 const fc={apiKey:"AIzaSyBWSlha9fD_q3zHXaRJ3ocJdtALqkrW-LU",authDomain:"kapinda-8d3ef.firebaseapp.com",projectId:"kapinda-8d3ef",storageBucket:"kapinda-8d3ef.appspot.com",messagingSenderId:"246456710881",appId:"1:246456710881:web:c2a7bdb5e3b9065d1829a0"};
 firebase.initializeApp(fc);
 const db=firebase.firestore();
@@ -195,6 +318,26 @@ function checkTheme(){if(localStorage.getItem('kapinda_dark')==='true'){document
 function toggleDarkMode(){let isD=document.getElementById('darkModeToggle').checked;document.body.classList.toggle('dark-mode',isD);localStorage.setItem('kapinda_dark',isD);}
 function showToast(m,err=false){let t=document.getElementById('toast');t.innerText=m;t.style.background=err?"var(--danger)":"var(--primary-grad)";t.style.color="#fff";t.classList.add('show');setTimeout(()=>t.classList.remove('show'),3000);}
 
+/* YENİ EKLENEN FOTOĞRAF ÖNİZLEME FONKSİYONU */
+function previewImage(input, previewId, labelId = null) {
+    let preview = document.getElementById(previewId);
+    if (input.files && input.files[0]) {
+        let reader = new FileReader();
+        reader.onload = function(e) {
+            preview.src = e.target.result;
+            preview.style.display = 'block';
+            if(labelId) {
+                document.getElementById(labelId).style.display = 'none'; 
+            }
+        }
+        reader.readAsDataURL(input.files[0]);
+    } else {
+        preview.src = '';
+        preview.style.display = 'none';
+        if(labelId) document.getElementById(labelId).style.display = 'block';
+    }
+}
+
 function switchView(tId){
     if(['homeView','exploreView','profileView','otherProfileView'].includes(cView)) lastView=cView;
     document.querySelectorAll('.view').forEach(v=>v.classList.remove('active'));
@@ -216,7 +359,7 @@ function switchView(tId){
     if(tId==='storePosView') document.getElementById('sKasaBakiye').innerText=(cuData?.bakiye||0)+" ₺";
 }
 
-function authModSwitch(m){document.getElementById('loginFormBlock').style.display=m==='login'?'block':'none';document.getElementById('registerFormBlock').style.display=m==='register'?'block':'none';}
+function authModSwitch(m){document.getElementById('loginFormBlock').style.display=m==='login'?'block':'none';document.getElementById('registerFormBlock').style.display=m==='register'?'block':'none';document.getElementById('tabLoginBtn').style.background=m==='login'?'var(--card-bg)':'transparent';document.getElementById('tabLoginBtn').style.color=m==='login'?'var(--text-main)':'var(--text-muted)';document.getElementById('tabRegisterBtn').style.background=m==='register'?'var(--card-bg)':'transparent';document.getElementById('tabRegisterBtn').style.color=m==='register'?'var(--text-main)':'var(--text-muted)';}
 
 function girisYap(){
     let input=document.getElementById('lEmail')?.value?.trim()?.toLowerCase();
@@ -286,7 +429,7 @@ function listenToProds(){
     });
 }
 
-function setupNav(){document.getElementById('nav-home').style.display='block';document.getElementById('nav-explore').style.display='block';document.getElementById('nav-cart').style.display='block';document.getElementById('nav-profile').style.display='block';document.getElementById('nav-admin').style.display=(cuData?.rol==='admin')?'block':'none';let p=document.getElementById('navProfilePic');if(cuData?.avatar){p.style.backgroundImage=`url('${cuData.avatar}')`;p.innerText='';}else{p.innerText=cuData?.isim?.[0]||'A';p.style.display="flex";p.style.justifyContent="center";p.style.alignItems="center";p.style.fontWeight="900";p.style.fontSize="12px";p.style.color="var(--text-main)";}}
+function setupNav(){document.getElementById('nav-home').style.display='flex';document.getElementById('nav-explore').style.display='flex';document.getElementById('nav-cart').style.display='flex';document.getElementById('nav-profile').style.display='flex';document.getElementById('nav-admin').style.display=(cuData?.rol==='admin')?'flex':'none';let p=document.getElementById('navProfilePic');if(cuData?.avatar){p.style.backgroundImage=`url('${cuData.avatar}')`;p.innerText='';p.style.border='none';}else{p.innerText=cuData?.isim?.[0]||'A';p.style.display="flex";p.style.justifyContent="center";p.style.alignItems="center";p.style.fontWeight="900";p.style.fontSize="12px";p.style.color="var(--text-main)";p.style.border='2px solid var(--border)';}}
 
 function kayitOl(){let ad=document.getElementById('rName')?.value?.trim();let un=document.getElementById('rUsername')?.value?.trim()?.toLowerCase();let em=document.getElementById('rEmail')?.value?.trim()?.toLowerCase();let p=document.getElementById('rPass')?.value?.trim();let sp=document.getElementById('rSponsor')?.value?.trim()?.toUpperCase();if(!ad||!un||!em||!p) return showToast("Eksik bilgi!",true);if(un.includes(' ')) return showToast("Kullanıcı adında boşluk olamaz!",true);if(un.length < 3) return showToast("Kullanıcı adı çok kısa!",true);showToast("Oluşturuluyor...");let nId='EN-'+Math.floor(100000+Math.random()*900000);db.collection('users').where('username','==',un).get().then(snap => {if(!snap.empty) return showToast("Bu ad alınmış!", true);let fn=(spE)=>{firebase.auth().createUserWithEmailAndPassword(em,p).then(()=>{db.collection('users').doc(em).set({isim:ad,username:un,rol:'customer',bakiye:0,knId:nId,seviye:'0',sponsor:spE,category:''}).then(()=>{showToast("Kayıt Tamam!"); authModSwitch('login'); document.getElementById('lEmail').value=un;});}).catch(e=>showToast("Hata oluştu!",true));};if(sp){db.collection('users').where("knId","==",sp).get().then(s=>{if(s.empty) return showToast("Sponsor EN hatalı!",true); fn(s.docs[0].id);});}else{fn(null);}});}
 function cikisYap(){firebase.auth().signOut().then(()=>{localStorage.removeItem('evinde_session');location.reload();});}
@@ -298,6 +441,16 @@ function openModal(id) {
         document.getElementById('eName').value = cuData.isim || '';
         document.getElementById('eUsername').value = cuData.username || '';
         document.getElementById('eBio').value = cuData.bio || '';
+        
+        // Mevcut avatarı önizlemeye ekle
+        let pre = document.getElementById('eAvPreview');
+        if(cuData.avatar) {
+            pre.src = cuData.avatar;
+            pre.style.display = 'block';
+        } else {
+            pre.src = '';
+            pre.style.display = 'none';
+        }
     }
 }
 function closeModal(id) {document.getElementById(id).classList.remove('active');}
@@ -308,11 +461,15 @@ async function saveProfile() {
     if(un && un !== cuData.username) {let snap=await db.collection('users').where('username','==',un).get();if(!snap.empty){showToast("Ad alınmış!",true);btn.disabled=false;return;}}
     let up={};if(n)up.isim=n;if(un)up.username=un;up.bio=b;
     try {
-        if(fi?.files?.[0]) {let sr=storage.ref('avatars/'+akEmail+'_'+Date.now());await sr.put(fi.files[0]);up.avatar=await sr.getDownloadURL();}
+        if(fi?.files?.[0]) {
+            let sr=storage.ref('avatars/'+akEmail+'_'+Date.now());
+            await sr.put(fi.files[0]);
+            up.avatar=await sr.getDownloadURL();
+        }
         if(p && p.length>=6) await firebase.auth().currentUser.updatePassword(p);
         await db.collection('users').doc(akEmail).update(up);
         closeModal('editProfileModal');showToast("Güncellendi!");
-    } catch(e){showToast("Hata: Yeniden giriş yapmalısın!",true);} finally {btn.innerText="Kaydet";btn.disabled=false;}
+    } catch(e){showToast("Hata: Yeniden giriş yapmalısın!",true);} finally {btn.innerText="Ayarları Kaydet";btn.disabled=false;}
 }
 
 function renderCatsUI(){let h=`<div class="cat-pill ${currCat==='all'?'active':''}" onclick="selCat('all')">Tümü</div>`;allCats.forEach(c=>h+=`<div class="cat-pill ${currCat===c.id?'active':''}" onclick="selCat('${c.id}')">${c.name}</div>`);let el=document.getElementById('catScroller');if(el)el.innerHTML=h;}
@@ -356,26 +513,29 @@ async function urunKaydet() {
             timestamp: firebase.firestore.FieldValue.serverTimestamp()
         });
         
-        // Başarılı olursa formu temizle
+        // Başarılı olursa formu ve önizlemeyi temizle
         document.getElementById('upAd').value = '';
         document.getElementById('upFiyat').value = '';
         document.getElementById('upEskiFiyat').value = '';
         document.getElementById('upResFile').value = '';
+        document.getElementById('upResPreview').style.display = 'none';
+        document.getElementById('upResPreview').src = '';
+        document.getElementById('upResLabel').style.display = 'block';
         
         switchView('profileView');
         showToast("Ürün başarıyla paylaşıldı!");
     } catch (e) {
         console.error("Ürün yükleme hatası:", e);
-        showToast("Hata oluştu! (Firebase izinleri kapalı olabilir)", true);
+        showToast("Hata oluştu! (Dosya yükleme)", true);
     } finally {
         btn.innerText = "Paylaş";
         btn.disabled = false;
     }
 }
 
-function createPostHtml(p){let av=p.storeAvatar?`background-image:url('${p.storeAvatar}');border:none;`:'';let badge='',priceText=`${p.fiyat} ₺`;if(p.eskiFiyat&&p.eskiFiyat>p.fiyat){let ind=Math.round(((p.eskiFiyat-p.fiyat)/p.eskiFiyat)*100);badge=`<div class="discount-badge">%${ind} İndirim</div>`;priceText=`<strike style="color:var(--text-muted);font-size:12px;margin-right:4px">${p.eskiFiyat}₺</strike>${p.fiyat} ₺`;}let isL=p.likes&&p.likes.includes(akEmail);let hIco=isL?`<i class="fa-solid fa-heart" style="color:var(--danger)" onclick="tLike('${p.id}')"></i>`:`<i class="fa-regular fa-heart" onclick="tLike('${p.id}')"></i>`;return`<div class="post-card">${badge}<div class="post-header" onclick="openOP('${p.storeEmail}')"><div style="display:flex;align-items:center;gap:12px;"><div class="post-avatar" style="${av}">${p.storeName?.[0]||'A'}</div><div><b style="font-size:14px;font-weight:800;display:block">${p.storeName}</b><small style="color:var(--primary);font-weight:800">@${p.storeUsername}</small></div></div></div><div class="post-image" style="background-image:url('${p.resimUrl}')" ondblclick="tLike('${p.id}')"></div><div class="ig-action-bar"><div class="ig-icons-left">${hIco}<i class="fa-regular fa-comment" onclick="oComm('${p.id}')"></i><i class="fa-solid fa-share-nodes" onclick="shareP('${p.ad}',${p.fiyat},'${p.storeUsername}')"></i></div><i class="fa-solid fa-bag-shopping" style="cursor:pointer;" onclick="sepeteEkle('${p.id}','${p.ad}',${p.fiyat},'${p.storeEmail}')"></i></div><div class="post-content"><b style="font-size:15px;color:${badge?'var(--danger)':'var(--text-main)'}">${priceText}</b><span style="font-size:13px;font-weight:600;display:block;margin-top:4px"><b>@${p.storeUsername}</b> ${p.ad}</span></div></div>`;}
-function renderFeed(){let h='';allProds.forEach(p=>h+=createPostHtml(p));document.getElementById('mainFeed').innerHTML=h||'<p style="text-align:center;margin-top:40px;color:var(--text-muted)">Akış boş.</p>';}
-function renderExplore(){let h='';let indirimli=allProds.filter(p=>{if(!(p.eskiFiyat&&p.eskiFiyat>p.fiyat))return false;if(currCat!=='all'){let u=allUsers[p.storeEmail];if(!u||u.category!==currCat)return false;}return true;});indirimli.forEach(p=>{let ind=Math.round(((p.eskiFiyat-p.fiyat)/p.eskiFiyat)*100);h+=`<div class="ig-grid-item" style="background-image:url('${p.resimUrl}')" onclick="viewSinglePost('${p.id}')"><div style="position:absolute;top:4px;right:4px;background:var(--danger);color:#fff;font-size:9px;padding:2px 4px;border-radius:4px;font-weight:900">%${ind}</div></div>`;});document.getElementById('exploreGrid').innerHTML=h||'<p style="grid-column:span 3;text-align:center;margin-top:40px;color:var(--text-muted)">Sonuç yok.</p>';}
+function createPostHtml(p){let av=p.storeAvatar?`background-image:url('${p.storeAvatar}');border:none;`:'';let badge='',priceText=`${p.fiyat} ₺`;if(p.eskiFiyat&&p.eskiFiyat>p.fiyat){let ind=Math.round(((p.eskiFiyat-p.fiyat)/p.eskiFiyat)*100);badge=`<div class="discount-badge">%${ind} İndirim</div>`;priceText=`<strike style="color:var(--text-muted);font-size:12px;margin-right:4px">${p.eskiFiyat}₺</strike>${p.fiyat} ₺`;}let isL=p.likes&&p.likes.includes(akEmail);let hIco=isL?`<i class="fa-solid fa-heart" style="color:var(--danger)" onclick="tLike('${p.id}')"></i>`:`<i class="fa-regular fa-heart" onclick="tLike('${p.id}')"></i>`;return`<div class="post-card">${badge}<div class="post-header" onclick="openOP('${p.storeEmail}')"><div style="display:flex;align-items:center;gap:12px;"><div class="post-avatar" style="${av}">${p.storeName?.[0]||'A'}</div><div><b style="font-size:14px;font-weight:800;display:block">${p.storeName}</b><small style="color:var(--primary);font-weight:800">@${p.storeUsername}</small></div></div></div><div class="post-image" style="background-image:url('${p.resimUrl}')" ondblclick="tLike('${p.id}')"></div><div class="ig-action-bar"><div class="ig-icons-left">${hIco}<i class="fa-regular fa-comment" onclick="oComm('${p.id}')"></i><i class="fa-solid fa-share-nodes" onclick="shareP('${p.ad}',${p.fiyat},'${p.storeUsername}')"></i></div><i class="fa-solid fa-cart-plus" style="cursor:pointer; color:var(--primary);" onclick="sepeteEkle('${p.id}','${p.ad}',${p.fiyat},'${p.storeEmail}')"></i></div><div class="post-content"><b style="font-size:16px;color:${badge?'var(--danger)':'var(--text-main)'}">${priceText}</b><span style="font-size:14px;font-weight:600;display:block;margin-top:6px"><b style="font-weight:900;">@${p.storeUsername}</b> ${p.ad}</span></div></div>`;}
+function renderFeed(){let h='';allProds.forEach(p=>h+=createPostHtml(p));document.getElementById('mainFeed').innerHTML=h||'<div style="text-align:center;margin-top:60px;color:var(--text-muted)"><i class="fa-solid fa-box-open" style="font-size:40px; margin-bottom: 10px; opacity:0.5"></i><br>Buralar çok ıssız.</div>';}
+function renderExplore(){let h='';let indirimli=allProds.filter(p=>{if(!(p.eskiFiyat&&p.eskiFiyat>p.fiyat))return false;if(currCat!=='all'){let u=allUsers[p.storeEmail];if(!u||u.category!==currCat)return false;}return true;});indirimli.forEach(p=>{let ind=Math.round(((p.eskiFiyat-p.fiyat)/p.eskiFiyat)*100);h+=`<div class="ig-grid-item" style="background-image:url('${p.resimUrl}')" onclick="viewSinglePost('${p.id}')"><div style="position:absolute;top:6px;right:6px;background:var(--danger);color:#fff;font-size:10px;padding:3px 6px;border-radius:6px;font-weight:900;box-shadow: 0 2px 5px rgba(0,0,0,0.3);">%${ind}</div></div>`;});document.getElementById('exploreGrid').innerHTML=h||'<p style="grid-column:span 3;text-align:center;margin-top:40px;color:var(--text-muted)">Sonuç yok.</p>';}
 
 function doSearch(){
     let q=document.getElementById('searchInput')?.value?.toLowerCase()?.trim()?.replace('@','');let sr=document.getElementById('searchResults');let eg=document.getElementById('exploreGrid');
@@ -385,23 +545,24 @@ function doSearch(){
     sr.innerHTML=h||'<p style="padding:15px;text-align:center;color:var(--text-muted)">Sonuç yok.</p>';
 }
 
-function openOP(em){if(em===akEmail)return switchView('profileView');viewEmail=em;let u=allUsers[em];if(!u)return;document.getElementById('opHeaderName').innerText=u.isim;document.getElementById('opName').innerText=u.isim;document.getElementById('opUsername').innerText="@"+(u.username||u.knId);document.getElementById('opKnId').innerText=u.knId;document.getElementById('opBio').innerText=u.bio||'';let av=document.getElementById('opAvatar');if(u.avatar){av.style.backgroundImage=`url('${u.avatar}')`;av.innerText='';av.style.border='none';}else{av.style.backgroundImage='none';av.innerText=u.isim?.[0]||'A';}let mp=allProds.filter(p=>p.storeEmail===em);document.getElementById('opProdCount').innerText=mp.length;let h='';mp.forEach(p=>h+=`<div class="ig-grid-item" style="background-image:url('${p.resimUrl}')" onclick="viewSinglePost('${p.id}')"></div>`);document.getElementById('opGrid').innerHTML=h;switchView('otherProfileView');document.getElementById('searchResults').style.display='none';}
+function openOP(em){if(em===akEmail)return switchView('profileView');viewEmail=em;let u=allUsers[em];if(!u)return;document.getElementById('opHeaderName').innerText=u.isim;document.getElementById('opName').innerText=u.isim;document.getElementById('opUsername').innerText="@"+(u.username||u.knId);document.getElementById('opKnId').innerText=u.knId;document.getElementById('opBio').innerText=u.bio||'';let av=document.getElementById('opAvatar');if(u.avatar){av.style.backgroundImage=`url('${u.avatar}')`;av.innerText='';av.style.border='none';}else{av.style.backgroundImage='none';av.innerText=u.isim?.[0]||'A';av.style.border='2px solid var(--border)';}let mp=allProds.filter(p=>p.storeEmail===em);document.getElementById('opProdCount').innerText=mp.length;let h='';mp.forEach(p=>h+=`<div class="ig-grid-item" style="background-image:url('${p.resimUrl}')" onclick="viewSinglePost('${p.id}')"></div>`);document.getElementById('opGrid').innerHTML=h;switchView('otherProfileView');document.getElementById('searchResults').style.display='none';}
 function openChatFromProfile(){openChat(viewEmail);}
 function viewSinglePost(id){let p=allProds.find(x=>x.id===id);if(p){document.getElementById('activePostId').value=id;document.getElementById('singlePostContainer').innerHTML=createPostHtml(p);switchView('singlePostView');}}
 function backFromSinglePost(){switchView(lastView);}
 function tLike(id){let p=allProds.find(x=>x.id===id);if(!p)return;let l=p.likes||[];if(l.includes(akEmail))l=l.filter(x=>x!==akEmail);else l.push(akEmail);db.collection('products').doc(id).update({likes:l});}
-function oComm(id){let p=allProds.find(x=>x.id===id);if(!p)return;document.getElementById('activePostId').value=id;let c=p.comments||[];let h='';c.forEach(x=>{let u=allUsers[x.u]||{isim:'Bilinmeyen'};let av=u.avatar?`background-image:url('${u.avatar}');`:'';h+=`<div style="display:flex;gap:10px;margin-bottom:12px"><div class="post-avatar" style="${av};width:32px;height:32px">${u.isim?.[0]||'A'}</div><div style="font-size:13px"><b style="font-weight:800">@${u.username||'üye'}</b> ${x.t}</div></div>`;});document.getElementById('commentsList').innerHTML=h||'<p style="text-align:center;color:var(--text-muted);font-size:12px">Henüz yorum yok.</p>';openModal('commentsModal');}
+function oComm(id){let p=allProds.find(x=>x.id===id);if(!p)return;document.getElementById('activePostId').value=id;let c=p.comments||[];let h='';c.forEach(x=>{let u=allUsers[x.u]||{isim:'Bilinmeyen'};let av=u.avatar?`background-image:url('${u.avatar}');`:'';h+=`<div style="display:flex;gap:12px;margin-bottom:15px"><div class="post-avatar" style="${av};width:36px;height:36px;border-radius:50%;">${u.isim?.[0]||'A'}</div><div style="font-size:14px; background:var(--ig-gray); padding:10px 14px; border-radius:0 16px 16px 16px;"><b style="font-weight:900; color:var(--text-main);">@${u.username||'üye'}</b><br>${x.t}</div></div>`;});document.getElementById('commentsList').innerHTML=h||'<div style="text-align:center;color:var(--text-muted);margin-top:30px;"><i class="fa-regular fa-comments" style="font-size:30px; margin-bottom:10px;"></i><br>İlk yorumu sen yap.</div>';openModal('commentsModal');}
 function addComment(){let v=document.getElementById('newCommentInput')?.value?.trim();if(!v)return;let id=document.getElementById('activePostId')?.value;db.collection('products').doc(id).update({comments:firebase.firestore.FieldValue.arrayUnion({u:akEmail,t:v,d:Date.now()})}).then(()=>{document.getElementById('newCommentInput').value='';});}
-function shareP(ad,f,un){let t=`Ürünü İncele: @${un} - ${ad} (${f}₺)\nEvinde App!`;navigator.clipboard.writeText(t).then(()=>showToast("Link kopyalandı!"));}
+function shareP(ad,f,un){let t=`Evinde App!\n@${un} mağazasından ${ad} sadece ${f}₺!\nHemen incele!`;navigator.clipboard.writeText(t).then(()=>showToast("Bağlantı kopyalandı!"));}
 function sepeteEkle(id,ad,f,s){sepet.push({id,ad,fiyat:f,satici:s});document.getElementById('cartCount').innerText=sepet.length;document.getElementById('cartCount').style.display='flex';showToast("Sepete Eklendi!");}
-function renderCart(){let h='',t=0;sepet.forEach(x=>{t+=x.fiyat;h+=`<div style="display:flex;justify-content:space-between;padding:15px 0;border-bottom:1px solid var(--border)"><b>${x.ad}</b><b>${x.fiyat} ₺</b></div>`;});document.getElementById('cartItemsContainer').innerHTML=h||'<p style="text-align:center;color:var(--text-muted)">Sepetin boş.</p>';document.getElementById('cartTotal').innerText=t+" ₺";}
-async function siparisVer(){if(!sepet.length)return showToast("Sepet boş!",true);let tot=sepet.reduce((s,i)=>s+i.fiyat,0);if(cuData.bakiye<tot)return showToast("Bakiye Yetersiz!",true);showToast("İşleniyor...");let nk=tot*0.20;await db.collection('users').doc(akEmail).update({bakiye:firebase.firestore.FieldValue.increment(-tot)});for(const i of sepet){await db.collection('users').doc(i.satici).update({bakiye:firebase.firestore.FieldValue.increment(i.fiyat*0.80)});}await db.collection('stats').doc('main').set({totalCiro:firebase.firestore.FieldValue.increment(tot),netKar:firebase.firestore.FieldValue.increment(nk)},{merge:true});sepet=[];document.getElementById('cartCount').style.display='none';switchView('profileView');showToast("Onaylandı!");}
+function renderCart(){let h='',t=0;sepet.forEach((x, index)=>{t+=x.fiyat;h+=`<div style="display:flex;justify-content:space-between; align-items:center; padding:15px; border-bottom:1px solid var(--border); background:var(--card-bg); border-radius:12px; margin-bottom:10px;"><div style="display:flex; flex-direction:column;"><b style="font-size:15px;">${x.ad}</b><small style="color:var(--text-muted)">Satıcı: @${allUsers[x.satici]?.username||'Mağaza'}</small></div><div style="display:flex; align-items:center; gap:15px;"><b style="color:var(--primary); font-size:16px;">${x.fiyat} ₺</b><i class="fa-solid fa-trash" style="color:var(--danger); cursor:pointer;" onclick="sepettenCikar(${index})"></i></div></div>`;});document.getElementById('cartItemsContainer').innerHTML=h||'<div style="text-align:center;color:var(--text-muted);margin-top:60px;"><i class="fa-solid fa-basket-shopping" style="font-size:40px; margin-bottom:10px; opacity:0.5;"></i><br>Sepetin şu an boş.</div>';document.getElementById('cartTotal').innerText=t+" ₺";}
+function sepettenCikar(index){ sepet.splice(index, 1); document.getElementById('cartCount').innerText=sepet.length; if(sepet.length===0) document.getElementById('cartCount').style.display='none'; renderCart(); }
+async function siparisVer(){if(!sepet.length)return showToast("Sepet boş!",true);let tot=sepet.reduce((s,i)=>s+i.fiyat,0);if(cuData.bakiye<tot)return showToast("Bakiye Yetersiz!",true);showToast("İşleniyor...");let nk=tot*0.20;await db.collection('users').doc(akEmail).update({bakiye:firebase.firestore.FieldValue.increment(-tot)});for(const i of sepet){await db.collection('users').doc(i.satici).update({bakiye:firebase.firestore.FieldValue.increment(i.fiyat*0.80)});}await db.collection('stats').doc('main').set({totalCiro:firebase.firestore.FieldValue.increment(tot),netKar:firebase.firestore.FieldValue.increment(nk)},{merge:true});sepet=[];document.getElementById('cartCount').style.display='none';switchView('profileView');showToast("Sipariş Onaylandı!");}
 
 function paraGonder() {
     let el=document.getElementById('tKnId');if(!el||!el.value) return;let alici=el.value.toUpperCase().trim();let t=parseInt(document.getElementById('tTutar')?.value||"0");
-    if(!alici||t<=0||cuData.bakiye<t) return showToast("Hata!",true);
+    if(!alici||t<=0||cuData.bakiye<t) return showToast("Hata veya bakiye yetersiz!",true);
     db.collection('users').where("knId","==",alici).get().then(snap=>{
-        if(snap.empty) return showToast("Hatalı ID!",true);let aEm=snap.docs[0].id;if(aEm===akEmail) return showToast("Hata!",true);
+        if(snap.empty) return showToast("Hatalı ID!",true);let aEm=snap.docs[0].id;if(aEm===akEmail) return showToast("Kendinize gönderemezsiniz!",true);
         db.collection('users').doc(akEmail).update({bakiye:firebase.firestore.FieldValue.increment(-t)}).then(()=>{
             db.collection('users').doc(aEm).update({bakiye:firebase.firestore.FieldValue.increment(t)});
             db.collection('transfers').add({g:akEmail,gN:cuData.isim,gKn:cuData.knId,a:aEm,aN:allUsers[aEm]?.isim,aKn:alici,t:t,tarih:Date.now()});
@@ -410,42 +571,42 @@ function paraGonder() {
     });
 }
 
-function renderProf(){if(!cuData)return;document.getElementById('pName').innerText=cuData.isim;document.getElementById('pUsername').innerText="@"+(cuData.username||cuData.knId);document.getElementById('pBalance').innerText=(cuData.bakiye||0)+" ₺";document.getElementById('pKnId').innerText=(cuData.knId||'EN-YOK')+" 📋";let av=document.getElementById('pAvatar');if(cuData.avatar){av.style.backgroundImage=`url('${cuData.avatar}')`;av.innerText='';}else{av.style.backgroundImage='none';av.innerText=cuData.isim?.[0]||'A';}let bd=document.getElementById('pLevelBadge');if(cuData.rol==='store'||cuData.rol==='admin')bd.style.display='none';else{bd.style.display='inline-flex';bd.innerText="SEVİYE "+(cuData.seviye||"0");}let isSt=(cuData.rol==='store'||cuData.rol==='admin');document.getElementById('btnUrunEkle').style.display=isSt?'flex':'none';document.getElementById('btnKasa').style.display=isSt?'flex':'none';document.getElementById('btnParaCek').style.display=isSt?'flex':'none';let e=0;for(let k in allUsers){if(allUsers[k].sponsor===cuData.knId)e++;}document.getElementById('pTeam').innerText=e;let h='';if(isSt){allProds.filter(p=>p.storeEmail===akEmail).forEach(p=>h+=`<div class="ig-grid-item" style="background-image:url('${p.resimUrl}')" onclick="viewSinglePost('${p.id}')"></div>`);}document.getElementById('profileGrid').innerHTML=h;}
-function kopyalaKnId(){navigator.clipboard.writeText(cuData.knId).then(()=>showToast("Kopyalandı!"));}
+function renderProf(){if(!cuData)return;document.getElementById('pName').innerText=cuData.isim;document.getElementById('pUsername').innerText="@"+(cuData.username||cuData.knId);document.getElementById('pBalance').innerText=(cuData.bakiye||0)+" ₺";document.getElementById('pKnId').innerHTML=cuData.knId + ' <i class="fa-regular fa-copy" style="margin-left:4px"></i>';let av=document.getElementById('pAvatar');if(cuData.avatar){av.style.backgroundImage=`url('${cuData.avatar}')`;av.innerText='';av.style.border='none';}else{av.style.backgroundImage='none';av.innerText=cuData.isim?.[0]||'A';av.style.border='2px solid var(--border)';}let bd=document.getElementById('pLevelBadge');if(cuData.rol==='store'||cuData.rol==='admin')bd.style.display='none';else{bd.style.display='inline-flex';bd.innerHTML='<i class="fa-solid fa-star"></i> SEVİYE '+(cuData.seviye||"0");}let isSt=(cuData.rol==='store'||cuData.rol==='admin');document.getElementById('btnUrunEkle').style.display=isSt?'flex':'none';document.getElementById('btnKasa').style.display=isSt?'flex':'none';document.getElementById('btnParaCek').style.display=isSt?'flex':'none';let e=0;for(let k in allUsers){if(allUsers[k].sponsor===cuData.knId)e++;}document.getElementById('pTeam').innerText=e;let h='';if(isSt){allProds.filter(p=>p.storeEmail===akEmail).forEach(p=>h+=`<div class="ig-grid-item" style="background-image:url('${p.resimUrl}')" onclick="viewSinglePost('${p.id}')"></div>`);}document.getElementById('profileGrid').innerHTML=h;}
+function kopyalaKnId(){navigator.clipboard.writeText(cuData.knId).then(()=>showToast("ID Kopyalandı!"));}
 function openChat(em){if(em===akEmail)return;actChatEm=em;document.getElementById('chatPartnerName').innerText=allUsers[em]?.isim||'Kullanıcı';switchView('chatDetailView');}
-function renderChats(){let h='',add=[];for(let c in allChats){if(c.includes(akEmail)){let o=c.replace(akEmail,'').replace('_','');if(!o||add.includes(o)||!allUsers[o])continue;add.push(o);let lm=allChats[c].list;h+=`<div style="display:flex;align-items:center;gap:15px;padding:15px;border-bottom:1px solid var(--border);cursor:pointer" onclick="openChat('${o}')"><div class="post-avatar" style="width:50px;height:50px">${allUsers[o].isim?.[0]}</div><div style="flex:1"><b>${allUsers[o].isim}</b><br><small>${lm[lm.length-1].m}</small></div></div>`;}}document.getElementById('messagesContainer').innerHTML=h||'<p style="text-align:center;padding:20px">Mesaj yok.</p>';}
-function renderChatBox(){if(!actChatEm)return;let id=[akEmail,actChatEm].sort().join('_');let m=allChats[id]?.list||[];let h='';m.forEach(x=>{let im=x.s===akEmail;h+=`<div style="display:flex;justify-content:${im?'flex-end':'flex-start'};margin-bottom:10px"><div style="background:${im?'var(--primary-grad)':'var(--card-bg)'};color:${im?'#fff':'#000'};padding:10px 15px;border-radius:15px;max-width:80%;font-size:13px">${x.m}</div></div>`;});let b=document.getElementById('chatMessagesBox');b.innerHTML=h;b.scrollTop=b.scrollHeight;}
+function renderChats(){let h='',add=[];for(let c in allChats){if(c.includes(akEmail)){let o=c.replace(akEmail,'').replace('_','');if(!o||add.includes(o)||!allUsers[o])continue;add.push(o);let lm=allChats[c].list;h+=`<div style="display:flex;align-items:center;gap:15px;padding:15px;border-bottom:1px solid var(--border);cursor:pointer; transition: background 0.2s;" onmouseover="this.style.background='var(--ig-gray)'" onmouseout="this.style.background='transparent'" onclick="openChat('${o}')"><div class="post-avatar" style="width:50px;height:50px; background-image:url('${allUsers[o].avatar||''}'); border:none;">${allUsers[o].avatar?'':allUsers[o].isim?.[0]}</div><div style="flex:1"><b style="font-size:15px;">${allUsers[o].isim}</b><br><small style="color:var(--text-muted); font-weight:600;">${lm[lm.length-1].m}</small></div></div>`;}}document.getElementById('messagesContainer').innerHTML=h||'<div style="text-align:center;padding:40px;color:var(--text-muted);"><i class="fa-regular fa-paper-plane" style="font-size:40px;margin-bottom:10px;opacity:0.5"></i><br>Henüz mesajın yok.</div>';}
+function renderChatBox(){if(!actChatEm)return;let id=[akEmail,actChatEm].sort().join('_');let m=allChats[id]?.list||[];let h='';m.forEach(x=>{let im=x.s===akEmail;h+=`<div style="display:flex;justify-content:${im?'flex-end':'flex-start'};margin-bottom:10px"><div style="background:${im?'var(--primary-grad)':'var(--card-bg)'};color:${im?'#fff':'var(--text-main)'};padding:12px 16px;border-radius:${im?'16px 16px 0 16px':'16px 16px 16px 0'};max-width:80%;font-size:14px; box-shadow:var(--shadow-sm);">${x.m}</div></div>`;});let b=document.getElementById('chatMessagesBox');b.innerHTML=h;b.scrollTop=b.scrollHeight;}
 function mesajGonder(){let t=document.getElementById('chatInput')?.value?.trim();if(!t)return;let id=[akEmail,actChatEm].sort().join('_');db.collection('chats').doc(id).set({list:firebase.firestore.FieldValue.arrayUnion({s:akEmail,m:t,t:Date.now()})},{merge:true});document.getElementById('chatInput').value='';}
 
-function openVipModal(){let h='';Object.keys(allPlans).sort((a,b)=>a-b).forEach(k=>{let p=allPlans[k];h+=`<div style="padding:15px;border:1px solid var(--border);border-radius:12px;margin-bottom:10px;display:flex;justify-content:space-between;align-items:center;background:var(--ig-gray)"><div><b>${p.ad}</b><br><small>%${p.oran*100} Kazanç</small></div><button class="btn-primary" style="width:auto" onclick="buyVip('${k}',${p.fiyat})">${p.fiyat} ₺</button></div>`;});document.getElementById('vipPlansContainer').innerHTML=h||'<p>Paket yok.</p>';}
-async function buyVip(lvl,f){if(cuData.bakiye<f)return showToast("Bakiye!",true);await db.collection('users').doc(akEmail).update({bakiye:firebase.firestore.FieldValue.increment(-f),rol:'promoter',seviye:lvl});await db.collection('stats').doc('main').set({totalCiro:firebase.firestore.FieldValue.increment(f),netKar:firebase.firestore.FieldValue.increment(f)},{merge:true});closeModal('vipModal');showToast("VIP Aktif!");}
+function openVipModal(){let h='';Object.keys(allPlans).sort((a,b)=>a-b).forEach(k=>{let p=allPlans[k];h+=`<div style="padding:15px;border:1px solid var(--border);border-radius:16px;margin-bottom:12px;display:flex;justify-content:space-between;align-items:center;background:var(--ig-gray);"><div><b style="font-size:15px;color:var(--text-main)">${p.ad}</b><br><small style="color:var(--primary); font-weight:800">%${p.oran*100} Kazanç Oranı</small></div><button class="btn-primary" style="width:auto; padding:10px 16px; box-shadow:none;" onclick="buyVip('${k}',${p.fiyat})">${p.fiyat} ₺</button></div>`;});document.getElementById('vipPlansContainer').innerHTML=h||'<p>Paket bulunamadı.</p>';}
+async function buyVip(lvl,f){if(cuData.bakiye<f)return showToast("Bakiye Yetersiz!",true);await db.collection('users').doc(akEmail).update({bakiye:firebase.firestore.FieldValue.increment(-f),rol:'promoter',seviye:lvl});await db.collection('stats').doc('main').set({totalCiro:firebase.firestore.FieldValue.increment(f),netKar:firebase.firestore.FieldValue.increment(f)},{merge:true});closeModal('vipModal');showToast("VIP Aktifleştirildi!");}
 function paraCekModalAc(){document.getElementById('wBakiyeGoster').innerText=(cuData.bakiye||0)+" ₺";openModal('withdrawModal');}
 async function paraCekTalebi(){
     if(cuData.rol!=='store'&&cuData.rol!=='admin') return showToast("Sadece esnaflar çekebilir!",true);
     let n=document.getElementById('wAd')?.value,i=document.getElementById('wIban')?.value,t=parseInt(document.getElementById('wTutar')?.value);
-    if(!n||!i||!t||t>cuData.bakiye) return showToast("Hata!",true);
+    if(!n||!i||!t||t>cuData.bakiye) return showToast("Bakiye yetersiz veya eksik bilgi!",true);
     await db.collection('users').doc(akEmail).update({bakiye:firebase.firestore.FieldValue.increment(-t)});
     await db.collection('withdrawals').add({em:akEmail,ad:n,iban:i,tutar:t,durum:'bekliyor',tarih:Date.now()});
-    closeModal('withdrawModal');showToast("Talebiniz alındı!");
+    closeModal('withdrawModal');showToast("Banka talebiniz alındı!");
 }
-function cekBozdur(){let el=document.getElementById('bozdurKod');if(!el||!el.value)return;let k=el.value.toUpperCase().trim();db.collection('vouchers').where('c','==',k).where('s','==','active').get().then(snap=>{if(snap.empty)return showToast("Hata!",true);let v=snap.docs[0];db.collection('vouchers').doc(v.id).update({s:'used'}).then(()=>{db.collection('users').doc(akEmail).update({bakiye:firebase.firestore.FieldValue.increment(v.data().a)});el.value='';showToast("Kasa Yüklendi!");});});}
+function cekBozdur(){let el=document.getElementById('bozdurKod');if(!el||!el.value)return;let k=el.value.toUpperCase().trim();db.collection('vouchers').where('c','==',k).where('s','==','active').get().then(snap=>{if(snap.empty)return showToast("Geçersiz Kod!",true);let v=snap.docs[0];db.collection('vouchers').doc(v.id).update({s:'used'}).then(()=>{db.collection('users').doc(akEmail).update({bakiye:firebase.firestore.FieldValue.increment(v.data().a)});el.value='';showToast("Kasa başarıyla yüklendi!");});});}
 
 function godTab(t,el){document.querySelectorAll('.god-tab').forEach(x=>x.classList.remove('active'));el.classList.add('active');document.getElementById('godTabAnaliz').style.display=t==='analiz'?'block':'none';document.getElementById('godTabKategoriler').style.display=t==='kategoriler'?'block':'none';document.getElementById('godTabUyeler').style.display=t==='uyeler'?'block':'none';document.getElementById('godTabUrunler').style.display=t==='urunler'?'block':'none';document.getElementById('godTabTransferler').style.display=t==='transferler'?'block':'none';document.getElementById('godTabOdemeler').style.display=t==='odemeler'?'block':'none';document.getElementById('godTabSaas').style.display=t==='saas'?'block':'none';if(t==='kategoriler')adminCatsDraw();if(t==='uyeler')adminUsersDraw();if(t==='urunler')adminProductsDraw();if(t==='transferler')adminTransfersDraw();if(t==='odemeler')adminWithdrawDraw();if(t==='saas')adminPlansDraw();}
-function adminCatsDraw(){let h='';allCats.forEach(c=>h+=`<div class="god-list-item"><b>${c.name}</b><button style="color:red" onclick="adminDelCat('${c.id}')">Sil</button></div>`);document.getElementById('adminCatsList').innerHTML=h;}
+function adminCatsDraw(){let h='';allCats.forEach(c=>h+=`<div class="god-list-item"><b>${c.name}</b><button style="background:var(--danger); color:#fff; border-radius:8px; padding:6px 12px" onclick="adminDelCat('${c.id}')">Sil</button></div>`);document.getElementById('adminCatsList').innerHTML=h;}
 function adminAddCat(){let n=document.getElementById('newCatName').value;db.collection('categories').add({name:n});}
 function adminDelCat(id){db.collection('categories').doc(id).delete();}
-function adminUsersDraw(){let searchEl = document.getElementById('adminUserSearch');let q=searchEl&&searchEl.value?searchEl.value.toLowerCase().trim():'';let h='';for(let k in allUsers){let u=allUsers[k];if(!(u.isim||'').toLowerCase().includes(q)&&!(u.knId||'').toLowerCase().includes(q)&&!(u.username||'').toLowerCase().includes(q))continue;let catS=`<select onchange="adminSetCat('${k}',this.value)"><option value="">Kategori Yok</option>`;allCats.forEach(c=>catS+=`<option value="${c.id}" ${u.category===c.id?'selected':''}>${c.name}</option>`);h+=`<div class="god-list-item"><div><b>${u.isim}</b><br><small>@${u.username}</small><br>${catS}</select></div><div>${u.bakiye} ₺<br><button onclick="adminAddPara('${k}')">Düzelt</button><button onclick="adminMakeStore('${k}')">Esnaf</button></div></div>`;}document.getElementById('adminUserList').innerHTML=h;}
+function adminUsersDraw(){let searchEl = document.getElementById('adminUserSearch');let q=searchEl&&searchEl.value?searchEl.value.toLowerCase().trim():'';let h='';for(let k in allUsers){let u=allUsers[k];if(!(u.isim||'').toLowerCase().includes(q)&&!(u.knId||'').toLowerCase().includes(q)&&!(u.username||'').toLowerCase().includes(q))continue;let catS=`<select onchange="adminSetCat('${k}',this.value)" style="margin-top:8px; padding:6px; border-radius:8px; background:var(--ig-gray); border:none; font-size:12px; color:var(--text-main); font-weight:800"><option value="">Kategori Seç</option>`;allCats.forEach(c=>catS+=`<option value="${c.id}" ${u.category===c.id?'selected':''}>${c.name}</option>`);catS+=`</select>`;h+=`<div class="god-list-item" style="flex-direction:column; align-items:flex-start; gap:10px;"><div style="width:100%; display:flex; justify-content:space-between;"><div><b style="font-size:15px">${u.isim}</b><br><small style="color:var(--primary); font-weight:800;">@${u.username}</small></div><div style="text-align:right;"><b style="color:var(--text-main); font-size:15px">${u.bakiye} ₺</b></div></div><div style="width:100%; display:flex; justify-content:space-between; align-items:center;">${catS}<div style="display:flex; gap:6px;"><button style="background:var(--ig-gray); color:var(--text-main); padding:6px 12px; border-radius:8px; font-size:12px" onclick="adminAddPara('${k}')">Bakiye Düzelt</button><button style="background:var(--success); color:#fff; padding:6px 12px; border-radius:8px; font-size:12px" onclick="adminMakeStore('${k}')">Esnaf Yap</button></div></div></div>`;}document.getElementById('adminUserList').innerHTML=h;}
 function adminSetCat(em,id){db.collection('users').doc(em).update({category:id});}
-function adminAddPara(e){let m=prompt("Tutar:");if(m)db.collection('users').doc(e).update({bakiye:parseInt(m)});}
-function adminMakeStore(e){db.collection('users').doc(e).update({rol:'store'});}
-function adminProductsDraw(){let h='';allProds.forEach(p=>h+=`<div class="ig-grid-item" style="background-image:url('${p.resimUrl}')"><button onclick="adminDeleteProduct('${p.id}')">X</button></div>`);document.getElementById('adminProductsList').innerHTML=h;}
+function adminAddPara(e){let m=prompt("Tutar (₺):");if(m)db.collection('users').doc(e).update({bakiye:parseInt(m)});}
+function adminMakeStore(e){db.collection('users').doc(e).update({rol:'store'});showToast("Esnaf yetkisi verildi!");}
+function adminProductsDraw(){let h='';allProds.forEach(p=>h+=`<div class="ig-grid-item" style="background-image:url('${p.resimUrl}')"><button class="admin-del-btn" onclick="adminDeleteProduct('${p.id}')"><i class="fa-solid fa-xmark"></i></button></div>`);document.getElementById('adminProductsList').innerHTML=h;}
 function adminDeleteProduct(id){db.collection('products').doc(id).delete();}
-function adminWithdrawDraw(){let h='',c=0;allWith.forEach(w=>{if(w.durum==='bekliyor'){c++;h+=`<div class="god-list-item"><b>${w.ad}</b><br>${w.tutar} ₺<br>${w.iban}<button onclick="adminOdemeYap('${w.id}')">Onayla</button></div>`;}});document.getElementById('godReqCount').innerText=c;document.getElementById('adminWithdrawList').innerHTML=h;}
+function adminWithdrawDraw(){let h='',c=0;allWith.forEach(w=>{if(w.durum==='bekliyor'){c++;h+=`<div class="god-list-item" style="flex-direction:column; align-items:flex-start; gap:8px;"><div><b style="font-size:15px">${w.ad}</b> <span style="color:var(--danger); font-weight:900">- ${w.tutar} ₺</span><br><small style="color:var(--text-muted); font-weight:600; word-break:break-all">${w.iban}</small></div><button class="btn-success" style="padding:10px; font-size:13px;" onclick="adminOdemeYap('${w.id}')">Ödendi Olarak İşaretle</button></div>`;}});document.getElementById('godReqCount').innerText=c;document.getElementById('adminWithdrawList').innerHTML=h||'<p>Bekleyen talep yok.</p>';}
 function adminOdemeYap(id){db.collection('withdrawals').doc(id).update({durum:'odendi'});}
-function adminPlansDraw(){let h='';Object.keys(allPlans).sort((a,b)=>a-b).forEach(k=>h+=`<div class="god-list-item"><b>${allPlans[k].ad}</b><button onclick="adminDelPlan('${k}')">X</button></div>`);document.getElementById('adminPlansList').innerHTML=h;}
+function adminPlansDraw(){let h='';Object.keys(allPlans).sort((a,b)=>a-b).forEach(k=>h+=`<div class="god-list-item"><b>${allPlans[k].ad}</b><button style="background:var(--danger); color:#fff; border-radius:8px; padding:6px 12px" onclick="adminDelPlan('${k}')">Sil</button></div>`);document.getElementById('adminPlansList').innerHTML=h;}
 function adminAddPlan(){let l=document.getElementById('npLvl').value,a=document.getElementById('npAd').value,f=parseInt(document.getElementById('npFiyat').value),o=parseFloat(document.getElementById('npOran').value)/100;db.collection('plans').doc(l).set({ad:a,fiyat:f,oran:o});}
 function adminDelPlan(k){db.collection('plans').doc(k).delete();}
-function adminTransfersDraw(){let h='';allTrans.forEach(t=>h+=`<div class="god-list-item">${t.gN} > ${t.aN} : ${t.t} ₺</div>`);document.getElementById('adminTransfersList').innerHTML=h;}
+function adminTransfersDraw(){let h='';allTrans.forEach(t=>h+=`<div class="god-list-item" style="font-size:13px"><div style="flex:1"><b style="color:var(--primary)">${t.gN}</b> <i class="fa-solid fa-arrow-right" style="color:var(--text-muted); font-size:10px; margin:0 4px"></i> <b style="color:var(--text-main)">${t.aN}</b></div><b style="color:var(--danger)">${t.t} ₺</b></div>`);document.getElementById('adminTransfersList').innerHTML=h;}
 function godModeCiz(){document.getElementById('godTotalCiro').innerText=(sysStats.totalCiro||0)+" ₺";document.getElementById('godProfit').innerText=(sysStats.netKar||0)+" ₺";let cm=0,ce=0,cv=0;for(let k in allUsers){if(allUsers[k].rol==='customer')cm++;else if(allUsers[k].rol==='store')ce++;else if(allUsers[k].rol==='promoter')cv++;}document.getElementById('godCountMusteri').innerText=cm;document.getElementById('godCountEsnaf').innerText=ce;document.getElementById('godCountVip').innerText=cv;adminUsersDraw();adminProductsDraw();adminWithdrawDraw();}
 </script>
 </body>
