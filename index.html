@@ -7,7 +7,7 @@ window.onload=()=>{
     checkTheme();
     setTimeout(()=>{let sl=document.getElementById('serverLoading');if(sl){sl.style.opacity='0';setTimeout(()=>sl.style.display='none',600);}},3000);
     let s=localStorage.getItem('evinde_session');
-    if(s){akEmail=s.toLowerCase();listenToUser();listenToAllUsers();}
+    if(s){akEmail=s.toLowerCase();listenToUser();listenToAllUsers();listenToProds();}
     else{hideLS();}
 };
 
@@ -44,7 +44,7 @@ function girisYap(){
     let p=document.getElementById('lPass')?.value?.trim();
     if(!input||!p)return showToast("Eksik bilgi!",true);
     showToast("Giriş yapılıyor...");
-    let loginFn=(em,pw)=>{firebase.auth().signInWithEmailAndPassword(em,pw).then(c=>{akEmail=c.user.email.toLowerCase();localStorage.setItem('evinde_session',akEmail);listenToUser();}).catch(()=>showToast("Bilgiler yanlış!",true));};
+    let loginFn=(em,pw)=>{firebase.auth().signInWithEmailAndPassword(em,pw).then(c=>{akEmail=c.user.email.toLowerCase();localStorage.setItem('evinde_session',akEmail);listenToUser();listenToAllUsers();listenToProds();}).catch(()=>showToast("Bilgiler yanlış!",true));};
     if(input.includes('@')){loginFn(input,p);}else{db.collection('users').where('username','==',input).get().then(s=>{if(s.empty)return showToast("Kullanıcı adı bulunamadı!",true);loginFn(s.docs[0].id,p);}).catch(()=>showToast("Bağlantı hatası!",true));}
 }
 
@@ -173,5 +173,4 @@ function adminPlansDraw(){let h='';Object.keys(allPlans).sort((a,b)=>a-b).forEac
 function adminAddPlan(){let l=document.getElementById('npLvl').value,a=document.getElementById('npAd').value,f=parseInt(document.getElementById('npFiyat').value),o=parseFloat(document.getElementById('npOran').value)/100;db.collection('plans').doc(l).set({ad:a,fiyat:f,oran:o});}
 function adminDelPlan(k){db.collection('plans').doc(k).delete();}
 function adminTransfersDraw(){let h='';allTrans.forEach(t=>h+=`<div class="god-list-item">${t.gN} > ${t.aN} : ${t.t} ₺</div>`);document.getElementById('adminTransfersList').innerHTML=h;}
-function godModeCiz(){document.getElementById('godTotalCiro').innerText=(sysStats.totalCiro||0)+" ₺";document.getElementById('godProfit').innerText=(sysStats.netKar||0)+" ₺";let cm=0,ce=0,cv=0;for(let k in allUsers){if(allUsers[k].rol==='customer')cm++;else if(allUsers[k].rol==='store')ce++;else if(allUsers[k].rol==='promoter')cv++;}document.getElementById('godCountMusteri').innerText=cm;document.getElementById('godCountEsnaf').innerText=ce;document.getElementById('godCountVip').innerText=cv;adminUsersDraw();adminProductsDraw();adminWithdrawDraw();}
-</script></body></html>
+function godModeCiz(){document.getElementById('godTotalCiro').innerText=(sysStats.totalCiro||0)+" ₺";document.getElementById('godProfit').innerText=(sysStats.netKar||0)+" ₺";let cm=0,ce=0,cv=0;for(let k in allUsers){if(allUsers[k].rol
