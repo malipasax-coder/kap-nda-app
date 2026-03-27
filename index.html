@@ -4,6 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover">
 <title>Evinde - Purple Edition V8</title>
+<link rel="manifest" id="manifest-link">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 <script src="https://www.gstatic.com/firebasejs/10.8.1/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.8.1/firebase-firestore-compat.js"></script>
@@ -43,7 +44,6 @@ body.dark-mode {
 * { box-sizing: border-box; outline: none; -webkit-tap-highlight-color: transparent; margin: 0; padding: 0; }
 body { font-family: 'Plus Jakarta Sans', sans-serif; background: #d4d4d8; display: flex; justify-content: center; align-items: center; min-height: 100vh; overflow: hidden; }
 
-/* Scrollbar Gizleme */
 ::-webkit-scrollbar { width: 0px; background: transparent; }
 
 .app-shell { width: 100%; height: 100dvh; background: var(--bg-color); position: relative; overflow: hidden; display: flex; flex-direction: column; transition: background 0.3s ease; }
@@ -91,7 +91,6 @@ button:disabled { opacity: 0.7; cursor: not-allowed; }
 .btn-warning { background: linear-gradient(135deg, #f59e0b, #d97706); color: #fff; width: 100%; }
 .btn-action { flex: 1; padding: 12px; border-radius: 12px; font-size: 13px; font-weight: 800; background: var(--ig-gray); color: var(--text-main); }
 
-/* FOTOĞRAF YÜKLEME ALANLARI İÇİN YENİ CSS */
 .custom-file-upload { display: inline-flex; justify-content: center; align-items: center; gap: 8px; transition: 0.3s; cursor: pointer; }
 .avatar-preview { width: 90px; height: 90px; border-radius: 50%; object-fit: cover; border: 3px solid var(--primary); margin: 0 auto 15px auto; display: none; box-shadow: var(--shadow-sm); }
 .img-preview { width: 100%; aspect-ratio: 4/5; object-fit: cover; border-radius: 14px; border: 1px solid var(--border); display: none; margin-bottom: 15px; box-shadow: var(--shadow-sm); }
@@ -138,6 +137,11 @@ button:disabled { opacity: 0.7; cursor: not-allowed; }
 .cat-pill.active { background: var(--text-main); color: var(--bg-color); border: none; }
 .level-badge { display: inline-flex; align-items: center; gap: 5px; background: var(--ig-gray); color: var(--text-main); padding: 6px 12px; border-radius: 8px; font-size: 12px; font-weight: 800; margin-top: 8px; }
 .level-badge.vip { background: var(--primary-grad); color: #fff; box-shadow: 0 4px 15px rgba(142,45,226,0.3); cursor: pointer; }
+
+/* PWA Kurulum Banner'ı CSS */
+#installBanner {
+    display: none; position: absolute; top: 0; left: 0; width: 100%; background: var(--glass-bg); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px); padding: 15px 20px; z-index: 10000; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--border); box-shadow: var(--shadow-md); color: var(--text-main);
+}
 </style>
 </head>
 <body>
@@ -148,6 +152,20 @@ button:disabled { opacity: 0.7; cursor: not-allowed; }
         <div class="premium-spinner"></div>
         <h1 class="text-gradient" style="font-size:28px;font-weight:900;margin:0">EVİNDE</h1>
         <p style="font-size:11px;font-weight:800;color:var(--text-muted);margin-top:8px; letter-spacing: 2px;">BAĞLANIYOR</p>
+    </div>
+
+    <div id="installBanner">
+        <div style="display:flex; align-items:center; gap:12px;">
+            <div style="width:40px; height:40px; background:var(--primary-grad); border-radius:12px; display:flex; justify-content:center; align-items:center; color:#fff; font-size:20px;"><i class="fa-solid fa-house-chimney"></i></div>
+            <div>
+                <b style="display:block; font-size:14px; font-weight:800;">Evinde Uygulaması</b>
+                <small style="font-size:11px; color:var(--text-muted); font-weight:600;">Ana ekrana ekle ve hızlı kullan</small>
+            </div>
+        </div>
+        <div style="display:flex; gap:10px;">
+            <button onclick="document.getElementById('installBanner').style.display='none'" style="background:var(--ig-gray); color:var(--text-main); padding:8px 12px; font-size:12px; border-radius:10px;">Geç</button>
+            <button onclick="installApp()" style="background:var(--primary-grad); color:#fff; padding:8px 12px; font-size:12px; border-radius:10px; box-shadow:var(--shadow-sm);">İndir</button>
+        </div>
     </div>
 
     <script>
@@ -282,6 +300,45 @@ button:disabled { opacity: 0.7; cursor: not-allowed; }
 </div>
 
 <script>
+// --- PWA (Uygulama İndirme) ALTYAPISI (Dış dosya gerektirmez) ---
+const manifest = {
+    "name": "Evinde Sosyal Ticaret",
+    "short_name": "Evinde",
+    "start_url": ".",
+    "display": "standalone",
+    "background_color": "#fafafa",
+    "theme_color": "#8e2de2",
+    "icons": [{"src": "https://cdn-icons-png.flaticon.com/512/3144/3144456.png", "sizes": "512x512", "type": "image/png"}]
+};
+const manifestBlob = new Blob([JSON.stringify(manifest)], {type: 'application/json'});
+document.getElementById('manifest-link').href = URL.createObjectURL(manifestBlob);
+
+if ('serviceWorker' in navigator) {
+    const swCode = `self.addEventListener('fetch', function(e) {});`;
+    const swBlob = new Blob([swCode], {type: 'application/javascript'});
+    navigator.serviceWorker.register(URL.createObjectURL(swBlob)).catch(err => console.log("SW Kayıt Hatası:", err));
+}
+
+let deferredPrompt;
+window.addEventListener('beforeinstallprompt', (e) => {
+    e.preventDefault();
+    deferredPrompt = e;
+    document.getElementById('installBanner').style.display = 'flex';
+});
+
+function installApp() {
+    if (deferredPrompt) {
+        deferredPrompt.prompt();
+        deferredPrompt.userChoice.then((choiceResult) => {
+            if (choiceResult.outcome === 'accepted') {
+                document.getElementById('installBanner').style.display = 'none';
+            }
+            deferredPrompt = null;
+        });
+    }
+}
+// ----------------------------------------------------------------
+
 // Firebase Config
 const fc={apiKey:"AIzaSyBWSlha9fD_q3zHXaRJ3ocJdtALqkrW-LU",authDomain:"kapinda-8d3ef.firebaseapp.com",projectId:"kapinda-8d3ef",storageBucket:"kapinda-8d3ef.appspot.com",messagingSenderId:"246456710881",appId:"1:246456710881:web:c2a7bdb5e3b9065d1829a0"};
 firebase.initializeApp(fc);
@@ -318,7 +375,6 @@ function checkTheme(){if(localStorage.getItem('kapinda_dark')==='true'){document
 function toggleDarkMode(){let isD=document.getElementById('darkModeToggle').checked;document.body.classList.toggle('dark-mode',isD);localStorage.setItem('kapinda_dark',isD);}
 function showToast(m,err=false){let t=document.getElementById('toast');t.innerText=m;t.style.background=err?"var(--danger)":"var(--primary-grad)";t.style.color="#fff";t.classList.add('show');setTimeout(()=>t.classList.remove('show'),3000);}
 
-/* YENİ EKLENEN FOTOĞRAF ÖNİZLEME FONKSİYONU */
 function previewImage(input, previewId, labelId = null) {
     let preview = document.getElementById(previewId);
     if (input.files && input.files[0]) {
@@ -326,9 +382,7 @@ function previewImage(input, previewId, labelId = null) {
         reader.onload = function(e) {
             preview.src = e.target.result;
             preview.style.display = 'block';
-            if(labelId) {
-                document.getElementById(labelId).style.display = 'none'; 
-            }
+            if(labelId) { document.getElementById(labelId).style.display = 'none'; }
         }
         reader.readAsDataURL(input.files[0]);
     } else {
@@ -442,7 +496,6 @@ function openModal(id) {
         document.getElementById('eUsername').value = cuData.username || '';
         document.getElementById('eBio').value = cuData.bio || '';
         
-        // Mevcut avatarı önizlemeye ekle
         let pre = document.getElementById('eAvPreview');
         if(cuData.avatar) {
             pre.src = cuData.avatar;
@@ -455,27 +508,54 @@ function openModal(id) {
 }
 function closeModal(id) {document.getElementById(id).classList.remove('active');}
 
-async function saveProfile() {
+function saveProfile() {
     let btn=document.getElementById('btnSaveProfile');btn.innerText="Yükleniyor...";btn.disabled=true;
     let n=document.getElementById('eName')?.value?.trim();let un=document.getElementById('eUsername')?.value?.trim()?.toLowerCase();let b=document.getElementById('eBio')?.value?.trim();let p=document.getElementById('ePass')?.value?.trim();let fi=document.getElementById('eAvFile');
-    if(un && un !== cuData.username) {let snap=await db.collection('users').where('username','==',un).get();if(!snap.empty){showToast("Ad alınmış!",true);btn.disabled=false;return;}}
-    let up={};if(n)up.isim=n;if(un)up.username=un;up.bio=b;
-    try {
+    
+    let completeSave = (avatarUrl) => {
+        let up = {}; if(n) up.isim=n; if(un) up.username=un; up.bio=b; if(avatarUrl) up.avatar=avatarUrl;
+        let updatePromises = [db.collection('users').doc(akEmail).update(up)];
+        if(p && p.length>=6) updatePromises.push(firebase.auth().currentUser.updatePassword(p));
+        
+        Promise.all(updatePromises).then(() => {
+            closeModal('editProfileModal'); showToast("Güncellendi!");
+        }).catch(e => {
+            showToast("Hata: " + e.message, true);
+        }).finally(() => {
+            btn.innerText="Ayarları Kaydet"; btn.disabled=false;
+        });
+    };
+
+    if(un && un !== cuData.username) {
+        db.collection('users').where('username','==',un).get().then(snap => {
+            if(!snap.empty){showToast("Ad alınmış!",true);btn.innerText="Ayarları Kaydet";btn.disabled=false;return;}
+            proceedWithImage();
+        });
+    } else { proceedWithImage(); }
+
+    function proceedWithImage() {
         if(fi?.files?.[0]) {
-            let sr=storage.ref('avatars/'+akEmail+'_'+Date.now());
-            await sr.put(fi.files[0]);
-            up.avatar=await sr.getDownloadURL();
+            let file = fi.files[0];
+            let safeName = akEmail + '_' + Date.now();
+            storage.ref('avatars/'+safeName).put(file).then(snapshot => {
+                return snapshot.ref.getDownloadURL();
+            }).then(url => {
+                completeSave(url);
+            }).catch(e => {
+                showToast("Fotoğraf yükleme hatası!", true);
+                btn.innerText="Ayarları Kaydet"; btn.disabled=false;
+            });
+        } else {
+            completeSave(null);
         }
-        if(p && p.length>=6) await firebase.auth().currentUser.updatePassword(p);
-        await db.collection('users').doc(akEmail).update(up);
-        closeModal('editProfileModal');showToast("Güncellendi!");
-    } catch(e){showToast("Hata: Yeniden giriş yapmalısın!",true);} finally {btn.innerText="Ayarları Kaydet";btn.disabled=false;}
+    }
 }
 
 function renderCatsUI(){let h=`<div class="cat-pill ${currCat==='all'?'active':''}" onclick="selCat('all')">Tümü</div>`;allCats.forEach(c=>h+=`<div class="cat-pill ${currCat===c.id?'active':''}" onclick="selCat('${c.id}')">${c.name}</div>`);let el=document.getElementById('catScroller');if(el)el.innerHTML=h;}
 function selCat(id){currCat=id;renderCatsUI();renderExplore();}
 
-async function urunKaydet() {
+// --- TAMAMEN YENİLENMİŞ VE GÜVENLİ ÜRÜN KAYDET FONKSİYONU ---
+function urunKaydet() {
     let a = document.getElementById('upAd')?.value?.trim();
     let f = parseInt(document.getElementById('upFiyat')?.value || "0");
     let ef = parseInt(document.getElementById('upEskiFiyat')?.value || "0");
@@ -494,12 +574,13 @@ async function urunKaydet() {
     btn.innerText = "Yükleniyor...";
     btn.disabled = true;
     
-    try {
-        let sr = storage.ref('products/' + Date.now() + '_' + file.name);
-        await sr.put(file);
-        let url = await sr.getDownloadURL();
-        
-        await db.collection('products').add({
+    // Dosya adındaki boşlukları ve Türkçe/özel karakterleri temizleyip güvenli hale getiriyoruz
+    let safeFileName = Date.now() + "_" + file.name.replace(/[^a-zA-Z0-9.]/g, "_");
+    
+    storage.ref('products/' + safeFileName).put(file).then((snapshot) => {
+        return snapshot.ref.getDownloadURL();
+    }).then((url) => {
+        return db.collection('products').add({
             ad: a,
             fiyat: f,
             eskiFiyat: ef,
@@ -512,7 +593,7 @@ async function urunKaydet() {
             comments: [],
             timestamp: firebase.firestore.FieldValue.serverTimestamp()
         });
-        
+    }).then(() => {
         // Başarılı olursa formu ve önizlemeyi temizle
         document.getElementById('upAd').value = '';
         document.getElementById('upFiyat').value = '';
@@ -524,14 +605,15 @@ async function urunKaydet() {
         
         switchView('profileView');
         showToast("Ürün başarıyla paylaşıldı!");
-    } catch (e) {
-        console.error("Ürün yükleme hatası:", e);
-        showToast("Hata oluştu! (Dosya yükleme)", true);
-    } finally {
+    }).catch((e) => {
+        showToast("Hata oluştu, tekrar deneyin!", true);
+        console.error("Firebase Storage Upload Hatası:", e);
+    }).finally(() => {
         btn.innerText = "Paylaş";
         btn.disabled = false;
-    }
+    });
 }
+// -------------------------------------------------------------------
 
 function createPostHtml(p){let av=p.storeAvatar?`background-image:url('${p.storeAvatar}');border:none;`:'';let badge='',priceText=`${p.fiyat} ₺`;if(p.eskiFiyat&&p.eskiFiyat>p.fiyat){let ind=Math.round(((p.eskiFiyat-p.fiyat)/p.eskiFiyat)*100);badge=`<div class="discount-badge">%${ind} İndirim</div>`;priceText=`<strike style="color:var(--text-muted);font-size:12px;margin-right:4px">${p.eskiFiyat}₺</strike>${p.fiyat} ₺`;}let isL=p.likes&&p.likes.includes(akEmail);let hIco=isL?`<i class="fa-solid fa-heart" style="color:var(--danger)" onclick="tLike('${p.id}')"></i>`:`<i class="fa-regular fa-heart" onclick="tLike('${p.id}')"></i>`;return`<div class="post-card">${badge}<div class="post-header" onclick="openOP('${p.storeEmail}')"><div style="display:flex;align-items:center;gap:12px;"><div class="post-avatar" style="${av}">${p.storeName?.[0]||'A'}</div><div><b style="font-size:14px;font-weight:800;display:block">${p.storeName}</b><small style="color:var(--primary);font-weight:800">@${p.storeUsername}</small></div></div></div><div class="post-image" style="background-image:url('${p.resimUrl}')" ondblclick="tLike('${p.id}')"></div><div class="ig-action-bar"><div class="ig-icons-left">${hIco}<i class="fa-regular fa-comment" onclick="oComm('${p.id}')"></i><i class="fa-solid fa-share-nodes" onclick="shareP('${p.ad}',${p.fiyat},'${p.storeUsername}')"></i></div><i class="fa-solid fa-cart-plus" style="cursor:pointer; color:var(--primary);" onclick="sepeteEkle('${p.id}','${p.ad}',${p.fiyat},'${p.storeEmail}')"></i></div><div class="post-content"><b style="font-size:16px;color:${badge?'var(--danger)':'var(--text-main)'}">${priceText}</b><span style="font-size:14px;font-weight:600;display:block;margin-top:6px"><b style="font-weight:900;">@${p.storeUsername}</b> ${p.ad}</span></div></div>`;}
 function renderFeed(){let h='';allProds.forEach(p=>h+=createPostHtml(p));document.getElementById('mainFeed').innerHTML=h||'<div style="text-align:center;margin-top:60px;color:var(--text-muted)"><i class="fa-solid fa-box-open" style="font-size:40px; margin-bottom: 10px; opacity:0.5"></i><br>Buralar çok ıssız.</div>';}
