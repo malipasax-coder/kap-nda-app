@@ -215,7 +215,7 @@ button:disabled { opacity: 0.7; cursor: not-allowed; }
                 <div id="loginFormBlock">
                     <div class="input-group"><input type="text" id="lEmail" placeholder="E-posta veya @Kullanıcı Adı"></div>
                     <div class="input-group"><input type="password" id="lPass" placeholder="Şifre"></div>
-                    <button class="btn-primary" onclick="girisYap()">Sisteme Gir</button>
+                    <button class="btn-primary" id="btnGirisYap" onclick="girisYap()">Sisteme Gir</button>
                 </div>
                 <div id="registerFormBlock" style="display:none">
                     <div class="input-group"><input type="text" id="rName" placeholder="Ad Soyad"></div>
@@ -223,7 +223,7 @@ button:disabled { opacity: 0.7; cursor: not-allowed; }
                     <div class="input-group"><input type="email" id="rEmail" placeholder="E-posta"></div>
                     <div class="input-group"><input type="password" id="rPass" placeholder="Şifre"></div>
                     <div class="input-group"><input type="text" id="rSponsor" placeholder="Sponsor Evinde No (İsteğe Bağlı)"></div>
-                    <button class="btn-primary" onclick="kayitOl()">Oluştur</button>
+                    <button class="btn-primary" id="btnKayitOl" onclick="kayitOl()">Hesap Oluştur</button>
                 </div>
             </div>
         </div>
@@ -316,9 +316,7 @@ function installApp() {
 const IMGBB_API_KEY = "69a8e29046473970219c179fb55b27d9";
 
 async function uploadImageToImgBB(base64String) {
-    // Base64 verisinin önündeki "data:image/jpeg;base64," kısmını atıyoruz
     const base64Data = base64String.split(',')[1]; 
-    
     const formData = new FormData();
     formData.append("image", base64Data);
     
@@ -329,7 +327,7 @@ async function uploadImageToImgBB(base64String) {
     
     const data = await response.json();
     if (data.success) {
-        return data.data.url; // Resmin internetteki linkini döndürür
+        return data.data.url; 
     } else {
         throw new Error(data.error.message || "Resim yüklenemedi.");
     }
@@ -340,7 +338,6 @@ const fc={apiKey:"AIzaSyBWSlha9fD_q3zHXaRJ3ocJdtALqkrW-LU",authDomain:"kapinda-8
 firebase.initializeApp(fc);
 const db=firebase.firestore();
 db.settings({experimentalForceLongPolling:true});
-// storage değişkenini tutuyoruz ama kullanmayacağız
 const storage=firebase.storage();
 
 let cuData=null,akEmail=null,allProds=[],allUsers={},allChats=[],allTrans=[],allWith=[],allPlans={},allVouch=[],allCats=[],currCat='all',sysStats={totalCiro:0,netKar:0},sepet=[],cView='authView',actChatEm=null,viewEmail=null,lastView='homeView';
@@ -361,14 +358,14 @@ function hideLS(){
 
 function checkTheme(){if(localStorage.getItem('kapinda_dark')==='true'){document.body.classList.add('dark-mode');let t=document.getElementById('darkModeToggle');if(t)t.checked=true;}}
 function toggleDarkMode(){let isD=document.getElementById('darkModeToggle').checked;document.body.classList.toggle('dark-mode',isD);localStorage.setItem('kapinda_dark',isD);}
-function showToast(m,err=false){let t=document.getElementById('toast');t.innerText=m;t.style.background=err?"var(--danger)":"var(--primary-grad)";t.style.color="#fff";t.classList.add('show');setTimeout(()=>t.classList.remove('show'),3000);}
+function showToast(m,err=false){let t=document.getElementById('toast');t.innerText=m;t.style.background=err?"var(--danger)":"var(--primary-grad)";t.style.color="#fff";t.classList.add('show');setTimeout(()=>t.classList.remove('show'),4000);}
 
 function previewImage(input, previewId, labelId = null) {
     let preview = document.getElementById(previewId);
     if (input.files && input.files[0]) {
         let reader = new FileReader();
         reader.onload = function(e) {
-            preview.src = e.target.result; // Base64 verisi oluşturur
+            preview.src = e.target.result; 
             preview.style.display = 'block';
             if(labelId) { document.getElementById(labelId).style.display = 'none'; }
         }
@@ -402,22 +399,41 @@ function switchView(tId){
 
 function authModSwitch(m){document.getElementById('loginFormBlock').style.display=m==='login'?'block':'none';document.getElementById('registerFormBlock').style.display=m==='register'?'block':'none';document.getElementById('tabLoginBtn').style.background=m==='login'?'var(--card-bg)':'transparent';document.getElementById('tabLoginBtn').style.color=m==='login'?'var(--text-main)':'var(--text-muted)';document.getElementById('tabRegisterBtn').style.background=m==='register'?'var(--card-bg)':'transparent';document.getElementById('tabRegisterBtn').style.color=m==='register'?'var(--text-main)':'var(--text-muted)';}
 
+// --- GİRİŞ YAPMA VE HATA YAKALAMA FONKSİYONU GÜNCELLENDİ ---
 function girisYap(){
     let input=document.getElementById('lEmail')?.value?.trim()?.toLowerCase();
     let p=document.getElementById('lPass')?.value?.trim();
     if(!input||!p)return showToast("Eksik bilgi!",true);
-    showToast("Giriş yapılıyor...");
+    
+    let btn = document.getElementById('btnGirisYap');
+    let originalText = btn.innerText;
+    btn.innerText = "Yükleniyor...";
+    btn.disabled = true;
+
     let loginFn=(em,pw)=>{
         firebase.auth().signInWithEmailAndPassword(em,pw).then(c=>{
             akEmail=c.user.email.toLowerCase(); localStorage.setItem('evinde_session',akEmail);
+            btn.innerText = originalText; btn.disabled = false;
             listenToUser(); listenToAllUsers(); listenToProds();
-        }).catch(()=>showToast("Bilgiler yanlış!",true));
+        }).catch((error)=>{
+            btn.innerText = originalText; btn.disabled = false;
+            showToast("Giriş Hatası: " + (error.message || "Bilgiler yanlış!"), true);
+        });
     };
-    if(input.includes('@')){ loginFn(input,p); } else {
+
+    if(input.includes('@')){ 
+        loginFn(input,p); 
+    } else {
         db.collection('users').where('username','==',input).get().then(s=>{
-            if(s.empty)return showToast("Kullanıcı adı bulunamadı!",true);
+            if(s.empty) {
+                btn.innerText = originalText; btn.disabled = false;
+                return showToast("Kullanıcı adı bulunamadı!",true);
+            }
             loginFn(s.docs[0].id,p);
-        }).catch(()=>showToast("Bağlantı hatası!",true));
+        }).catch((error)=>{
+            btn.innerText = originalText; btn.disabled = false;
+            showToast("Veritabanı Hatası: " + (error.message || "Bağlantı koptu!"), true);
+        });
     }
 }
 
@@ -433,7 +449,10 @@ function listenToUser(){
             if(cView==='profileView')renderProf();
             listenToChats();
         }else{ showToast("Hesap verisi bulunamadı!",true); cikisYap(); }
-    }, err => {hideLS();});
+    }, err => {
+        hideLS();
+        showToast("Veri okuma hatası! Kuralları kontrol et.", true);
+    });
 }
 
 function listenToAllUsers(){
@@ -462,7 +481,52 @@ function listenToProds(){
 
 function setupNav(){document.getElementById('nav-home').style.display='flex';document.getElementById('nav-explore').style.display='flex';document.getElementById('nav-cart').style.display='flex';document.getElementById('nav-profile').style.display='flex';document.getElementById('nav-admin').style.display=(cuData?.rol==='admin')?'flex':'none';let p=document.getElementById('navProfilePic');if(cuData?.avatar){p.style.backgroundImage=`url('${cuData.avatar}')`;p.innerText='';p.style.border='none';}else{p.innerText=cuData?.isim?.[0]||'A';p.style.display="flex";p.style.justifyContent="center";p.style.alignItems="center";p.style.fontWeight="900";p.style.fontSize="12px";p.style.color="var(--text-main)";p.style.border='2px solid var(--border)';}}
 
-function kayitOl(){let ad=document.getElementById('rName')?.value?.trim();let un=document.getElementById('rUsername')?.value?.trim()?.toLowerCase();let em=document.getElementById('rEmail')?.value?.trim()?.toLowerCase();let p=document.getElementById('rPass')?.value?.trim();let sp=document.getElementById('rSponsor')?.value?.trim()?.toUpperCase();if(!ad||!un||!em||!p) return showToast("Eksik bilgi!",true);if(un.includes(' ')) return showToast("Kullanıcı adında boşluk olamaz!",true);if(un.length < 3) return showToast("Kullanıcı adı çok kısa!",true);showToast("Oluşturuluyor...");let nId='EN-'+Math.floor(100000+Math.random()*900000);db.collection('users').where('username','==',un).get().then(snap => {if(!snap.empty) return showToast("Bu ad alınmış!", true);let fn=(spE)=>{firebase.auth().createUserWithEmailAndPassword(em,p).then(()=>{db.collection('users').doc(em).set({isim:ad,username:un,rol:'customer',bakiye:0,knId:nId,seviye:'0',sponsor:spE,category:''}).then(()=>{showToast("Kayıt Tamam!"); authModSwitch('login'); document.getElementById('lEmail').value=un;});}).catch(e=>showToast("Hata oluştu!",true));};if(sp){db.collection('users').where("knId","==",sp).get().then(s=>{if(s.empty) return showToast("Sponsor EN hatalı!",true); fn(s.docs[0].id);});}else{fn(null);}});}
+// --- KAYIT OLMA VE HATA YAKALAMA FONKSİYONU GÜNCELLENDİ ---
+function kayitOl(){
+    let ad=document.getElementById('rName')?.value?.trim();let un=document.getElementById('rUsername')?.value?.trim()?.toLowerCase();let em=document.getElementById('rEmail')?.value?.trim()?.toLowerCase();let p=document.getElementById('rPass')?.value?.trim();let sp=document.getElementById('rSponsor')?.value?.trim()?.toUpperCase();
+    if(!ad||!un||!em||!p) return showToast("Eksik bilgi!",true);
+    if(un.includes(' ')) return showToast("Kullanıcı adında boşluk olamaz!",true);
+    if(un.length < 3) return showToast("Kullanıcı adı çok kısa!",true);
+    
+    let btn = document.getElementById('btnKayitOl');
+    let originalText = btn.innerText;
+    btn.innerText = "Yükleniyor...";
+    btn.disabled = true;
+
+    let nId='EN-'+Math.floor(100000+Math.random()*900000);
+    db.collection('users').where('username','==',un).get().then(snap => {
+        if(!snap.empty) {
+            btn.innerText = originalText; btn.disabled = false;
+            return showToast("Bu ad alınmış!", true);
+        }
+        let fn=(spE)=>{
+            firebase.auth().createUserWithEmailAndPassword(em,p).then(()=>{
+                db.collection('users').doc(em).set({isim:ad,username:un,rol:'customer',bakiye:0,knId:nId,seviye:'0',sponsor:spE,category:''}).then(()=>{
+                    showToast("Kayıt Tamam!"); authModSwitch('login'); document.getElementById('lEmail').value=un;
+                    btn.innerText = originalText; btn.disabled = false;
+                });
+            }).catch(e=>{
+                btn.innerText = originalText; btn.disabled = false;
+                showToast("Kayıt Hatası: " + e.message,true);
+            });
+        };
+        if(sp){
+            db.collection('users').where("knId","==",sp).get().then(s=>{
+                if(s.empty) {
+                    btn.innerText = originalText; btn.disabled = false;
+                    return showToast("Sponsor EN hatalı!",true);
+                }
+                fn(s.docs[0].id);
+            });
+        }else{
+            fn(null);
+        }
+    }).catch(e => {
+        btn.innerText = originalText; btn.disabled = false;
+        showToast("Veritabanı Hatası: " + e.message, true);
+    });
+}
+
 function cikisYap(){firebase.auth().signOut().then(()=>{localStorage.removeItem('evinde_session');location.reload();});}
 
 function openModal(id) {
@@ -479,7 +543,6 @@ function openModal(id) {
 }
 function closeModal(id) {document.getElementById(id).classList.remove('active');}
 
-// --- PROFİL FOTOSU KAYDETME (IMGBB İLE) ---
 async function saveProfile() {
     let btn=document.getElementById('btnSaveProfile'); btn.innerText="Yükleniyor..."; btn.disabled=true;
     let n=document.getElementById('eName')?.value?.trim(); let un=document.getElementById('eUsername')?.value?.trim()?.toLowerCase();
@@ -524,7 +587,6 @@ async function saveProfile() {
 function renderCatsUI(){let h=`<div class="cat-pill ${currCat==='all'?'active':''}" onclick="selCat('all')">Tümü</div>`;allCats.forEach(c=>h+=`<div class="cat-pill ${currCat===c.id?'active':''}" onclick="selCat('${c.id}')">${c.name}</div>`);let el=document.getElementById('catScroller');if(el)el.innerHTML=h;}
 function selCat(id){currCat=id;renderCatsUI();renderExplore();}
 
-// --- ÜRÜN YÜKLEME (IMGBB İLE) ---
 async function urunKaydet() {
     let a = document.getElementById('upAd')?.value?.trim();
     let f = parseInt(document.getElementById('upFiyat')?.value || "0");
@@ -567,7 +629,6 @@ async function urunKaydet() {
         btn.innerText = "Paylaş"; btn.disabled = false;
     }
 }
-// -------------------------------------------------------------------
 
 function createPostHtml(p){let av=p.storeAvatar?`background-image:url('${p.storeAvatar}');border:none;`:'';let badge='',priceText=`${p.fiyat} ₺`;if(p.eskiFiyat&&p.eskiFiyat>p.fiyat){let ind=Math.round(((p.eskiFiyat-p.fiyat)/p.eskiFiyat)*100);badge=`<div class="discount-badge">%${ind} İndirim</div>`;priceText=`<strike style="color:var(--text-muted);font-size:12px;margin-right:4px">${p.eskiFiyat}₺</strike>${p.fiyat} ₺`;}let isL=p.likes&&p.likes.includes(akEmail);let hIco=isL?`<i class="fa-solid fa-heart" style="color:var(--danger)" onclick="tLike('${p.id}')"></i>`:`<i class="fa-regular fa-heart" onclick="tLike('${p.id}')"></i>`;return`<div class="post-card">${badge}<div class="post-header" onclick="openOP('${p.storeEmail}')"><div style="display:flex;align-items:center;gap:12px;"><div class="post-avatar" style="${av}">${p.storeName?.[0]||'A'}</div><div><b style="font-size:14px;font-weight:800;display:block">${p.storeName}</b><small style="color:var(--primary);font-weight:800">@${p.storeUsername}</small></div></div></div><div class="post-image" style="background-image:url('${p.resimUrl}')" ondblclick="tLike('${p.id}')"></div><div class="ig-action-bar"><div class="ig-icons-left">${hIco}<i class="fa-regular fa-comment" onclick="oComm('${p.id}')"></i><i class="fa-solid fa-share-nodes" onclick="shareP('${p.ad}',${p.fiyat},'${p.storeUsername}')"></i></div><i class="fa-solid fa-cart-plus" style="cursor:pointer; color:var(--primary);" onclick="sepeteEkle('${p.id}','${p.ad}',${p.fiyat},'${p.storeEmail}')"></i></div><div class="post-content"><b style="font-size:16px;color:${badge?'var(--danger)':'var(--text-main)'}">${priceText}</b><span style="font-size:14px;font-weight:600;display:block;margin-top:6px"><b style="font-weight:900;">@${p.storeUsername}</b> ${p.ad}</span></div></div>`;}
 function renderFeed(){let h='';allProds.forEach(p=>h+=createPostHtml(p));document.getElementById('mainFeed').innerHTML=h||'<div style="text-align:center;margin-top:60px;color:var(--text-muted)"><i class="fa-solid fa-box-open" style="font-size:40px; margin-bottom: 10px; opacity:0.5"></i><br>Buralar çok ıssız.</div>';}
@@ -639,5 +700,4 @@ function adminProductsDraw(){let h='';allProds.forEach(p=>h+=`<div class="ig-gri
 function adminDeleteProduct(id){db.collection('products').doc(id).delete();}
 function adminWithdrawDraw(){let h='',c=0;allWith.forEach(w=>{if(w.durum==='bekliyor'){c++;h+=`<div class="god-list-item" style="flex-direction:column; align-items:flex-start; gap:8px;"><div><b style="font-size:15px">${w.ad}</b> <span style="color:var(--danger); font-weight:900">- ${w.tutar} ₺</span><br><small style="color:var(--text-muted); font-weight:600; word-break:break-all">${w.iban}</small></div><button class="btn-success" style="padding:10px; font-size:13px;" onclick="adminOdemeYap('${w.id}')">Ödendi Olarak İşaretle</button></div>`;}});document.getElementById('godReqCount').innerText=c;document.getElementById('adminWithdrawList').innerHTML=h||'<p>Bekleyen talep yok.</p>';}
 function adminOdemeYap(id){db.collection('withdrawals').doc(id).update({durum:'odendi'});}
-function adminPlansDraw(){let h='';Object.keys(allPlans).sort((a,b)=>a-b).forEach(k=>h+=`<div class="god-list-item"><b>${allPlans[k].ad}</b><button style="background:var(--danger); color:#fff; border-radius:8px; padding:6px 12px" onclick="adminDelPlan('${k}')">Sil</button></div>`);document.getElementById('adminPlansList').innerHTML=h;}
-function adminAddPlan(){let l=document.getElementById('npLvl').value,a=document.getElementById('npAd').value,f=parseInt(document.getElementById('npFiyat').value),o=parseFloat(document.getElementById('npOran').value)/100;db.collection('plans').doc(l).set({ad:a,fiyat:
+function adminPlans
