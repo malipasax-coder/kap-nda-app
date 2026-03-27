@@ -3,8 +3,11 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover">
-<title>Evinde - Purple Edition V8</title>
-<link rel="manifest" id="manifest-link">
+<title>Evinde - Purple Edition</title>
+<link rel="manifest" href="manifest.json">
+<meta name="theme-color" content="#8e2de2">
+<link rel="apple-touch-icon" href="https://cdn-icons-png.flaticon.com/512/3144/3144456.png">
+
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 <script src="https://www.gstatic.com/firebasejs/10.8.1/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.8.1/firebase-firestore-compat.js"></script>
@@ -138,7 +141,6 @@ button:disabled { opacity: 0.7; cursor: not-allowed; }
 .level-badge { display: inline-flex; align-items: center; gap: 5px; background: var(--ig-gray); color: var(--text-main); padding: 6px 12px; border-radius: 8px; font-size: 12px; font-weight: 800; margin-top: 8px; }
 .level-badge.vip { background: var(--primary-grad); color: #fff; box-shadow: 0 4px 15px rgba(142,45,226,0.3); cursor: pointer; }
 
-/* PWA Kurulum Banner'ı CSS */
 #installBanner {
     display: none; position: absolute; top: 0; left: 0; width: 100%; background: var(--glass-bg); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px); padding: 15px 20px; z-index: 10000; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--border); box-shadow: var(--shadow-md); color: var(--text-main);
 }
@@ -168,34 +170,17 @@ button:disabled { opacity: 0.7; cursor: not-allowed; }
         </div>
     </div>
 
-    <script>
-        setTimeout(function(){
-            var sl = document.getElementById('serverLoading');
-            if(sl) {
-                sl.style.opacity = '0';
-                setTimeout(function(){ sl.style.display = 'none'; }, 600);
-            }
-        }, 2500); 
-    </script>
-
     <div id="toast">Bildirim</div>
 
     <div class="modal-overlay" id="transferModal"><div class="modal-card"><div class="close-bar" onclick="closeModal('transferModal')"></div><h3 style="margin:0 0 15px 0;text-align:center;font-weight:900" class="text-gradient">Para Gönder</h3><div class="input-group"><input type="text" id="tKnId" placeholder="Alıcı Evinde No (EN-123456)" style="text-transform:uppercase"></div><div class="input-group"><input type="number" id="tTutar" placeholder="Tutar (₺)"></div><button class="btn-primary" onclick="paraGonder()">Gönder</button></div></div>
-    
     <div class="modal-overlay" id="withdrawModal"><div class="modal-card"><div class="close-bar" onclick="closeModal('withdrawModal')"></div><h3 style="margin:0 0 5px 0;text-align:center;font-weight:900">Hesaba Aktar</h3><p style="text-align:center;font-size:12px;font-weight:600;color:var(--text-muted);margin-bottom:20px">Mevcut: <b id="wBakiyeGoster" class="text-gradient">0 ₺</b></p><div class="input-group"><input type="text" id="wAd" placeholder="Banka Alıcı Ad Soyad"></div><div class="input-group"><input type="text" id="wIban" placeholder="TR... IBAN Numarası"></div><div class="input-group"><input type="number" id="wTutar" placeholder="Çekilecek Tutar (₺)"></div><button class="btn-success" onclick="paraCekTalebi()">Banka Talebi Oluştur</button></div></div>
-    
     <div class="modal-overlay" id="vipModal"><div class="modal-card"><div class="close-bar" onclick="closeModal('vipModal')"></div><h3 style="margin:0 0 15px 0;text-align:center;font-weight:900" class="text-gradient"><i class="fa-solid fa-crown"></i> VIP Paketler</h3><div id="vipPlansContainer"></div></div></div>
     
     <div class="modal-overlay" id="editProfileModal">
         <div class="modal-card">
             <div class="close-bar" onclick="closeModal('editProfileModal')"></div>
             <h3 style="margin:0 0 25px 0;text-align:center;font-weight:900">Ayarlar</h3>
-            
-            <div style="display:flex;justify-content:space-between;align-items:center;padding:15px 0;border-bottom:1px solid var(--border);margin-bottom:20px">
-                <b style="font-size:15px;font-weight:800">Karanlık Mod</b>
-                <input type="checkbox" id="darkModeToggle" onchange="toggleDarkMode()" style="width:20px;height:20px; accent-color: var(--primary);">
-            </div>
-
+            <div style="display:flex;justify-content:space-between;align-items:center;padding:15px 0;border-bottom:1px solid var(--border);margin-bottom:20px"><b style="font-size:15px;font-weight:800">Karanlık Mod</b><input type="checkbox" id="darkModeToggle" onchange="toggleDarkMode()" style="width:20px;height:20px; accent-color: var(--primary);"></div>
             <div style="text-align: center; margin-bottom: 20px;">
                 <img id="eAvPreview" class="avatar-preview" src="">
                 <label for="eAvFile" class="btn-outline custom-file-upload" style="padding: 10px 20px; width: auto; font-size: 13px; border-radius: 20px;">
@@ -203,12 +188,10 @@ button:disabled { opacity: 0.7; cursor: not-allowed; }
                 </label>
                 <input type="file" id="eAvFile" accept="image/*" style="display:none" onchange="previewImage(this, 'eAvPreview')">
             </div>
-
             <div class="input-group"><input type="text" id="eName" placeholder="Ad Soyad"></div>
             <div class="input-group"><input type="text" id="eUsername" placeholder="Kullanıcı Adı (Örn: mali.dev)"></div>
             <div class="input-group"><textarea id="eBio" rows="2" placeholder="Biyografi..."></textarea></div>
             <div class="input-group"><input type="password" id="ePass" placeholder="Yeni Şifre (Boş bırakabilirsiniz)"></div>
-            
             <button class="btn-primary" onclick="saveProfile()" id="btnSaveProfile">Ayarları Kaydet</button>
             <button class="btn-outline" style="margin-top:12px;color:var(--danger);border-color:var(--danger)" onclick="cikisYap()">Çıkış Yap</button>
         </div>
@@ -300,23 +283,11 @@ button:disabled { opacity: 0.7; cursor: not-allowed; }
 </div>
 
 <script>
-// --- PWA (Uygulama İndirme) ALTYAPISI (Dış dosya gerektirmez) ---
-const manifest = {
-    "name": "Evinde Sosyal Ticaret",
-    "short_name": "Evinde",
-    "start_url": ".",
-    "display": "standalone",
-    "background_color": "#fafafa",
-    "theme_color": "#8e2de2",
-    "icons": [{"src": "https://cdn-icons-png.flaticon.com/512/3144/3144456.png", "sizes": "512x512", "type": "image/png"}]
-};
-const manifestBlob = new Blob([JSON.stringify(manifest)], {type: 'application/json'});
-document.getElementById('manifest-link').href = URL.createObjectURL(manifestBlob);
-
+// --- PWA KAYIT İŞLEMİ (Gerçek dosyaları arayacak) ---
 if ('serviceWorker' in navigator) {
-    const swCode = `self.addEventListener('fetch', function(e) {});`;
-    const swBlob = new Blob([swCode], {type: 'application/javascript'});
-    navigator.serviceWorker.register(URL.createObjectURL(swBlob)).catch(err => console.log("SW Kayıt Hatası:", err));
+    window.addEventListener('load', () => {
+        navigator.serviceWorker.register('sw.js').catch(err => console.log("SW Kayıt Hatası:", err));
+    });
 }
 
 let deferredPrompt;
@@ -335,6 +306,8 @@ function installApp() {
             }
             deferredPrompt = null;
         });
+    } else {
+        showToast("Tarayıcı menüsünden 'Ana Ekrana Ekle'ye basabilirsiniz.", true);
     }
 }
 // ----------------------------------------------------------------
@@ -380,7 +353,7 @@ function previewImage(input, previewId, labelId = null) {
     if (input.files && input.files[0]) {
         let reader = new FileReader();
         reader.onload = function(e) {
-            preview.src = e.target.result;
+            preview.src = e.target.result; // <-- Burada base64 verisi oluşturuluyor
             preview.style.display = 'block';
             if(labelId) { document.getElementById(labelId).style.display = 'none'; }
         }
@@ -508,9 +481,10 @@ function openModal(id) {
 }
 function closeModal(id) {document.getElementById(id).classList.remove('active');}
 
+// --- YENİLENMİŞ VE GÜVENLİ PROFİL FOTOSU KAYDETME ---
 function saveProfile() {
     let btn=document.getElementById('btnSaveProfile');btn.innerText="Yükleniyor...";btn.disabled=true;
-    let n=document.getElementById('eName')?.value?.trim();let un=document.getElementById('eUsername')?.value?.trim()?.toLowerCase();let b=document.getElementById('eBio')?.value?.trim();let p=document.getElementById('ePass')?.value?.trim();let fi=document.getElementById('eAvFile');
+    let n=document.getElementById('eName')?.value?.trim();let un=document.getElementById('eUsername')?.value?.trim()?.toLowerCase();let b=document.getElementById('eBio')?.value?.trim();let p=document.getElementById('ePass')?.value?.trim();
     
     let completeSave = (avatarUrl) => {
         let up = {}; if(n) up.isim=n; if(un) up.username=un; up.bio=b; if(avatarUrl) up.avatar=avatarUrl;
@@ -518,7 +492,7 @@ function saveProfile() {
         if(p && p.length>=6) updatePromises.push(firebase.auth().currentUser.updatePassword(p));
         
         Promise.all(updatePromises).then(() => {
-            closeModal('editProfileModal'); showToast("Güncellendi!");
+            closeModal('editProfileModal'); showToast("Ayarlar Güncellendi!");
         }).catch(e => {
             showToast("Hata: " + e.message, true);
         }).finally(() => {
@@ -534,18 +508,22 @@ function saveProfile() {
     } else { proceedWithImage(); }
 
     function proceedWithImage() {
-        if(fi?.files?.[0]) {
-            let file = fi.files[0];
-            let safeName = akEmail + '_' + Date.now();
-            storage.ref('avatars/'+safeName).put(file).then(snapshot => {
+        let pre = document.getElementById('eAvPreview');
+        // Ekranda bir resim varsa ve bu bizim FileReader ile aldığımız "base64" (data:) verisiyse:
+        if(pre.src && pre.src.startsWith('data:')) {
+            let safeName = 'avatar_' + akEmail + '_' + Date.now();
+            
+            // PUTSTRİNG İLE DATA_URL OLARAK YÜKLÜYORUZ (Takılmayı Önler)
+            storage.ref('avatars/'+safeName).putString(pre.src, 'data_url').then(snapshot => {
                 return snapshot.ref.getDownloadURL();
             }).then(url => {
                 completeSave(url);
             }).catch(e => {
-                showToast("Fotoğraf yükleme hatası!", true);
+                showToast("Profil fotoğrafı yükleme hatası!", true);
                 btn.innerText="Ayarları Kaydet"; btn.disabled=false;
             });
         } else {
+            // Kullanıcı fotoğraf seçmediyse veya eski fotoğraf duruyorsa
             completeSave(null);
         }
     }
@@ -559,25 +537,22 @@ function urunKaydet() {
     let a = document.getElementById('upAd')?.value?.trim();
     let f = parseInt(document.getElementById('upFiyat')?.value || "0");
     let ef = parseInt(document.getElementById('upEskiFiyat')?.value || "0");
-    let fi = document.getElementById('upResFile');
+    let previewImg = document.getElementById('upResPreview');
     let btn = document.getElementById('btnUrunKaydet');
     
-    if (!a || !f || !fi?.files?.[0]) {
+    // Resmin "data:" ile başlayıp başlamadığını kontrol ediyoruz (Base64 kontrolü)
+    if (!a || !f || !previewImg.src || !previewImg.src.startsWith('data:')) {
         return showToast("Lütfen tüm alanları doldurup resim seçin!", true);
-    }
-    
-    let file = fi.files[0];
-    if (file.size > 5 * 1024 * 1024) {
-        return showToast("Resim boyutu çok büyük (Maks 5MB)!", true);
     }
     
     btn.innerText = "Yükleniyor...";
     btn.disabled = true;
     
-    // Dosya adındaki boşlukları ve Türkçe/özel karakterleri temizleyip güvenli hale getiriyoruz
-    let safeFileName = Date.now() + "_" + file.name.replace(/[^a-zA-Z0-9.]/g, "_");
+    let safeFileName = "prod_" + Date.now() + "_" + Math.floor(Math.random() * 10000);
+    let base64Data = previewImg.src;
     
-    storage.ref('products/' + safeFileName).put(file).then((snapshot) => {
+    // PUT YERİNE PUTSTRING KULLANIYORUZ - Mobildeki takılmayı çözen kilit nokta burası!
+    storage.ref('products/' + safeFileName).putString(base64Data, 'data_url').then((snapshot) => {
         return snapshot.ref.getDownloadURL();
     }).then((url) => {
         return db.collection('products').add({
@@ -599,8 +574,8 @@ function urunKaydet() {
         document.getElementById('upFiyat').value = '';
         document.getElementById('upEskiFiyat').value = '';
         document.getElementById('upResFile').value = '';
-        document.getElementById('upResPreview').style.display = 'none';
-        document.getElementById('upResPreview').src = '';
+        previewImg.style.display = 'none';
+        previewImg.src = '';
         document.getElementById('upResLabel').style.display = 'block';
         
         switchView('profileView');
