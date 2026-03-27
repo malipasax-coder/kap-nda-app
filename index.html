@@ -96,7 +96,7 @@ button{border:none;padding:14px 20px;border-radius:14px;font-weight:800;cursor:p
                 sl.style.opacity = '0';
                 setTimeout(function(){ sl.style.display = 'none'; }, 600);
             }
-        }, 2500); // Ne olursa olsun 2.5 saniye sonra yükleme ekranı yok olur.
+        }, 2500); 
     </script>
 
     <div id="toast">Bildirim</div>
@@ -170,7 +170,6 @@ let cuData=null,akEmail=null,allProds=[],allUsers={},allChats=[],allTrans=[],all
 
 window.onload=()=>{
     checkTheme();
-    // Yükleme ekranını gizleyen normal çağrı (üstteki fail-safe buna rağmen çalışacaktır)
     setTimeout(hideLS, 1000); 
 
     let s=localStorage.getItem('evinde_session');
@@ -319,7 +318,61 @@ async function saveProfile() {
 function renderCatsUI(){let h=`<div class="cat-pill ${currCat==='all'?'active':''}" onclick="selCat('all')">Tümü</div>`;allCats.forEach(c=>h+=`<div class="cat-pill ${currCat===c.id?'active':''}" onclick="selCat('${c.id}')">${c.name}</div>`);let el=document.getElementById('catScroller');if(el)el.innerHTML=h;}
 function selCat(id){currCat=id;renderCatsUI();renderExplore();}
 
-async function urunKaydet(){let a=document.getElementById('upAd')?.value?.trim();let f=parseInt(document.getElementById('upFiyat')?.value||"0");let ef=parseInt(document.getElementById('upEskiFiyat')?.value||"0");let fi=document.getElementById('upResFile');let btn=document.getElementById('btnUrunKaydet');if(!a||!f||!fi?.files?.[0])return showToast("Eksik alan!",true);btn.innerText="Yükleniyor...";btn.disabled=true;try{let sr=storage.ref('products/'+Date.now());await sr.put(fi.files[0]);let url=await sr.getDownloadURL();await db.collection('products').add({ad:a,fiyat:f,eskiFiyat:ef,resimUrl:url,storeEmail:akEmail,storeName:cuData.isim,storeUsername:cuData.username||cuData.knId,storeAvatar:cuData.avatar||null,likes:[],comments:[],timestamp:firebase.firestore.FieldValue.serverTimestamp()});switchView('profileView');showToast("Eklendi!");}catch(e){showToast("Hata!",true);}finally{btn.innerText="Paylaş";btn.disabled=false;}}
+async function urunKaydet() {
+    let a = document.getElementById('upAd')?.value?.trim();
+    let f = parseInt(document.getElementById('upFiyat')?.value || "0");
+    let ef = parseInt(document.getElementById('upEskiFiyat')?.value || "0");
+    let fi = document.getElementById('upResFile');
+    let btn = document.getElementById('btnUrunKaydet');
+    
+    if (!a || !f || !fi?.files?.[0]) {
+        return showToast("Lütfen tüm alanları doldurup resim seçin!", true);
+    }
+    
+    let file = fi.files[0];
+    if (file.size > 5 * 1024 * 1024) {
+        return showToast("Resim boyutu çok büyük (Maks 5MB)!", true);
+    }
+    
+    btn.innerText = "Yükleniyor...";
+    btn.disabled = true;
+    
+    try {
+        let sr = storage.ref('products/' + Date.now() + '_' + file.name);
+        await sr.put(file);
+        let url = await sr.getDownloadURL();
+        
+        await db.collection('products').add({
+            ad: a,
+            fiyat: f,
+            eskiFiyat: ef,
+            resimUrl: url,
+            storeEmail: akEmail,
+            storeName: cuData.isim || "İsimsiz",
+            storeUsername: cuData.username || cuData.knId,
+            storeAvatar: cuData.avatar || null,
+            likes: [],
+            comments: [],
+            timestamp: firebase.firestore.FieldValue.serverTimestamp()
+        });
+        
+        // Başarılı olursa formu temizle
+        document.getElementById('upAd').value = '';
+        document.getElementById('upFiyat').value = '';
+        document.getElementById('upEskiFiyat').value = '';
+        document.getElementById('upResFile').value = '';
+        
+        switchView('profileView');
+        showToast("Ürün başarıyla paylaşıldı!");
+    } catch (e) {
+        console.error("Ürün yükleme hatası:", e);
+        showToast("Hata oluştu! (Firebase izinleri kapalı olabilir)", true);
+    } finally {
+        btn.innerText = "Paylaş";
+        btn.disabled = false;
+    }
+}
+
 function createPostHtml(p){let av=p.storeAvatar?`background-image:url('${p.storeAvatar}');border:none;`:'';let badge='',priceText=`${p.fiyat} ₺`;if(p.eskiFiyat&&p.eskiFiyat>p.fiyat){let ind=Math.round(((p.eskiFiyat-p.fiyat)/p.eskiFiyat)*100);badge=`<div class="discount-badge">%${ind} İndirim</div>`;priceText=`<strike style="color:var(--text-muted);font-size:12px;margin-right:4px">${p.eskiFiyat}₺</strike>${p.fiyat} ₺`;}let isL=p.likes&&p.likes.includes(akEmail);let hIco=isL?`<i class="fa-solid fa-heart" style="color:var(--danger)" onclick="tLike('${p.id}')"></i>`:`<i class="fa-regular fa-heart" onclick="tLike('${p.id}')"></i>`;return`<div class="post-card">${badge}<div class="post-header" onclick="openOP('${p.storeEmail}')"><div style="display:flex;align-items:center;gap:12px;"><div class="post-avatar" style="${av}">${p.storeName?.[0]||'A'}</div><div><b style="font-size:14px;font-weight:800;display:block">${p.storeName}</b><small style="color:var(--primary);font-weight:800">@${p.storeUsername}</small></div></div></div><div class="post-image" style="background-image:url('${p.resimUrl}')" ondblclick="tLike('${p.id}')"></div><div class="ig-action-bar"><div class="ig-icons-left">${hIco}<i class="fa-regular fa-comment" onclick="oComm('${p.id}')"></i><i class="fa-solid fa-share-nodes" onclick="shareP('${p.ad}',${p.fiyat},'${p.storeUsername}')"></i></div><i class="fa-solid fa-bag-shopping" style="cursor:pointer;" onclick="sepeteEkle('${p.id}','${p.ad}',${p.fiyat},'${p.storeEmail}')"></i></div><div class="post-content"><b style="font-size:15px;color:${badge?'var(--danger)':'var(--text-main)'}">${priceText}</b><span style="font-size:13px;font-weight:600;display:block;margin-top:4px"><b>@${p.storeUsername}</b> ${p.ad}</span></div></div>`;}
 function renderFeed(){let h='';allProds.forEach(p=>h+=createPostHtml(p));document.getElementById('mainFeed').innerHTML=h||'<p style="text-align:center;margin-top:40px;color:var(--text-muted)">Akış boş.</p>';}
 function renderExplore(){let h='';let indirimli=allProds.filter(p=>{if(!(p.eskiFiyat&&p.eskiFiyat>p.fiyat))return false;if(currCat!=='all'){let u=allUsers[p.storeEmail];if(!u||u.category!==currCat)return false;}return true;});indirimli.forEach(p=>{let ind=Math.round(((p.eskiFiyat-p.fiyat)/p.eskiFiyat)*100);h+=`<div class="ig-grid-item" style="background-image:url('${p.resimUrl}')" onclick="viewSinglePost('${p.id}')"><div style="position:absolute;top:4px;right:4px;background:var(--danger);color:#fff;font-size:9px;padding:2px 4px;border-radius:4px;font-weight:900">%${ind}</div></div>`;});document.getElementById('exploreGrid').innerHTML=h||'<p style="grid-column:span 3;text-align:center;margin-top:40px;color:var(--text-muted)">Sonuç yok.</p>';}
