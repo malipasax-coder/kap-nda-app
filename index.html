@@ -236,7 +236,7 @@ button:disabled { opacity: 0.7; cursor: not-allowed; }
         
         <div class="view" id="singlePostView"><div style="padding:15px 20px;background:var(--glass-bg);backdrop-filter:blur(20px);border-bottom:1px solid var(--border);position:sticky;top:0;z-index:10;color:var(--text-main);display:flex;align-items:center;gap:15px"><i class="fa-solid fa-arrow-left" style="font-size:20px;cursor:pointer" onclick="backFromSinglePost()"></i><h3 style="margin:0;font-size:18px;font-weight:900">Gönderi</h3></div><div id="singlePostContainer"></div></div>
         
-        <div class="view" id="profileView"><div class="profile-header"><div style="display:flex;align-items:center"><div id="pAvatar" style="width:90px;height:90px;background:var(--ig-gray);border-radius:50%;color:var(--text-main);display:flex;justify-content:center;align-items:center;font-size:32px;font-weight:900;background-size:cover;border:2px solid var(--border)">A</div><div class="profile-stats"><div class="stat-box"><b id="pTeam">0</b><small>Ağım</small></div><div class="stat-box"><b id="pFollowers">0</b><small>Takipçi</small></div><div class="stat-box"><b id="pBalance" class="text-gradient">0₺</b><small>Cüzdan</small></div></div></div><div style="margin-top:20px"><h2 id="pName" style="margin:0;font-size:18px;font-weight:900;color:var(--text-main)">İsim</h2><div id="pUsername" style="color:var(--primary);font-weight:800;font-size:14px;margin-top:2px">@username</div><div id="pKnId" style="display:inline-block; font-size:11px;font-weight:800;color:var(--text-muted);margin-top:8px;cursor:pointer; background:var(--ig-gray); padding: 4px 10px; border-radius: 8px;" onclick="kopyalaKnId()">EN-XXXXXX <i class="fa-regular fa-copy"></i></div><br><div id="pLevelBadge" class="level-badge" onclick="if(cuData?.rol==='customer'||cuData?.rol==='promoter')openModal('vipModal')">Seviye 0</div><p id="pBioText" style="font-size:14px;color:var(--text-main);margin-top:10px;font-weight:500"></p></div><div style="display:flex;gap:10px;margin-top:20px"><button class="btn-action" onclick="openModal('editProfileModal')">Profili Düzenle</button><button class="btn-action" style="background:var(--primary-grad);color:#fff" onclick="openModal('transferModal')">Transfer</button><button class="btn-action" style="background:var(--success);color:#fff" onclick="openModal('depositModal')"><i class="fa-solid fa-plus"></i> Bakiye</button></div><div style="display:flex;gap:10px;margin-top:10px"><button class="btn-primary" id="btnUrunEkle" style="display:none" onclick="switchView('storeAddProdView')">Ürün Ekle</button><button class="btn-warning" id="btnKasa" style="display:none" onclick="switchView('storePosView')">Kasa</button><button class="btn-success" id="btnParaCek" style="display:none" onclick="paraCekModalAc()">Para Çek</button></div></div><div id="profileGrid" class="ig-grid"></div></div>
+        <div class="view" id="profileView"><div class="profile-header"><div style="display:flex;align-items:center"><div id="pAvatar" style="width:90px;height:90px;background:var(--ig-gray);border-radius:50%;color:var(--text-main);display:flex;justify-content:center;align-items:center;font-size:32px;font-weight:900;background-size:cover;border:2px solid var(--border)">A</div><div class="profile-stats"><div class="stat-box"><b id="pTeam">0</b><small>Ağım</small></div><div class="stat-box"><b id="pFollowers">0</b><small>Takipçi</small></div><div class="stat-box"><b id="pBalance" class="text-gradient">0₺</b><small>Cüzdan</small></div></div></div><div style="margin-top:20px"><h2 id="pName" style="margin:0;font-size:18px;font-weight:900;color:var(--text-main)">İsim</h2><div id="pUsername" style="color:var(--primary);font-weight:800;font-size:14px;margin-top:2px">@username</div><div id="pKnId" style="display:inline-block; font-size:11px;font-weight:800;color:var(--text-muted);margin-top:8px;cursor:pointer; background:var(--ig-gray); padding: 4px 10px; border-radius: 8px;" onclick="kopyalaKnId()">EN-XXXXXX <i class="fa-regular fa-copy"></i></div><br><div id="pLevelBadge" class="level-badge" onclick="if(cuData?.rol==='customer'||cuData?.rol==='promoter')openModal('vipModal')">Seviye 0</div><div id="pActiveStatus"></div><p id="pBioText" style="font-size:14px;color:var(--text-main);margin-top:10px;font-weight:500"></p></div><div style="display:flex;gap:10px;margin-top:20px"><button class="btn-action" onclick="openModal('editProfileModal')">Profili Düzenle</button><button class="btn-action" style="background:var(--primary-grad);color:#fff" onclick="openModal('transferModal')">Transfer</button><button class="btn-action" style="background:var(--success);color:#fff" onclick="openModal('depositModal')"><i class="fa-solid fa-plus"></i> Bakiye</button></div><div style="display:flex;gap:10px;margin-top:10px"><button class="btn-primary" id="btnUrunEkle" style="display:none" onclick="switchView('storeAddProdView')">Ürün Ekle</button><button class="btn-warning" id="btnKasa" style="display:none" onclick="switchView('storePosView')">Kasa</button><button class="btn-success" id="btnParaCek" style="display:none" onclick="paraCekModalAc()">Para Çek</button></div></div><div id="profileGrid" class="ig-grid"></div></div>
         
         <div class="view" id="otherProfileView"><div style="padding:15px 20px;background:var(--glass-bg);backdrop-filter:blur(20px);border-bottom:1px solid var(--border);position:sticky;top:0;z-index:10;color:var(--text-main);display:flex;align-items:center;gap:15px"><i class="fa-solid fa-arrow-left" style="font-size:20px;cursor:pointer" onclick="switchView('exploreView')"></i><h3 id="opHeaderName" style="margin:0;font-size:18px;font-weight:900">Profil</h3></div><div class="profile-header"><div style="display:flex;align-items:center"><div id="opAvatar" style="width:90px;height:90px;background:var(--ig-gray);border-radius:50%;color:var(--text-main);display:flex;justify-content:center;align-items:center;font-size:32px;font-weight:900;background-size:cover;border:2px solid var(--border)"></div><div class="profile-stats"><div class="stat-box"><b id="opProdCount">0</b><small>Gönderi</small></div><div class="stat-box"><b id="opFollowers">0</b><small>Takipçi</small></div></div></div><div style="margin-top:20px"><h2 id="opName" style="margin:0;font-size:18px;font-weight:900;color:var(--text-main)">İsim</h2><div id="opUsername" style="color:var(--primary);font-weight:800;font-size:14px;margin-top:2px">@username</div><div id="opKnId" style="display:inline-block; font-size:11px;font-weight:800;color:var(--text-muted);margin-top:8px; background:var(--ig-gray); padding: 4px 10px; border-radius: 8px;">EN-XXXXXX</div><p id="opBio" style="font-size:14px;color:var(--text-main);margin-top:10px;font-weight:500"></p></div><div style="display:flex;gap:10px;margin-top:20px" id="opActionsContainer"></div></div><div id="opGrid" class="ig-grid"></div></div>
         
@@ -282,7 +282,6 @@ button:disabled { opacity: 0.7; cursor: not-allowed; }
 </div>
 
 <script>
-// --- PWA KAYIT İŞLEMİ (Ana Ekrana Ekleme) ---
 if ('serviceWorker' in navigator) {
     window.addEventListener('load', () => {
         navigator.serviceWorker.register('sw.js').catch(err => console.log("SW Kayıt Hatası:", err));
@@ -309,9 +308,7 @@ function installApp() {
         showToast("Tarayıcı menüsünden 'Ana Ekrana Ekle'ye basabilirsiniz.", true);
     }
 }
-// ----------------------------------------------------------------
 
-// --- IMGBB RESİM YÜKLEME SİSTEMİ (Firebase Storage Baypası) ---
 const IMGBB_API_KEY = "69a8e29046473970219c179fb55b27d9";
 
 async function uploadImageToImgBB(base64String) {
@@ -331,7 +328,6 @@ async function uploadImageToImgBB(base64String) {
         throw new Error(data.error.message || "Resim yüklenemedi.");
     }
 }
-// ----------------------------------------------------------------
 
 const fc={apiKey:"AIzaSyBWSlha9fD_q3zHXaRJ3ocJdtALqkrW-LU",authDomain:"kapinda-8d3ef.firebaseapp.com",projectId:"kapinda-8d3ef",storageBucket:"kapinda-8d3ef.appspot.com",messagingSenderId:"246456710881",appId:"1:246456710881:web:c2a7bdb5e3b9065d1829a0"};
 firebase.initializeApp(fc);
@@ -398,7 +394,6 @@ function switchView(tId){
 
 function authModSwitch(m){document.getElementById('loginFormBlock').style.display=m==='login'?'block':'none';document.getElementById('registerFormBlock').style.display=m==='register'?'block':'none';document.getElementById('tabLoginBtn').style.background=m==='login'?'var(--card-bg)':'transparent';document.getElementById('tabLoginBtn').style.color=m==='login'?'var(--text-main)':'var(--text-muted)';document.getElementById('tabRegisterBtn').style.background=m==='register'?'var(--card-bg)':'transparent';document.getElementById('tabRegisterBtn').style.color=m==='register'?'var(--text-main)':'var(--text-muted)';}
 
-// --- GİRİŞ YAPMA VE HATA YAKALAMA FONKSİYONU ---
 async function girisYap() {
     let input = document.getElementById('lEmail')?.value?.trim()?.toLowerCase();
     let p = document.getElementById('lPass')?.value?.trim();
@@ -440,7 +435,6 @@ async function girisYap() {
     }
 }
 
-// --- KAYIT OLMA VE HATA YAKALAMA FONKSİYONU ---
 async function kayitOl() {
     let ad = document.getElementById('rName')?.value?.trim();
     let un = document.getElementById('rUsername')?.value?.trim()?.toLowerCase();
@@ -497,18 +491,44 @@ async function kayitOl() {
     }
 }
 
-function listenToUser(){
-    let sEm=akEmail;
-    db.collection('users').doc(sEm).onSnapshot(d=>{
+function listenToUser() {
+    let sEm = akEmail;
+    db.collection('users').doc(sEm).onSnapshot(d => {
         hideLS();
-        if(d.exists){
-            cuData=d.data();
-            document.getElementById('appHeader').style.display='flex'; document.getElementById('appNav').style.display='flex';
+        if(d.exists) {
+            cuData = d.data();
+            document.getElementById('appHeader').style.display = 'flex'; 
+            document.getElementById('appNav').style.display = 'flex';
+            
+            // --- 4. MADDE: VIP SÜRE VE 2 ÜRÜN KONTROLÜ EKLENTİSİ BASTI ---
+            if (cuData.rol === 'promoter' && cuData.vipExpiry) {
+                if (Date.now() > cuData.vipExpiry) {
+                    let msg = "";
+                    if ((cuData.aylikSatis || 0) < 2) {
+                        msg = "Aylık minimum 2 ürün satış şartını sağlamadığınız için komisyon üyeliğiniz donduruldu.";
+                    } else {
+                        msg = "Abonelik süreniz doldu. Yenilemeniz gerekmektedir.";
+                    }
+                    // Kullanıcıyı normal üyeye düşür
+                    db.collection('users').doc(akEmail).update({
+                        rol: 'customer',
+                        seviye: '0',
+                        vipExpiry: null,
+                        aylikSatis: 0
+                    });
+                    showToast(msg, true);
+                }
+            }
+            // -------------------------------------------------------------
+
             setupNav();
-            if(cView==='authView')switchView('homeView');
-            if(cView==='profileView')renderProf();
+            if(cView === 'authView') switchView('homeView');
+            if(cView === 'profileView') renderProf();
             listenToChats();
-        }else{ showToast("Hesap verisi bulunamadı!",true); cikisYap(); }
+        } else { 
+            showToast("Hesap verisi bulunamadı!", true); 
+            cikisYap(); 
+        }
     }, err => {
         hideLS();
         showToast("Veri okuma hatası! Firestore kurallarını kontrol edin.", true);
@@ -651,7 +671,6 @@ function doSearch(){
 }
 
 function openOP(em){if(em===akEmail)return switchView('profileView');viewEmail=em;let u=allUsers[em];if(!u)return;document.getElementById('opHeaderName').innerText=u.isim;document.getElementById('opName').innerText=u.isim;document.getElementById('opUsername').innerText="@"+(u.username||u.knId);document.getElementById('opKnId').innerText=u.knId;document.getElementById('opBio').innerText=u.bio||'';let av=document.getElementById('opAvatar');if(u.avatar){av.style.backgroundImage=`url('${u.avatar}')`;av.innerText='';av.style.border='none';}else{av.style.backgroundImage='none';av.innerText=u.isim?.[0]||'A';av.style.border='2px solid var(--border)';}let mp=allProds.filter(p=>p.storeEmail===em);document.getElementById('opProdCount').innerText=mp.length;
-// Yeni eklenen Takipçi Sayısı:
 document.getElementById('opFollowers').innerText=(u.followers?.length||0);
 let isF = u.followers?.includes(akEmail);
 let fText = isF ? "Takipten Çık" : "Takip Et";
@@ -660,14 +679,13 @@ document.getElementById('opActionsContainer').innerHTML = `<button class="btn-ac
 
 let h='';mp.forEach(p=>h+=`<div class="ig-grid-item" style="background-image:url('${p.resimUrl}')" onclick="viewSinglePost('${p.id}')"></div>`);document.getElementById('opGrid').innerHTML=h;switchView('otherProfileView');document.getElementById('searchResults').style.display='none';}
 
-// YENİ EKLENEN: Takip Etme Fonksiyonu
 function toggleFollow(em){
     let u=allUsers[em]; if(!u) return;
     let f=u.followers||[];
     if(f.includes(akEmail)) f=f.filter(x=>x!==akEmail); else f.push(akEmail);
     db.collection('users').doc(em).update({followers:f}).then(()=>{
         showToast("Takip güncellendi!");
-        openOP(em); // Ekranı yenile
+        openOP(em); 
     });
 }
 
@@ -678,7 +696,6 @@ function tLike(id){let p=allProds.find(x=>x.id===id);if(!p)return;let l=p.likes|
 function oComm(id){let p=allProds.find(x=>x.id===id);if(!p)return;document.getElementById('activePostId').value=id;let c=p.comments||[];let h='';c.forEach(x=>{let u=allUsers[x.u]||{isim:'Bilinmeyen'};let av=u.avatar?`background-image:url('${u.avatar}');`:'';h+=`<div style="display:flex;gap:12px;margin-bottom:15px"><div class="post-avatar" style="${av};width:36px;height:36px;border-radius:50%;">${u.isim?.[0]||'A'}</div><div style="font-size:14px; background:var(--ig-gray); padding:10px 14px; border-radius:0 16px 16px 16px;"><b style="font-weight:900; color:var(--text-main);">@${u.username||'üye'}</b><br>${x.t}</div></div>`;});document.getElementById('commentsList').innerHTML=h||'<div style="text-align:center;color:var(--text-muted);margin-top:30px;"><i class="fa-regular fa-comments" style="font-size:30px; margin-bottom:10px;"></i><br>İlk yorumu sen yap.</div>';openModal('commentsModal');}
 function addComment(){let v=document.getElementById('newCommentInput')?.value?.trim();if(!v)return;let id=document.getElementById('activePostId')?.value;db.collection('products').doc(id).update({comments:firebase.firestore.FieldValue.arrayUnion({u:akEmail,t:v,d:Date.now()})}).then(()=>{document.getElementById('newCommentInput').value='';});}
 
-// GÜNCELLENEN: Paylaşım Kısıtlaması (Sadece VIP)
 function shareP(ad,f,un){
     if(cuData.rol === 'customer' && (!cuData.seviye || cuData.seviye === '0')) {
         return showToast("Bağlantı paylaşarak para kazanmak için VIP (Seviye) satın almalısınız!", true);
@@ -690,9 +707,40 @@ function shareP(ad,f,un){
 function sepeteEkle(id,ad,f,s){sepet.push({id,ad,fiyat:f,satici:s});document.getElementById('cartCount').innerText=sepet.length;document.getElementById('cartCount').style.display='flex';showToast("Sepete Eklendi!");}
 function renderCart(){let h='',t=0;sepet.forEach((x, index)=>{t+=x.fiyat;h+=`<div style="display:flex;justify-content:space-between; align-items:center; padding:15px; border-bottom:1px solid var(--border); background:var(--card-bg); border-radius:12px; margin-bottom:10px;"><div style="display:flex; flex-direction:column;"><b style="font-size:15px;">${x.ad}</b><small style="color:var(--text-muted)">Satıcı: @${allUsers[x.satici]?.username||'Mağaza'}</small></div><div style="display:flex; align-items:center; gap:15px;"><b style="color:var(--primary); font-size:16px;">${x.fiyat} ₺</b><i class="fa-solid fa-trash" style="color:var(--danger); cursor:pointer;" onclick="sepettenCikar(${index})"></i></div></div>`;});document.getElementById('cartItemsContainer').innerHTML=h||'<div style="text-align:center;color:var(--text-muted);margin-top:60px;"><i class="fa-solid fa-basket-shopping" style="font-size:40px; margin-bottom:10px; opacity:0.5;"></i><br>Sepetin şu an boş.</div>';document.getElementById('cartTotal').innerText=t+" ₺";}
 function sepettenCikar(index){ sepet.splice(index, 1); document.getElementById('cartCount').innerText=sepet.length; if(sepet.length===0) document.getElementById('cartCount').style.display='none'; renderCart(); }
-async function siparisVer(){if(!sepet.length)return showToast("Sepet boş!",true);let tot=sepet.reduce((s,i)=>s+i.fiyat,0);if(cuData.bakiye<tot)return showToast("Bakiye Yetersiz!",true);showToast("İşleniyor...");let nk=tot*0.20;await db.collection('users').doc(akEmail).update({bakiye:firebase.firestore.FieldValue.increment(-tot)});for(const i of sepet){await db.collection('users').doc(i.satici).update({bakiye:firebase.firestore.FieldValue.increment(i.fiyat*0.80)});}await db.collection('stats').doc('main').set({totalCiro:firebase.firestore.FieldValue.increment(tot),netKar:firebase.firestore.FieldValue.increment(nk)},{merge:true});sepet=[];document.getElementById('cartCount').style.display='none';switchView('profileView');showToast("Sipariş Onaylandı!");}
 
-// YENİ EKLENEN: Bakiye Yükleme Talebi
+async function siparisVer() {
+    if(!sepet.length) return showToast("Sepet boş!", true);
+    let tot = sepet.reduce((s,i) => s + i.fiyat, 0);
+    if(cuData.bakiye < tot) return showToast("Bakiye Yetersiz!", true);
+    
+    showToast("İşleniyor...");
+    let nk = tot * 0.20;
+    
+    // Alıcının bakiyesinden düş
+    await db.collection('users').doc(akEmail).update({
+        bakiye: firebase.firestore.FieldValue.increment(-tot)
+    });
+    
+    // --- 4. MADDE EKLENTİSİ: Satıcının bakiyesini ve 'Aylık Satış' sayacını artır ---
+    for(const i of sepet) {
+        await db.collection('users').doc(i.satici).update({
+            bakiye: firebase.firestore.FieldValue.increment(i.fiyat * 0.80),
+            aylikSatis: firebase.firestore.FieldValue.increment(1) 
+        });
+    }
+    // -------------------------------------------------------------------------------
+    
+    await db.collection('stats').doc('main').set({
+        totalCiro: firebase.firestore.FieldValue.increment(tot),
+        netKar: firebase.firestore.FieldValue.increment(nk)
+    }, {merge: true});
+    
+    sepet = [];
+    document.getElementById('cartCount').style.display = 'none';
+    switchView('profileView');
+    showToast("Sipariş Onaylandı!");
+}
+
 function bakiyeYukleTalep() {
     let t = parseInt(document.getElementById('dAmount')?.value);
     let s = document.getElementById('dSender')?.value?.trim();
@@ -717,10 +765,76 @@ function paraGonder() {
     });
 }
 
-function renderProf(){if(!cuData)return;document.getElementById('pName').innerText=cuData.isim;document.getElementById('pUsername').innerText="@"+(cuData.username||cuData.knId);document.getElementById('pBalance').innerText=(cuData.bakiye||0)+" ₺";document.getElementById('pKnId').innerHTML=cuData.knId + ' <i class="fa-regular fa-copy" style="margin-left:4px"></i>';let av=document.getElementById('pAvatar');if(cuData.avatar){av.style.backgroundImage=`url('${cuData.avatar}')`;av.innerText='';av.style.border='none';}else{av.style.backgroundImage='none';av.innerText=cuData.isim?.[0]||'A';av.style.border='2px solid var(--border)';}let bd=document.getElementById('pLevelBadge');if(cuData.rol==='store'||cuData.rol==='admin')bd.style.display='none';else{bd.style.display='inline-flex';bd.innerHTML='<i class="fa-solid fa-star"></i> SEVİYE '+(cuData.seviye||"0");}let isSt=(cuData.rol==='store'||cuData.rol==='admin');document.getElementById('btnUrunEkle').style.display=isSt?'flex':'none';document.getElementById('btnKasa').style.display=isSt?'flex':'none';document.getElementById('btnParaCek').style.display=isSt?'flex':'none';
-// Takipçi sayısını ekrana bas
-document.getElementById('pFollowers').innerText=(cuData.followers?.length||0);
-let e=0;for(let k in allUsers){if(allUsers[k].sponsor===cuData.knId)e++;}document.getElementById('pTeam').innerText=e;let h='';if(isSt){allProds.filter(p=>p.storeEmail===akEmail).forEach(p=>h+=`<div class="ig-grid-item" style="background-image:url('${p.resimUrl}')" onclick="viewSinglePost('${p.id}')"></div>`);}document.getElementById('profileGrid').innerHTML=h;}
+function renderProf(){
+    if(!cuData)return;
+    document.getElementById('pName').innerText=cuData.isim;
+    document.getElementById('pUsername').innerText="@"+(cuData.username||cuData.knId);
+    document.getElementById('pBalance').innerText=(cuData.bakiye||0)+" ₺";
+    document.getElementById('pKnId').innerHTML=cuData.knId + ' <i class="fa-regular fa-copy" style="margin-left:4px"></i>';
+    
+    let av=document.getElementById('pAvatar');
+    if(cuData.avatar){
+        av.style.backgroundImage=`url('${cuData.avatar}')`;
+        av.innerText='';
+        av.style.border='none';
+    }else{
+        av.style.backgroundImage='none';
+        av.innerText=cuData.isim?.[0]||'A';
+        av.style.border='2px solid var(--border)';
+    }
+    
+    let bd=document.getElementById('pLevelBadge');
+    if(cuData.rol==='store'||cuData.rol==='admin'){
+        bd.style.display='none';
+    }else{
+        bd.style.display='inline-flex';
+        bd.innerHTML='<i class="fa-solid fa-star"></i> SEVİYE '+(cuData.seviye||"0");
+    }
+
+    // --- 4. MADDE EKLENTİSİ: AKTİFLİK VE SÜRE GÖSTERGE PANELİ ---
+    let activeDiv = document.getElementById('pActiveStatus');
+    if (!activeDiv) {
+        activeDiv = document.createElement('div');
+        activeDiv.id = 'pActiveStatus';
+        // Rozetin hemen altına ekle
+        document.getElementById('pUsername').parentNode.insertBefore(activeDiv, document.getElementById('pLevelBadge').nextSibling);
+    }
+    
+    if (cuData.rol === 'promoter' && cuData.vipExpiry) {
+        let satis = cuData.aylikSatis || 0;
+        let daysLeft = Math.ceil((cuData.vipExpiry - Date.now()) / (1000 * 60 * 60 * 24));
+        let color = satis >= 2 ? 'var(--success)' : 'var(--warning)';
+        
+        activeDiv.innerHTML = `
+            <div style="font-size:12px; font-weight:800; color:var(--text-main); background:var(--card-bg); padding:10px 14px; border-radius:12px; display:inline-block; border:1px solid ${color}; margin-top:12px; box-shadow:var(--shadow-sm)">
+                <i class="fa-solid fa-chart-line" style="color:${color}"></i> Aylık Satış: <span style="color:${color}; font-size:14px;">${satis}</span> / 2 <br>
+                <small style="color:var(--text-muted); font-weight:600; margin-top:4px; display:block;">Kalan Abonelik: ${daysLeft > 0 ? daysLeft : 0} Gün</small>
+            </div>
+        `;
+        activeDiv.style.display = 'block';
+    } else {
+        activeDiv.style.display = 'none';
+    }
+    // -------------------------------------------------------------
+
+    let isSt=(cuData.rol==='store'||cuData.rol==='admin');
+    document.getElementById('btnUrunEkle').style.display=isSt?'flex':'none';
+    document.getElementById('btnKasa').style.display=isSt?'flex':'none';
+    document.getElementById('btnParaCek').style.display=isSt?'flex':'none';
+    
+    document.getElementById('pFollowers').innerText=(cuData.followers?.length||0);
+    
+    let e=0;
+    for(let k in allUsers){if(allUsers[k].sponsor===cuData.knId)e++;}
+    document.getElementById('pTeam').innerText=e;
+    
+    let h='';
+    if(isSt){
+        allProds.filter(p=>p.storeEmail===akEmail).forEach(p=>h+=`<div class="ig-grid-item" style="background-image:url('${p.resimUrl}')" onclick="viewSinglePost('${p.id}')"></div>`);
+    }
+    document.getElementById('profileGrid').innerHTML=h;
+}
+
 function kopyalaKnId(){navigator.clipboard.writeText(cuData.knId).then(()=>showToast("ID Kopyalandı!"));}
 function openChat(em){if(em===akEmail)return;actChatEm=em;document.getElementById('chatPartnerName').innerText=allUsers[em]?.isim||'Kullanıcı';switchView('chatDetailView');}
 function renderChats(){let h='',add=[];for(let c in allChats){if(c.includes(akEmail)){let o=c.replace(akEmail,'').replace('_','');if(!o||add.includes(o)||!allUsers[o])continue;add.push(o);let lm=allChats[c].list;h+=`<div style="display:flex;align-items:center;gap:15px;padding:15px;border-bottom:1px solid var(--border);cursor:pointer; transition: background 0.2s;" onmouseover="this.style.background='var(--ig-gray)'" onmouseout="this.style.background='transparent'" onclick="openChat('${o}')"><div class="post-avatar" style="width:50px;height:50px; background-image:url('${allUsers[o].avatar||''}'); border:none;">${allUsers[o].avatar?'':allUsers[o].isim?.[0]}</div><div style="flex:1"><b style="font-size:15px;">${allUsers[o].isim}</b><br><small style="color:var(--text-muted); font-weight:600;">${lm[lm.length-1].m}</small></div></div>`;}}document.getElementById('messagesContainer').innerHTML=h||'<div style="text-align:center;padding:40px;color:var(--text-muted);"><i class="fa-regular fa-paper-plane" style="font-size:40px;margin-bottom:10px;opacity:0.5"></i><br>Henüz mesajın yok.</div>';}
@@ -728,7 +842,31 @@ function renderChatBox(){if(!actChatEm)return;let id=[akEmail,actChatEm].sort().
 function mesajGonder(){let t=document.getElementById('chatInput')?.value?.trim();if(!t)return;let id=[akEmail,actChatEm].sort().join('_');db.collection('chats').doc(id).set({list:firebase.firestore.FieldValue.arrayUnion({s:akEmail,m:t,t:Date.now()})},{merge:true});document.getElementById('chatInput').value='';}
 
 function openVipModal(){let h='';Object.keys(allPlans).sort((a,b)=>a-b).forEach(k=>{let p=allPlans[k];h+=`<div style="padding:15px;border:1px solid var(--border);border-radius:16px;margin-bottom:12px;display:flex;justify-content:space-between;align-items:center;background:var(--ig-gray);"><div><b style="font-size:15px;color:var(--text-main)">${p.ad}</b><br><small style="color:var(--primary); font-weight:800">%${p.oran*100} Kazanç Oranı</small></div><button class="btn-primary" style="width:auto; padding:10px 16px; box-shadow:none;" onclick="buyVip('${k}',${p.fiyat})">${p.fiyat} ₺</button></div>`;});document.getElementById('vipPlansContainer').innerHTML=h||'<p>Paket bulunamadı.</p>';}
-async function buyVip(lvl,f){if(cuData.bakiye<f)return showToast("Bakiye Yetersiz!",true);await db.collection('users').doc(akEmail).update({bakiye:firebase.firestore.FieldValue.increment(-f),rol:'promoter',seviye:lvl});await db.collection('stats').doc('main').set({totalCiro:firebase.firestore.FieldValue.increment(f),netKar:firebase.firestore.FieldValue.increment(f)},{merge:true});closeModal('vipModal');showToast("VIP Aktifleştirildi!");}
+
+async function buyVip(lvl, f) {
+    if(cuData.bakiye < f) return showToast("Bakiye Yetersiz!", true);
+    
+    // --- 4. MADDE EKLENTİSİ: VIP Satın Alımda 30 Gün Süre ve Satış Sıfırlama ---
+    let expiry = Date.now() + (30 * 24 * 60 * 60 * 1000); 
+    
+    await db.collection('users').doc(akEmail).update({
+        bakiye: firebase.firestore.FieldValue.increment(-f),
+        rol: 'promoter',
+        seviye: lvl,
+        vipExpiry: expiry,
+        aylikSatis: 0
+    });
+    // --------------------------------------------------------------------------
+    
+    await db.collection('stats').doc('main').set({
+        totalCiro: firebase.firestore.FieldValue.increment(f),
+        netKar: firebase.firestore.FieldValue.increment(f)
+    }, {merge: true});
+    
+    closeModal('vipModal');
+    showToast("Komisyon Üyeliği Aktifleştirildi! (30 Gün)");
+}
+
 function paraCekModalAc(){document.getElementById('wBakiyeGoster').innerText=(cuData.bakiye||0)+" ₺";openModal('withdrawModal');}
 async function paraCekTalebi(){
     if(cuData.rol!=='store'&&cuData.rol!=='admin') return showToast("Sadece esnaflar çekebilir!",true);
@@ -751,7 +889,6 @@ function adminMakeStore(e){db.collection('users').doc(e).update({rol:'store'});s
 function adminProductsDraw(){let h='';allProds.forEach(p=>h+=`<div class="ig-grid-item" style="background-image:url('${p.resimUrl}')"><button class="admin-del-btn" onclick="adminDeleteProduct('${p.id}')"><i class="fa-solid fa-xmark"></i></button></div>`);document.getElementById('adminProductsList').innerHTML=h;}
 function adminDeleteProduct(id){db.collection('products').doc(id).delete();}
 
-// GÜNCELLENEN: Admin Talepler (Para Çekme + Bakiye Yükleme Onayları)
 function adminWithdrawDraw(){
     let h='<h4 style="margin:0 0 10px 0; color:var(--text-main)">Para Çekme Talepleri</h4>', c=0;
     allWith.forEach(w=>{
