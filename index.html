@@ -13,10 +13,21 @@
 <script src="https://www.gstatic.com/firebasejs/10.8.1/firebase-firestore-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.8.1/firebase-auth-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.8.1/firebase-storage-compat.js"></script>
+
 <style>
 @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;800;900&display=swap');
-:root { --primary: #8e2de2; --primary-grad: linear-gradient(135deg, #8e2de2 0%, #4a00e0 100%); --secondary: #a1a1aa; --bg-color: #fafafa; --card-bg: #ffffff; --text-main: #18181b; --text-muted: #71717a; --danger: #ef4444; --success: #10b981; --warning: #f59e0b; --border: #e4e4e7; --ig-gray: #f4f4f5; --glass-bg: rgba(255, 255, 255, 0.85); --shadow-sm: 0 2px 10px rgba(0,0,0,0.03); --shadow-md: 0 10px 30px rgba(142,45,226,0.12); }
-body.dark-mode { --bg-color: #09090b; --card-bg: #18181b; --text-main: #f4f4f5; --text-muted: #a1a1aa; --border: #27272a; --ig-gray: #27272a; --glass-bg: rgba(9, 9, 11, 0.85); --shadow-sm: 0 4px 20px rgba(0,0,0,0.3); }
+:root { 
+    --primary: #8e2de2; --primary-grad: linear-gradient(135deg, #8e2de2 0%, #4a00e0 100%); 
+    --secondary: #a1a1aa; --bg-color: #fafafa; --card-bg: #ffffff; --text-main: #18181b; 
+    --text-muted: #71717a; --danger: #ef4444; --success: #10b981; --warning: #f59e0b; 
+    --border: #e4e4e7; --ig-gray: #f4f4f5; --glass-bg: rgba(255, 255, 255, 0.85); 
+    --shadow-sm: 0 2px 10px rgba(0,0,0,0.03); --shadow-md: 0 10px 30px rgba(142,45,226,0.12); 
+}
+body.dark-mode { 
+    --bg-color: #09090b; --card-bg: #18181b; --text-main: #f4f4f5; --text-muted: #a1a1aa; 
+    --border: #27272a; --ig-gray: #27272a; --glass-bg: rgba(9, 9, 11, 0.85); 
+    --shadow-sm: 0 4px 20px rgba(0,0,0,0.3); 
+}
 
 * { box-sizing: border-box; outline: none; -webkit-tap-highlight-color: transparent; margin: 0; padding: 0; }
 body { font-family: 'Plus Jakarta Sans', sans-serif; background: #d4d4d8; display: flex; justify-content: center; align-items: center; min-height: 100vh; overflow: hidden; }
@@ -121,14 +132,11 @@ button:disabled { opacity: 0.7; cursor: not-allowed; }
 
 <div class="app-shell" id="appShell">
     
-    <div id="serverLoading"><div class="premium-spinner"></div><h1 class="text-gradient" style="font-size:28px;font-weight:900;margin:0">EVİNDE</h1><p style="font-size:11px;font-weight:800;color:var(--text-muted);margin-top:8px; letter-spacing: 2px;">BAĞLANIYOR</p></div>
-
-    <div id="installBanner">
-        <div style="display:flex; align-items:center; gap:12px;"><div style="width:40px; height:40px; background:var(--primary-grad); border-radius:12px; display:flex; justify-content:center; align-items:center; color:#fff; font-size:20px;"><i class="fa-solid fa-house-chimney"></i></div><div><b style="display:block; font-size:14px; font-weight:800;">Evinde Uygulaması</b><small style="font-size:11px; color:var(--text-muted); font-weight:600;">Ana ekrana ekle ve hızlı kullan</small></div></div>
-        <div style="display:flex; gap:10px;"><button onclick="document.getElementById('installBanner').style.display='none'" style="background:var(--ig-gray); color:var(--text-main); padding:8px 12px; font-size:12px; border-radius:10px;">Geç</button><button onclick="installApp()" style="background:var(--primary-grad); color:#fff; padding:8px 12px; font-size:12px; border-radius:10px; box-shadow:var(--shadow-sm);">İndir</button></div>
+    <div id="serverLoading">
+        <div class="premium-spinner"></div>
+        <h1 class="text-gradient" style="font-size:28px;font-weight:900;margin:0">EVİNDE</h1>
+        <p style="font-size:11px;font-weight:800;color:var(--text-muted);margin-top:8px; letter-spacing: 2px;">BAĞLANIYOR</p>
     </div>
-
-    <div id="toast">Bildirim</div>
 
     <div class="modal-overlay" id="depositModal"><div class="modal-card"><div class="close-bar" onclick="closeModal('depositModal')"></div><h3 style="margin:0 0 15px 0;text-align:center;font-weight:900" class="text-gradient">Bakiye Yükle</h3><p style="text-align:center;font-size:12px;font-weight:600;color:var(--text-muted);margin-bottom:20px">Ödeme bildiriminiz yönetici tarafından onaylandığında tutar bakiyenize yansıyacaktır.</p><div class="input-group"><input type="number" id="dAmount" placeholder="Yatırılan Tutar (₺)"></div><div class="input-group"><input type="text" id="dSender" placeholder="Gönderici Ad Soyad"></div><button class="btn-success" onclick="bakiyeYukleTalep()">Bildirimi Gönder</button></div></div>
     <div class="modal-overlay" id="transferModal"><div class="modal-card"><div class="close-bar" onclick="closeModal('transferModal')"></div><h3 style="margin:0 0 15px 0;text-align:center;font-weight:900" class="text-gradient">Para Gönder</h3><div class="input-group"><input type="text" id="tKnId" placeholder="Alıcı Evinde No (EN-123456)" style="text-transform:uppercase"></div><div class="input-group"><input type="number" id="tTutar" placeholder="Tutar (₺)"></div><button class="btn-primary" onclick="paraGonder()">Gönder</button></div></div>
@@ -253,6 +261,17 @@ button:disabled { opacity: 0.7; cursor: not-allowed; }
 </div>
 
 <script>
+// Güvenlik: Her durumda "BAĞLANIYOR" ekranını kapatacak sigorta
+window.addEventListener('DOMContentLoaded', () => {
+    setTimeout(() => {
+        let sl = document.getElementById('serverLoading');
+        if (sl && sl.style.display !== 'none') {
+            sl.style.opacity = '0';
+            setTimeout(() => { sl.style.display = 'none'; }, 600);
+        }
+    }, 1500); 
+});
+
 if ('serviceWorker' in navigator) { 
     window.addEventListener('load', () => { navigator.serviceWorker.register('sw.js').catch(err => console.log("SW Kayıt Hatası:", err)); }); 
 }
@@ -299,11 +318,15 @@ window.onload=()=>{
     checkTheme(); 
     setTimeout(hideLS, 1000); 
     
-    // GHOST OTURUM HATASI ÇÖZÜMÜ: Otomatik Kimlik Doğrulama Dinleyicisi
+    // OTOMATİK OTURUM YÖNETİMİ
     firebase.auth().onAuthStateChanged(user => {
         if(user) {
             akEmail = user.email.toLowerCase();
-            sepet = JSON.parse(localStorage.getItem(getCartKey())) || [];
+            try {
+                sepet = JSON.parse(localStorage.getItem(getCartKey())) || [];
+            } catch(e) {
+                sepet = []; localStorage.removeItem(getCartKey());
+            }
             if(sepet.length > 0) { document.getElementById('cartCount').innerText = sepet.length; document.getElementById('cartCount').style.display = 'flex'; }
             listenToUser(); listenToAllUsers(); listenToProds(); 
         } else {
@@ -314,7 +337,7 @@ window.onload=()=>{
 };
 
 function hideLS(){ let sl=document.getElementById('serverLoading'); if(sl){ sl.style.opacity='0'; setTimeout(()=>{sl.style.display='none'},600); } }
-function checkTheme(){if(localStorage.getItem('kapinda_dark')==='true'){document.body.classList.add('dark-mode');let t=document.getElementById('darkModeToggle');if(t)t.checked=true;}}
+function checkTheme(){try{if(localStorage.getItem('kapinda_dark')==='true'){document.body.classList.add('dark-mode');let t=document.getElementById('darkModeToggle');if(t)t.checked=true;}}catch(e){}}
 function toggleDarkMode(){let isD=document.getElementById('darkModeToggle').checked;document.body.classList.toggle('dark-mode',isD);localStorage.setItem('kapinda_dark',isD);}
 function showToast(m,err=false){let t=document.getElementById('toast');t.innerText=m;t.style.background=err?"var(--danger)":"var(--primary-grad)";t.style.color="#fff";t.classList.add('show');setTimeout(()=>t.classList.remove('show'),4000);}
 
@@ -468,7 +491,7 @@ async function urunKaydet() {
     btn.innerText = "Yükleniyor..."; btn.disabled = true;
     try {
         let url = await uploadImageToImgBB(previewImg.src);
-        await db.collection('products').add({ ad: a, fiyat: f, eskiFiyat: ef, resimUrl: url, storeEmail: akEmail, storeName: cuData.isim || "İsimsiz", storeUsername: cuData.username || cuData.knId, storeAvatar: cuData.avatar || null, likes: [], comments: [], timestamp: firebase.firestore.FieldValue.serverTimestamp() });
+        await db.collection('products').add({ ad: a, fiyat: Math.round(f), eskiFiyat: Math.round(ef), resimUrl: url, storeEmail: akEmail, storeName: cuData.isim || "İsimsiz", storeUsername: cuData.username || cuData.knId, storeAvatar: cuData.avatar || null, likes: [], comments: [], timestamp: firebase.firestore.FieldValue.serverTimestamp() });
         document.getElementById('upAd').value = ''; document.getElementById('upFiyat').value = ''; document.getElementById('upEskiFiyat').value = ''; document.getElementById('upResFile').value = ''; previewImg.style.display = 'none'; previewImg.src = ''; document.getElementById('upResLabel').style.display = 'block'; switchView('profileView'); showToast("Ürün başarıyla paylaşıldı!");
     } catch (e) { showToast("Hata: Resim yüklenemedi!", true); } finally { btn.innerText = "Paylaş"; btn.disabled = false; }
 }
@@ -484,72 +507,97 @@ let isF = u.followers?.includes(akEmail); let fText = isF ? "Takipten Çık" : "
 document.getElementById('opActionsContainer').innerHTML = `<button class="btn-action" style="background:${fBg};color:#fff;flex:1" onclick="toggleFollow('${em}')">${fText}</button><button class="btn-primary" style="flex:1" onclick="openChatFromProfile()"><i class="fa-regular fa-envelope"></i> Mesaj</button>`;
 let h='';mp.forEach(p=>h+=`<div class="ig-grid-item" style="background-image:url('${p.resimUrl}')" onclick="viewSinglePost('${p.id}')"></div>`);document.getElementById('opGrid').innerHTML=h;switchView('otherProfileView');document.getElementById('searchResults').style.display='none';}
 
-// YARIŞMA DURUMU ÇÖZÜMÜ: arrayUnion ve arrayRemove
-function toggleFollow(em){ 
-    let u=allUsers[em]; if(!u) return; 
-    let isF=u.followers&&u.followers.includes(akEmail); 
+function toggleFollow(em) {
+    let u = allUsers[em]; if (!u) return;
+    let isF = u.followers && u.followers.includes(akEmail);
     let ref = db.collection('users').doc(em);
-    if(isF) {
-        ref.update({followers: firebase.firestore.FieldValue.arrayRemove(akEmail)}).then(()=>{ showToast("Takipten çıkıldı!"); openOP(em); });
-    } else { 
-        ref.update({followers: firebase.firestore.FieldValue.arrayUnion(akEmail)}).then(()=>{ notifyUser(em, `@${cuData.username||cuData.isim} seni takip etmeye başladı!`); showToast("Takip edildi!"); openOP(em); });
-    } 
+    if (isF) {
+        ref.update({ followers: firebase.firestore.FieldValue.arrayRemove(akEmail) }).then(() => { showToast("Takipten çıkıldı!"); openOP(em); });
+    } else {
+        ref.update({ followers: firebase.firestore.FieldValue.arrayUnion(akEmail) }).then(() => { notifyUser(em, `@${cuData.username || cuData.isim} seni takip etmeye başladı!`); showToast("Takip edildi!"); openOP(em); });
+    }
 }
+
 function openChatFromProfile(){openChat(viewEmail);}
 function viewSinglePost(id){let p=allProds.find(x=>x.id===id);if(p){document.getElementById('activePostId').value=id;document.getElementById('singlePostContainer').innerHTML=createPostHtml(p);switchView('singlePostView');}}
 function backFromSinglePost(){switchView(lastView);}
-function tLike(id){
-    let p=allProds.find(x=>x.id===id);if(!p)return;
-    let isL=p.likes&&p.likes.includes(akEmail);
+
+function tLike(id) {
+    let p = allProds.find(x => x.id === id); if (!p) return;
+    let isL = p.likes && p.likes.includes(akEmail);
     let ref = db.collection('products').doc(id);
-    if(isL){
-        ref.update({likes: firebase.firestore.FieldValue.arrayRemove(akEmail)});
-    }else{
-        ref.update({likes: firebase.firestore.FieldValue.arrayUnion(akEmail)}); 
-        notifyUser(p.storeEmail, `@${cuData.username||cuData.isim} gönderini beğendi!`);
-    }
+    if (isL) { ref.update({ likes: firebase.firestore.FieldValue.arrayRemove(akEmail) }); } 
+    else { ref.update({ likes: firebase.firestore.FieldValue.arrayUnion(akEmail) }); notifyUser(p.storeEmail, `@${cuData.username || cuData.isim} gönderini beğendi!`); }
 }
+
 function oComm(id){let p=allProds.find(x=>x.id===id);if(!p)return;document.getElementById('activePostId').value=id;let c=p.comments||[];let h='';c.forEach(x=>{let u=allUsers[x.u]||{isim:'Bilinmeyen'};let t=getTick(u.rol);let av=u.avatar?`background-image:url('${u.avatar}');`:'';h+=`<div style="display:flex;gap:12px;margin-bottom:15px"><div class="post-avatar" style="${av};width:36px;height:36px;border-radius:50%;">${u.isim?.[0]||'A'}</div><div style="font-size:14px; background:var(--ig-gray); padding:10px 14px; border-radius:0 16px 16px 16px;"><b style="font-weight:900; color:var(--text-main);display:inline-flex;align-items:center;">@${u.username||'üye'} ${t}</b><br>${x.t}</div></div>`;});document.getElementById('commentsList').innerHTML=h||'<div style="text-align:center;color:var(--text-muted);margin-top:30px;"><i class="fa-regular fa-comments" style="font-size:30px; margin-bottom:10px;"></i><br>İlk yorumu sen yap.</div>';openModal('commentsModal');}
 function addComment(){let v=document.getElementById('newCommentInput')?.value?.trim();if(!v)return;let id=document.getElementById('activePostId')?.value; let p=allProds.find(x=>x.id===id);
 db.collection('products').doc(id).update({comments:firebase.firestore.FieldValue.arrayUnion({u:akEmail,t:v,d:Date.now()})}).then(()=>{ notifyUser(p.storeEmail, `@${cuData.username||cuData.isim} gönderine yorum yaptı: "${v}"`); document.getElementById('newCommentInput').value='';});}
 
 function shareP(ad,f,un){ if(cuData.rol === 'customer' && (!cuData.seviye || cuData.seviye === '0')) { return showToast("Bağlantı paylaşarak para kazanmak için VIP (Seviye) satın almalısınız!", true); } let t=`Evinde App!\n@${un} mağazasından ${ad} sadece ${f}₺!\nHemen incele!`; navigator.clipboard.writeText(t).then(()=>showToast("Bağlantı kopyalandı!")); }
 
-function sepeteEkle(id, ad, f, s) { sepet.push({id, ad, fiyat: f, satici: s}); localStorage.setItem(getCartKey(), JSON.stringify(sepet)); document.getElementById('cartCount').innerText = sepet.length; document.getElementById('cartCount').style.display = 'flex'; showToast("Sepete Eklendi!"); }
+function sepeteEkle(id, ad, f, s) { sepet.push({id, ad, fiyat: Math.round(f), satici: s}); localStorage.setItem(getCartKey(), JSON.stringify(sepet)); document.getElementById('cartCount').innerText = sepet.length; document.getElementById('cartCount').style.display = 'flex'; showToast("Sepete Eklendi!"); }
 function sepettenCikar(index) { sepet.splice(index, 1); localStorage.setItem(getCartKey(), JSON.stringify(sepet)); document.getElementById('cartCount').innerText = sepet.length; if(sepet.length === 0) document.getElementById('cartCount').style.display = 'none'; renderCart(); }
 
-function renderCart(){let h='',t=0;sepet.forEach((x, index)=>{t+=x.fiyat;h+=`<div style="display:flex;justify-content:space-between; align-items:center; padding:15px; border-bottom:1px solid var(--border); background:var(--card-bg); border-radius:12px; margin-bottom:10px;"><div style="display:flex; flex-direction:column;"><b style="font-size:15px;">${x.ad}</b><small style="color:var(--text-muted)">Satıcı: @${allUsers[x.satici]?.username||'Mağaza'}</small></div><div style="display:flex; align-items:center; gap:15px;"><b style="color:var(--primary); font-size:16px;">${x.fiyat} ₺</b><i class="fa-solid fa-trash" style="color:var(--danger); cursor:pointer;" onclick="sepettenCikar(${index})"></i></div></div>`;});document.getElementById('cartItemsContainer').innerHTML=h||'<div style="text-align:center;color:var(--text-muted);margin-top:60px;"><i class="fa-solid fa-basket-shopping" style="font-size:40px; margin-bottom:10px; opacity:0.5;"></i><br>Sepetin şu an boş.</div>';document.getElementById('cartTotal').innerText=Math.round(t)+" ₺";}
+function renderCart(){let h='',t=0;sepet.forEach((x, index)=>{t+=x.fiyat;h+=`<div style="display:flex;justify-content:space-between; align-items:center; padding:15px; border-bottom:1px solid var(--border); background:var(--card-bg); border-radius:12px; margin-bottom:10px;"><div style="display:flex; flex-direction:column;"><b style="font-size:15px;">${x.ad}</b><small style="color:var(--text-muted)">Satıcı: @${allUsers[x.satici]?.username||'Mağaza'}</small></div><div style="display:flex; align-items:center; gap:15px;"><b style="color:var(--primary); font-size:16px;">${Math.round(x.fiyat)} ₺</b><i class="fa-solid fa-trash" style="color:var(--danger); cursor:pointer;" onclick="sepettenCikar(${index})"></i></div></div>`;});document.getElementById('cartItemsContainer').innerHTML=h||'<div style="text-align:center;color:var(--text-muted);margin-top:60px;"><i class="fa-solid fa-basket-shopping" style="font-size:40px; margin-bottom:10px; opacity:0.5;"></i><br>Sepetin şu an boş.</div>';document.getElementById('cartTotal').innerText=Math.round(t)+" ₺";}
 
-// YUVARLAMA HATALARI ÇÖZÜMÜ (Math.round eklendi)
 async function siparisVer() {
-    if(!sepet.length) return showToast("Sepet boş!", true); let adres = document.getElementById('cartAddress').value.trim(); if(!adres) return showToast("Lütfen teslimat adresi girin!", true);
-    let tot = sepet.reduce((s,i) => s + i.fiyat, 0); if(cuData.bakiye < tot) return showToast("Bakiye Yetersiz!", true);
-    showToast("İşleniyor..."); let btn = document.querySelector("#cartView .btn-primary"); if(btn) { btn.innerText = "Bekleyin..."; btn.disabled = true; }
     try {
-        await db.collection('users').doc(akEmail).update({ bakiye: firebase.firestore.FieldValue.increment(-Math.round(tot)) });
+        if(!sepet || !sepet.length) return showToast("Sepet boş!", true);
+        let adres = document.getElementById('cartAddress').value.trim();
+        if(!adres) return showToast("Lütfen teslimat adresi girin!", true);
+
+        let tot = sepet.reduce((s,i) => s + (i.fiyat || 0), 0);
+        if((cuData.bakiye || 0) < tot) return showToast("Bakiye Yetersiz!", true);
+
+        showToast("İşleniyor...");
+        let btn = document.querySelector("#cartView .btn-primary");
+        if(btn) { btn.innerText = "Bekleyin..."; btn.disabled = true; }
+
+        let batch = db.batch(); 
         
-        let sistemKari = Math.round(tot * 0.20); 
+        let aliciRef = db.collection('users').doc(akEmail);
+        batch.update(aliciRef, { bakiye: firebase.firestore.FieldValue.increment(-Math.round(tot)) });
+
+        let sistemKari = Math.round(tot * 0.20);
         let sponsorPayi = 0;
-        
+
         if (cuData.sponsor && allUsers[cuData.sponsor]) {
-            sponsorPayi = Math.round(tot * 0.05); 
-            sistemKari = Math.round(tot * 0.15);  
-            await db.collection('users').doc(cuData.sponsor).update({ bakiye: firebase.firestore.FieldValue.increment(sponsorPayi) });
+            sponsorPayi = Math.round(tot * 0.05);
+            sistemKari = Math.round(tot * 0.15);
+            let spRef = db.collection('users').doc(cuData.sponsor);
+            batch.update(spRef, { bakiye: firebase.firestore.FieldValue.increment(sponsorPayi) });
             notifyUser(cuData.sponsor, `Ağınızdaki bir alışverişten ${sponsorPayi} ₺ komisyon kazandınız!`);
         }
-        
+
         for(const i of sepet) {
             let saticiPayi = Math.round(i.fiyat * 0.80);
-            await db.collection('users').doc(i.satici).update({ bakiye: firebase.firestore.FieldValue.increment(saticiPayi), aylikSatis: firebase.firestore.FieldValue.increment(1) });
+            let saticiRef = db.collection('users').doc(i.satici);
+            batch.update(saticiRef, { bakiye: firebase.firestore.FieldValue.increment(saticiPayi), aylikSatis: firebase.firestore.FieldValue.increment(1) });
             notifyUser(i.satici, `🎉 Yeni Sipariş: ${i.ad} (${saticiPayi} ₺ kazandınız)`);
-            await db.collection('orders').add({ aliciEmail: akEmail, aliciAd: cuData.isim, saticiEmail: i.satici, saticiAd: allUsers[i.satici]?.isim, urunAd: i.ad, fiyat: i.fiyat, adres: adres, durum: 'Hazırlanıyor', tarih: Date.now() });
+
+            let orderRef = db.collection('orders').doc();
+            batch.set(orderRef, { aliciEmail: akEmail, aliciAd: cuData.isim, saticiEmail: i.satici, saticiAd: allUsers[i.satici]?.isim, urunAd: i.ad, fiyat: Math.round(i.fiyat), adres: adres, durum: 'Hazırlanıyor', tarih: Date.now() });
         }
-        
-        await db.collection('stats').doc('main').set({ totalCiro: firebase.firestore.FieldValue.increment(Math.round(tot)), netKar: firebase.firestore.FieldValue.increment(sistemKari) }, {merge: true});
-        
-        sepet = []; localStorage.removeItem(getCartKey()); document.getElementById('cartCount').style.display = 'none'; document.getElementById('cartAddress').value = '';
-        switchView('profileView'); showToast("Sipariş Başarıyla Onaylandı!");
-    } catch (e) { showToast("Sipariş sırasında hata!", true); } finally { if(btn) { btn.innerText = "Güvenli Ödeme Yap"; btn.disabled = false; } }
+
+        let statsRef = db.collection('stats').doc('main');
+        batch.set(statsRef, { totalCiro: firebase.firestore.FieldValue.increment(Math.round(tot)), netKar: firebase.firestore.FieldValue.increment(sistemKari) }, {merge: true});
+
+        await batch.commit();
+
+        sepet = [];
+        localStorage.removeItem(getCartKey());
+        document.getElementById('cartCount').style.display = 'none';
+        document.getElementById('cartAddress').value = '';
+        switchView('profileView');
+        showToast("Sipariş Başarıyla Onaylandı!");
+    } catch (e) {
+        showToast("Sipariş sırasında hata!", true);
+        console.error(e);
+    } finally {
+        let btn = document.querySelector("#cartView .btn-primary");
+        if(btn) { btn.innerText = "Güvenli Ödeme Yap"; btn.disabled = false; }
+    }
 }
 
 async function loadOrders(tip) {
@@ -567,9 +615,9 @@ async function loadOrders(tip) {
 
 function kargolaSiparis(orderId, aliciEm, urunAd) { db.collection('orders').doc(orderId).update({durum: 'Kargoya Verildi'}).then(() => { notifyUser(aliciEm, `📦 Siparişin yola çıktı: ${urunAd}`); showToast("Durum güncellendi!"); loadOrders('satici'); }); }
 
-function bakiyeYukleTalep() { let t = parseInt(document.getElementById('dAmount')?.value); let s = document.getElementById('dSender')?.value?.trim(); if(!t || !s || t<=0) return showToast("Geçerli tutar ve isim girin!", true); db.collection('deposits').add({em: akEmail, ad: s, tutar: t, durum: 'bekliyor', tarih: Date.now()}).then(()=>{ closeModal('depositModal'); document.getElementById('dAmount').value=''; document.getElementById('dSender').value=''; showToast("Bakiye yükleme talebiniz alındı!"); });}
+function bakiyeYukleTalep() { let t = parseInt(document.getElementById('dAmount')?.value); let s = document.getElementById('dSender')?.value?.trim(); if(!t || !s || t<=0) return showToast("Geçerli tutar ve isim girin!", true); db.collection('deposits').add({em: akEmail, ad: s, tutar: Math.round(t), durum: 'bekliyor', tarih: Date.now()}).then(()=>{ closeModal('depositModal'); document.getElementById('dAmount').value=''; document.getElementById('dSender').value=''; showToast("Bakiye yükleme talebiniz alındı!"); });}
 
-function paraGonder() { let el=document.getElementById('tKnId');if(!el||!el.value) return;let alici=el.value.toUpperCase().trim();let t=parseInt(document.getElementById('tTutar')?.value||"0"); if(!alici||t<=0||cuData.bakiye<t) return showToast("Hata veya bakiye yetersiz!",true); db.collection('users').where("knId","==",alici).get().then(snap=>{ if(snap.empty) return showToast("Hatalı ID!",true);let aEm=snap.docs[0].id;if(aEm===akEmail) return showToast("Kendinize gönderemezsiniz!",true); db.collection('users').doc(akEmail).update({bakiye:firebase.firestore.FieldValue.increment(-t)}).then(()=>{ db.collection('users').doc(aEm).update({bakiye:firebase.firestore.FieldValue.increment(t)}); db.collection('transfers').add({g:akEmail,gN:cuData.isim,gKn:cuData.knId,a:aEm,aN:allUsers[aEm]?.isim,aKn:alici,t:t,tarih:Date.now()}); el.value=''; document.getElementById('tTutar').value=''; notifyUser(aEm, `💸 @${cuData.username||cuData.isim} sana ${t} ₺ gönderdi!`); closeModal('transferModal');showToast("Transfer Başarılı!"); }); });}
+function paraGonder() { let el=document.getElementById('tKnId');if(!el||!el.value) return;let alici=el.value.toUpperCase().trim();let t=parseInt(document.getElementById('tTutar')?.value||"0"); if(!alici||t<=0||cuData.bakiye<t) return showToast("Hata veya bakiye yetersiz!",true); db.collection('users').where("knId","==",alici).get().then(snap=>{ if(snap.empty) return showToast("Hatalı ID!",true);let aEm=snap.docs[0].id;if(aEm===akEmail) return showToast("Kendinize gönderemezsiniz!",true); db.collection('users').doc(akEmail).update({bakiye:firebase.firestore.FieldValue.increment(-Math.round(t))}).then(()=>{ db.collection('users').doc(aEm).update({bakiye:firebase.firestore.FieldValue.increment(Math.round(t))}); db.collection('transfers').add({g:akEmail,gN:cuData.isim,gKn:cuData.knId,a:aEm,aN:allUsers[aEm]?.isim,aKn:alici,t:Math.round(t),tarih:Date.now()}); el.value=''; document.getElementById('tTutar').value=''; notifyUser(aEm, `💸 @${cuData.username||cuData.isim} sana ${Math.round(t)} ₺ gönderdi!`); closeModal('transferModal');showToast("Transfer Başarılı!"); }); });}
 
 function renderProf(){ if(!cuData)return; let t=getTick(cuData.rol); document.getElementById('pName').innerHTML=cuData.isim+t; document.getElementById('pUsername').innerText="@"+(cuData.username||cuData.knId); document.getElementById('pBalance').innerText=Math.round(cuData.bakiye||0)+" ₺"; document.getElementById('pKnId').innerHTML=cuData.knId + ' <i class="fa-regular fa-copy" style="margin-left:4px"></i>'; let av=document.getElementById('pAvatar'); if(cuData.avatar){ av.style.backgroundImage=`url('${cuData.avatar}')`; av.innerText=''; av.style.border='none'; }else{ av.style.backgroundImage='none'; av.innerText=cuData.isim?.[0]||'A'; av.style.border='2px solid var(--border)'; } let bd=document.getElementById('pLevelBadge'); if(cuData.rol==='store'||cuData.rol==='admin'){ bd.style.display='none'; }else{ bd.style.display='inline-flex'; bd.innerHTML='<i class="fa-solid fa-star"></i> SEVİYE '+(cuData.seviye||"0"); } let activeDiv = document.getElementById('pActiveStatus'); if (!activeDiv) { activeDiv = document.createElement('div'); activeDiv.id = 'pActiveStatus'; document.getElementById('pUsername').parentNode.insertBefore(activeDiv, document.getElementById('pLevelBadge').nextSibling); } if (cuData.seviye > 0 && cuData.vipExpiry) { let satis = cuData.aylikSatis || 0; let daysLeft = Math.ceil((cuData.vipExpiry - Date.now()) / (1000 * 60 * 60 * 24)); let color = satis >= 2 ? 'var(--success)' : 'var(--warning)'; activeDiv.innerHTML = `<div style="font-size:12px; font-weight:800; color:var(--text-main); background:var(--card-bg); padding:10px 14px; border-radius:12px; display:inline-block; border:1px solid ${color}; margin-top:12px; box-shadow:var(--shadow-sm)"><i class="fa-solid fa-chart-line" style="color:${color}"></i> Aylık Satış: <span style="color:${color}; font-size:14px;">${satis}</span> / 2 <br><small style="color:var(--text-muted); font-weight:600; margin-top:4px; display:block;">Kalan Abonelik: ${daysLeft > 0 ? daysLeft : 0} Gün</small></div>`; activeDiv.style.display = 'block'; } else { activeDiv.style.display = 'none'; } let isSt=(cuData.rol==='store'||cuData.rol==='admin'); document.getElementById('btnUrunEkle').style.display=isSt?'flex':'none'; document.getElementById('btnKasa').style.display=isSt?'flex':'none'; document.getElementById('btnParaCek').style.display=isSt?'flex':'none'; document.getElementById('pFollowers').innerText=(cuData.followers?.length||0); let e=0; for(let k in allUsers){if(allUsers[k].sponsor===cuData.knId)e++;} document.getElementById('pTeam').innerText=e; let h=''; if(isSt){ allProds.filter(p=>p.storeEmail===akEmail).forEach(p=>h+=`<div class="ig-grid-item" style="background-image:url('${p.resimUrl}')" onclick="viewSinglePost('${p.id}')"></div>`); } document.getElementById('profileGrid').innerHTML=h; }
 
@@ -580,20 +628,18 @@ function renderChatBox(){if(!actChatEm)return;let id=[akEmail,actChatEm].sort().
 function mesajGonder(){let t=document.getElementById('chatInput')?.value?.trim();if(!t)return;let id=[akEmail,actChatEm].sort().join('_');db.collection('chats').doc(id).set({list:firebase.firestore.FieldValue.arrayUnion({s:akEmail,m:t,t:Date.now()})},{merge:true}); notifyUser(actChatEm, `💬 @${cuData.username||cuData.isim} sana yeni mesaj gönderdi.`); document.getElementById('chatInput').value='';}
 
 function openVipModal(){let h='';Object.keys(allPlans).sort((a,b)=>a-b).forEach(k=>{let p=allPlans[k];h+=`<div style="padding:15px;border:1px solid var(--border);border-radius:16px;margin-bottom:12px;display:flex;justify-content:space-between;align-items:center;background:var(--ig-gray);"><div><b style="font-size:15px;color:var(--text-main)">${p.ad}</b><br><small style="color:var(--primary); font-weight:800">%${p.oran*100} Kazanç Oranı</small></div><button class="btn-primary" style="width:auto; padding:10px 16px; box-shadow:none;" onclick="buyVip('${k}',${p.fiyat})">${p.fiyat} ₺</button></div>`;});document.getElementById('vipPlansContainer').innerHTML=h||'<p>Paket bulunamadı.</p>';}
-
-// ROL ÇAKIŞMASI ÇÖZÜMÜ
 async function buyVip(lvl, f) { 
-    if(cuData.bakiye < f) return showToast("Bakiye Yetersiz!", true); 
+    if((cuData.bakiye || 0) < f) return showToast("Bakiye Yetersiz!", true); 
     let expiry = Date.now() + (30 * 24 * 60 * 60 * 1000); 
     let newRol = (cuData.rol === 'admin' || cuData.rol === 'store') ? cuData.rol : 'promoter';
-    await db.collection('users').doc(akEmail).update({ bakiye: firebase.firestore.FieldValue.increment(-f), rol: newRol, seviye: lvl, vipExpiry: expiry, aylikSatis: 0 }); 
-    await db.collection('stats').doc('main').set({ totalCiro: firebase.firestore.FieldValue.increment(f), netKar: firebase.firestore.FieldValue.increment(f) }, {merge: true}); 
+    await db.collection('users').doc(akEmail).update({ bakiye: firebase.firestore.FieldValue.increment(-Math.round(f)), rol: newRol, seviye: lvl, vipExpiry: expiry, aylikSatis: 0 }); 
+    await db.collection('stats').doc('main').set({ totalCiro: firebase.firestore.FieldValue.increment(Math.round(f)), netKar: firebase.firestore.FieldValue.increment(Math.round(f)) }, {merge: true}); 
     closeModal('vipModal'); showToast("Komisyon Üyeliği Aktifleştirildi! (30 Gün)"); 
 }
 
 function paraCekModalAc(){document.getElementById('wBakiyeGoster').innerText=Math.round(cuData.bakiye||0)+" ₺";openModal('withdrawModal');}
-async function paraCekTalebi(){ if(cuData.rol!=='store'&&cuData.rol!=='admin') return showToast("Sadece esnaflar çekebilir!",true); let n=document.getElementById('wAd')?.value,i=document.getElementById('wIban')?.value,t=parseInt(document.getElementById('wTutar')?.value); if(!n||!i||!t||t>cuData.bakiye) return showToast("Bakiye yetersiz veya eksik bilgi!",true); await db.collection('users').doc(akEmail).update({bakiye:firebase.firestore.FieldValue.increment(-t)}); await db.collection('withdrawals').add({em:akEmail,ad:n,iban:i,tutar:t,durum:'bekliyor',tarih:Date.now()}); closeModal('withdrawModal');showToast("Banka talebiniz alındı!"); }
-function cekBozdur(){let el=document.getElementById('bozdurKod');if(!el||!el.value)return;let k=el.value.toUpperCase().trim();db.collection('vouchers').where('c','==',k).where('s','==','active').get().then(snap=>{if(snap.empty)return showToast("Geçersiz Kod!",true);let v=snap.docs[0];db.collection('vouchers').doc(v.id).update({s:'used'}).then(()=>{db.collection('users').doc(akEmail).update({bakiye:firebase.firestore.FieldValue.increment(v.data().a)});el.value='';showToast("Kasa başarıyla yüklendi!");});});}
+async function paraCekTalebi(){ if(cuData.rol!=='store'&&cuData.rol!=='admin') return showToast("Sadece esnaflar çekebilir!",true); let n=document.getElementById('wAd')?.value,i=document.getElementById('wIban')?.value,t=parseInt(document.getElementById('wTutar')?.value); if(!n||!i||!t||t>cuData.bakiye) return showToast("Bakiye yetersiz veya eksik bilgi!",true); await db.collection('users').doc(akEmail).update({bakiye:firebase.firestore.FieldValue.increment(-Math.round(t))}); await db.collection('withdrawals').add({em:akEmail,ad:n,iban:i,tutar:Math.round(t),durum:'bekliyor',tarih:Date.now()}); closeModal('withdrawModal');showToast("Banka talebiniz alındı!"); }
+function cekBozdur(){let el=document.getElementById('bozdurKod');if(!el||!el.value)return;let k=el.value.toUpperCase().trim();db.collection('vouchers').where('c','==',k).where('s','==','active').get().then(snap=>{if(snap.empty)return showToast("Geçersiz Kod!",true);let v=snap.docs[0];db.collection('vouchers').doc(v.id).update({s:'used'}).then(()=>{db.collection('users').doc(akEmail).update({bakiye:firebase.firestore.FieldValue.increment(Math.round(v.data().a))});el.value='';showToast("Kasa başarıyla yüklendi!");});});}
 
 function godTab(t,el){document.querySelectorAll('.god-tab').forEach(x=>x.classList.remove('active'));el.classList.add('active');document.getElementById('godTabAnaliz').style.display=t==='analiz'?'block':'none';document.getElementById('godTabKategoriler').style.display=t==='kategoriler'?'block':'none';document.getElementById('godTabUyeler').style.display=t==='uyeler'?'block':'none';document.getElementById('godTabUrunler').style.display=t==='urunler'?'block':'none';document.getElementById('godTabTransferler').style.display=t==='transferler'?'block':'none';document.getElementById('godTabOdemeler').style.display=t==='odemeler'?'block':'none';document.getElementById('godTabSaas').style.display=t==='saas'?'block':'none';if(t==='kategoriler')adminCatsDraw();if(t==='uyeler')adminUsersDraw();if(t==='urunler')adminProductsDraw();if(t==='transferler')adminTransfersDraw();if(t==='odemeler')adminWithdrawDraw();if(t==='saas')adminPlansDraw();}
 function adminCatsDraw(){let h='';allCats.forEach(c=>h+=`<div class="god-list-item"><b>${c.name}</b><button style="background:var(--danger); color:#fff; border-radius:8px; padding:6px 12px" onclick="adminDelCat('${c.id}')">Sil</button></div>`);document.getElementById('adminCatsList').innerHTML=h;} function adminAddCat(){let n=document.getElementById('newCatName').value;db.collection('categories').add({name:n});} function adminDelCat(id){db.collection('categories').doc(id).delete();}
@@ -612,14 +658,4 @@ function adminUsersDraw(){
     }
     document.getElementById('adminUserList').innerHTML=h;
 }
-function adminSetCat(em,id){db.collection('users').doc(em).update({category:id});} function adminAddPara(e){let m=prompt("Tutar (₺):");if(m)db.collection('users').doc(e).update({bakiye:parseInt(m)});} 
-function adminMakeStore(e){db.collection('users').doc(e).update({rol:'store'});showToast("Esnaf (Mavi Tik) yetkisi verildi!");}
-function adminMakeCustomer(e){db.collection('users').doc(e).update({rol:'customer'});showToast("Normal üyeye düşürüldü!");}
-
-function adminProductsDraw(){let h='';allProds.forEach(p=>h+=`<div class="ig-grid-item" style="background-image:url('${p.resimUrl}')"><button class="admin-del-btn" onclick="adminDeleteProduct('${p.id}')"><i class="fa-solid fa-xmark"></i></button></div>`);document.getElementById('adminProductsList').innerHTML=h;} function adminDeleteProduct(id){db.collection('products').doc(id).delete();}
-
-function adminWithdrawDraw(){
-    let h='<h4 style="margin:0 0 10px 0; color:var(--text-main)">Para Çekme Talepleri</h4>', c=0;
-    allWith.forEach(w=>{ if(w.durum==='bekliyor'){ c++; h+=`<div class="god-list-item" style="flex-direction:column; align-items:flex-start; gap:8px;"><div><b style="font-size:15px">${w.ad}</b> <span style="color:var(--danger); font-weight:900">- ${w.tutar} ₺</span><br><small style="color:var(--text-muted); font-weight:600; word-break:break-all">${w.iban}</small></div><button class="btn-success" style="padding:10px; font-size:13px;" onclick="adminOdemeYap('${w.id}')">Ödendi Olarak İşaretle</button></div>`; } });
-    h+='<h4 style="margin:25px 0 10px 0; color:var(--text-main)">Bakiye Yükleme Talepleri</h4>'; let depCount = 0;
-    allDeps.forEach(d=>{ if(d.durum==='bekliyor'){ c++; depCount++; h+=`<div class="god-list-item" style="flex-direction:column; align-items:flex-start; gap:8px;"><div><b style="font-size:15px">${d.ad}</b>
+function adminSetCat(em,id){db.collection('users').doc(em).update({category:id});} function adminAddPara(e){let m=prompt("Tutar (₺):");if(m)db
