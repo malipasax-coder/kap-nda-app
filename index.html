@@ -138,20 +138,44 @@ button:disabled { opacity: 0.7; cursor: not-allowed; }
         <p style="font-size:11px;font-weight:800;color:var(--text-muted);margin-top:8px; letter-spacing: 2px;">BAĞLANIYOR</p>
     </div>
 
+    <div id="installBanner">
+        <div style="display:flex; align-items:center; gap:12px;">
+            <div style="width:40px; height:40px; background:var(--primary-grad); border-radius:12px; display:flex; justify-content:center; align-items:center; color:#fff; font-size:20px;"><i class="fa-solid fa-house-chimney"></i></div>
+            <div><b style="display:block; font-size:14px; font-weight:800;">Evinde Uygulaması</b><small style="font-size:11px; color:var(--text-muted); font-weight:600;">Ana ekrana ekle ve hızlı kullan</small></div>
+        </div>
+        <div style="display:flex; gap:10px;">
+            <button onclick="document.getElementById('installBanner').style.display='none'" style="background:var(--ig-gray); color:var(--text-main); padding:8px 12px; font-size:12px; border-radius:10px;">Geç</button>
+            <button onclick="installApp()" style="background:var(--primary-grad); color:#fff; padding:8px 12px; font-size:12px; border-radius:10px; box-shadow:var(--shadow-sm);">İndir</button>
+        </div>
+    </div>
+
+    <div id="toast">Bildirim</div>
+
     <div class="modal-overlay" id="depositModal"><div class="modal-card"><div class="close-bar" onclick="closeModal('depositModal')"></div><h3 style="margin:0 0 15px 0;text-align:center;font-weight:900" class="text-gradient">Bakiye Yükle</h3><p style="text-align:center;font-size:12px;font-weight:600;color:var(--text-muted);margin-bottom:20px">Ödeme bildiriminiz yönetici tarafından onaylandığında tutar bakiyenize yansıyacaktır.</p><div class="input-group"><input type="number" id="dAmount" placeholder="Yatırılan Tutar (₺)"></div><div class="input-group"><input type="text" id="dSender" placeholder="Gönderici Ad Soyad"></div><button class="btn-success" onclick="bakiyeYukleTalep()">Bildirimi Gönder</button></div></div>
+    
     <div class="modal-overlay" id="transferModal"><div class="modal-card"><div class="close-bar" onclick="closeModal('transferModal')"></div><h3 style="margin:0 0 15px 0;text-align:center;font-weight:900" class="text-gradient">Para Gönder</h3><div class="input-group"><input type="text" id="tKnId" placeholder="Alıcı Evinde No (EN-123456)" style="text-transform:uppercase"></div><div class="input-group"><input type="number" id="tTutar" placeholder="Tutar (₺)"></div><button class="btn-primary" onclick="paraGonder()">Gönder</button></div></div>
+    
     <div class="modal-overlay" id="withdrawModal"><div class="modal-card"><div class="close-bar" onclick="closeModal('withdrawModal')"></div><h3 style="margin:0 0 5px 0;text-align:center;font-weight:900">Hesaba Aktar</h3><p style="text-align:center;font-size:12px;font-weight:600;color:var(--text-muted);margin-bottom:20px">Mevcut: <b id="wBakiyeGoster" class="text-gradient">0 ₺</b></p><div class="input-group"><input type="text" id="wAd" placeholder="Banka Alıcı Ad Soyad"></div><div class="input-group"><input type="text" id="wIban" placeholder="TR... IBAN Numarası"></div><div class="input-group"><input type="number" id="wTutar" placeholder="Çekilecek Tutar (₺)"></div><button class="btn-success" onclick="paraCekTalebi()">Banka Talebi Oluştur</button></div></div>
+    
     <div class="modal-overlay" id="vipModal"><div class="modal-card"><div class="close-bar" onclick="closeModal('vipModal')"></div><h3 style="margin:0 0 15px 0;text-align:center;font-weight:900" class="text-gradient"><i class="fa-solid fa-crown"></i> VIP Paketler</h3><div id="vipPlansContainer"></div></div></div>
+    
     <div class="modal-overlay" id="teamModal"><div class="modal-card" style="height:70vh;display:flex;flex-direction:column"><div class="close-bar" onclick="closeModal('teamModal')"></div><h3 style="margin:0 0 15px 0;text-align:center;font-weight:900"><i class="fa-solid fa-users text-gradient"></i> Ağım (Ekibim)</h3><div id="teamListContainer" style="flex:1;overflow-y:auto;margin-bottom:15px"></div></div></div>
+    
     <div class="modal-overlay" id="ordersModal"><div class="modal-card" style="height:70vh;display:flex;flex-direction:column"><div class="close-bar" onclick="closeModal('ordersModal')"></div><h3 id="ordersModalTitle" style="margin:0 0 15px 0;text-align:center;font-weight:900">Siparişlerim</h3><div id="ordersListContainer" style="flex:1;overflow-y:auto;margin-bottom:15px"></div></div></div>
+    
     <div class="modal-overlay" id="notifModal"><div class="modal-card" style="height:60vh;display:flex;flex-direction:column"><div class="close-bar" onclick="closeModal('notifModal')"></div><div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:15px"><h3 style="margin:0;font-weight:900"><i class="fa-solid fa-bell text-gradient"></i> Bildirimler</h3><small style="color:var(--primary);cursor:pointer;font-weight:800" onclick="clearNotifs()">Temizle</small></div><div id="notifListContainer" style="flex:1;overflow-y:auto;"></div></div></div>
+
     <div class="modal-overlay" id="editProfileModal"><div class="modal-card"><div class="close-bar" onclick="closeModal('editProfileModal')"></div><h3 style="margin:0 0 25px 0;text-align:center;font-weight:900">Ayarlar</h3><div style="display:flex;justify-content:space-between;align-items:center;padding:15px 0;border-bottom:1px solid var(--border);margin-bottom:20px"><b style="font-size:15px;font-weight:800">Karanlık Mod</b><input type="checkbox" id="darkModeToggle" onchange="toggleDarkMode()" style="width:20px;height:20px; accent-color: var(--primary);"></div><div style="text-align: center; margin-bottom: 20px;"><img id="eAvPreview" class="avatar-preview" src=""><label for="eAvFile" class="btn-outline custom-file-upload" style="padding: 10px 20px; width: auto; font-size: 13px; border-radius: 20px;"><i class="fa-solid fa-camera"></i> Fotoğraf Seç</label><input type="file" id="eAvFile" accept="image/*" style="display:none" onchange="previewImage(this, 'eAvPreview')"></div><div class="input-group"><input type="text" id="eName" placeholder="Ad Soyad"></div><div class="input-group"><input type="text" id="eUsername" placeholder="Kullanıcı Adı (Örn: mali.dev)"></div><div class="input-group"><textarea id="eBio" rows="2" placeholder="Biyografi..."></textarea></div><div class="input-group"><input type="password" id="ePass" placeholder="Yeni Şifre (Boş bırakabilirsiniz)"></div><button class="btn-primary" onclick="saveProfile()" id="btnSaveProfile">Ayarları Kaydet</button><button class="btn-outline" style="margin-top:12px;color:var(--danger);border-color:var(--danger)" onclick="cikisYap()">Çıkış Yap</button></div></div>
+    
     <div class="modal-overlay" id="commentsModal"><div class="modal-card" style="height:70vh;display:flex;flex-direction:column"><div class="close-bar" onclick="closeModal('commentsModal')"></div><h3 style="margin:0 0 15px 0;text-align:center;font-weight:900">Yorumlar</h3><div id="commentsList" style="flex:1;overflow-y:auto;margin-bottom:15px"></div><div class="chat-input-bar" style="position:relative;border-radius:14px;padding:10px;bottom:auto; background: var(--ig-gray); border: none;"><input type="text" id="newCommentInput" placeholder="Yorum ekle..." style="flex:1;padding:12px;border-radius:20px;border:1px solid var(--border);background:var(--card-bg);color:var(--text-main);outline:none"><button style="width:40px;height:40px;border-radius:50%;background:var(--primary-grad);color:#fff;border:none" onclick="addComment()"><i class="fa-solid fa-paper-plane"></i></button><input type="hidden" id="activePostId"></div></div></div>
 
     <div class="header" id="appHeader" style="display:none">
         <h2 class="text-gradient" style="margin:0; font-size: 22px; font-weight: 900; letter-spacing: -0.5px;">EVİNDE</h2>
         <div style="display:flex;gap:15px;align-items:center;">
-            <div style="position:relative;cursor:pointer;" onclick="openModal('notifModal')"><i class="fa-solid fa-bell" style="font-size:20px;color:var(--text-main);"></i><div class="notif-badge" id="notifBadge" style="display:none">0</div></div>
+            <div style="position:relative;cursor:pointer;" onclick="openModal('notifModal')">
+                <i class="fa-solid fa-bell" style="font-size:20px;color:var(--text-main);"></i>
+                <div class="notif-badge" id="notifBadge" style="display:none">0</div>
+            </div>
             <i class="fa-brands fa-facebook-messenger" style="font-size:22px;color:var(--text-main);cursor:pointer" onclick="switchView('messagesView')"></i>
         </div>
     </div>
@@ -162,12 +186,14 @@ button:disabled { opacity: 0.7; cursor: not-allowed; }
             <div style="height:100%;display:flex;flex-direction:column;justify-content:center;padding:0 40px;margin-top:-60px">
                 <div style="text-align:center;margin-bottom:40px"><h1 class="text-gradient" style="margin:0;font-size:46px;font-weight:900">EVİNDE</h1><p style="font-size:11px;color:var(--text-muted);font-weight:800; letter-spacing: 1px;">SOSYAL TİCARET</p></div>
                 <div style="display:flex;margin-bottom:25px;background:var(--ig-gray);border-radius:16px;padding:6px"><div style="flex:1;text-align:center;padding:14px;font-size:13px;font-weight:800;border-radius:12px;cursor:pointer;background:var(--card-bg);color:var(--text-main);box-shadow:var(--shadow-sm)" id="tabLoginBtn" onclick="authModSwitch('login')">Giriş Yap</div><div style="flex:1;text-align:center;padding:14px;font-size:13px;font-weight:800;border-radius:12px;cursor:pointer;color:var(--text-muted)" id="tabRegisterBtn" onclick="authModSwitch('register')">Hesap Aç</div></div>
+                
                 <div id="loginFormBlock">
                     <div class="input-group"><input type="text" id="lEmail" placeholder="E-posta veya @Kullanıcı Adı"></div>
                     <div class="input-group"><input type="password" id="lPass" placeholder="Şifre"></div>
                     <button class="btn-primary" id="btnGirisYap" onclick="girisYap()">Sisteme Gir</button>
                     <div style="text-align:center;margin-top:20px"><span onclick="sifreSifirla()" style="color:var(--primary);font-size:12px;cursor:pointer;font-weight:800">Şifremi Unuttum</span></div>
                 </div>
+                
                 <div id="registerFormBlock" style="display:none">
                     <div class="input-group"><input type="text" id="rName" placeholder="Ad Soyad"></div>
                     <div class="input-group"><input type="text" id="rUsername" placeholder="Kullanıcı Adı (Örn: mali.dev)"></div>
@@ -261,37 +287,19 @@ button:disabled { opacity: 0.7; cursor: not-allowed; }
 </div>
 
 <script>
-// Güvenlik: Her durumda "BAĞLANIYOR" ekranını kapatacak sigorta
-window.addEventListener('DOMContentLoaded', () => {
-    setTimeout(() => {
-        let sl = document.getElementById('serverLoading');
-        if (sl && sl.style.display !== 'none') {
-            sl.style.opacity = '0';
-            setTimeout(() => { sl.style.display = 'none'; }, 600);
-        }
-    }, 1500); 
-});
+// --- ANA MOTOR (AÇILIŞ) ---
+// Yükleme Ekranı Sigortası: Her halükarda kapanacak
+document.getElementById('serverLoading').style.display = 'flex';
+setTimeout(() => {
+    let sl = document.getElementById('serverLoading');
+    if (sl) sl.style.display = 'none';
+}, 1500);
 
-if ('serviceWorker' in navigator) { 
-    window.addEventListener('load', () => { navigator.serviceWorker.register('sw.js').catch(err => console.log("SW Kayıt Hatası:", err)); }); 
-}
+if ('serviceWorker' in navigator) { window.addEventListener('load', () => { navigator.serviceWorker.register('sw.js').catch(err => {}); }); }
 
 let deferredPrompt;
-window.addEventListener('beforeinstallprompt', (e) => { 
-    e.preventDefault(); deferredPrompt = e; document.getElementById('installBanner').style.display = 'flex'; 
-});
-
-function installApp() { 
-    if (deferredPrompt) { 
-        deferredPrompt.prompt(); 
-        deferredPrompt.userChoice.then((choiceResult) => { 
-            if (choiceResult.outcome === 'accepted') { document.getElementById('installBanner').style.display = 'none'; } 
-            deferredPrompt = null; 
-        }); 
-    } else { 
-        showToast("Tarayıcı menüsünden 'Ana Ekrana Ekle'ye basabilirsiniz.", true); 
-    } 
-}
+window.addEventListener('beforeinstallprompt', (e) => { e.preventDefault(); deferredPrompt = e; document.getElementById('installBanner').style.display = 'flex'; });
+function installApp() { if (deferredPrompt) { deferredPrompt.prompt(); deferredPrompt.userChoice.then((choiceResult) => { if (choiceResult.outcome === 'accepted') { document.getElementById('installBanner').style.display = 'none'; } deferredPrompt = null; }); } else { showToast("Tarayıcı menüsünden 'Ana Ekrana Ekle'ye basabilirsiniz.", true); } }
 
 const IMGBB_API_KEY = "69a8e29046473970219c179fb55b27d9";
 
@@ -306,48 +314,40 @@ const fc={apiKey:"AIzaSyBWSlha9fD_q3zHXaRJ3ocJdtALqkrW-LU",authDomain:"kapinda-8
 firebase.initializeApp(fc); 
 const db=firebase.firestore(); 
 db.settings({experimentalForceLongPolling:true}); 
-const storage=firebase.storage();
 
-let cuData=null,akEmail=null,allProds=[],allUsers={},allChats=[],allTrans=[],allWith=[],allPlans=[],allVouch=[],allCats=[],allDeps=[],currCat='all',sysStats={totalCiro:0,netKar:0};
+let cuData=null,akEmail=null,allProds=[],allUsers={},allChats=[],allTrans=[],allWith=[],allPlans=[],allCats=[],allDeps=[],currCat='all',sysStats={totalCiro:0,netKar:0};
 let sepet = [];
 let cView='authView',actChatEm=null,viewEmail=null,lastView='homeView';
 
 function getCartKey() { return 'evinde_sepet_' + (akEmail || 'guest'); }
 
-window.onload=()=>{
-    checkTheme(); 
-    setTimeout(hideLS, 1000); 
-    
-    // OTOMATİK OTURUM YÖNETİMİ
-    firebase.auth().onAuthStateChanged(user => {
-        if(user) {
-            akEmail = user.email.toLowerCase();
-            try {
-                sepet = JSON.parse(localStorage.getItem(getCartKey())) || [];
-            } catch(e) {
-                sepet = []; localStorage.removeItem(getCartKey());
-            }
-            if(sepet.length > 0) { document.getElementById('cartCount').innerText = sepet.length; document.getElementById('cartCount').style.display = 'flex'; }
-            listenToUser(); listenToAllUsers(); listenToProds(); 
-        } else {
-            hideLS();
-            switchView('authView');
-        }
-    });
-};
+// Otomatik Tema Yükleme
+try { if(localStorage.getItem('kapinda_dark')==='true'){ document.body.classList.add('dark-mode'); let t=document.getElementById('darkModeToggle'); if(t)t.checked=true; } } catch(e){}
 
-function hideLS(){ let sl=document.getElementById('serverLoading'); if(sl){ sl.style.opacity='0'; setTimeout(()=>{sl.style.display='none'},600); } }
-function checkTheme(){try{if(localStorage.getItem('kapinda_dark')==='true'){document.body.classList.add('dark-mode');let t=document.getElementById('darkModeToggle');if(t)t.checked=true;}}catch(e){}}
+// --- GHOST OTURUM (BAĞLANIYOR) ÇÖZÜMÜ ---
+firebase.auth().onAuthStateChanged(user => {
+    let sl = document.getElementById('serverLoading');
+    if (sl) sl.style.display = 'none';
+
+    if(user) {
+        akEmail = user.email.toLowerCase();
+        try { sepet = JSON.parse(localStorage.getItem(getCartKey())) || []; } catch(e) { sepet = []; localStorage.removeItem(getCartKey()); }
+        if(sepet.length > 0) { document.getElementById('cartCount').innerText = sepet.length; document.getElementById('cartCount').style.display = 'flex'; }
+        listenToUser(); listenToAllUsers(); listenToProds(); 
+    } else {
+        switchView('authView');
+    }
+});
+
 function toggleDarkMode(){let isD=document.getElementById('darkModeToggle').checked;document.body.classList.toggle('dark-mode',isD);localStorage.setItem('kapinda_dark',isD);}
 function showToast(m,err=false){let t=document.getElementById('toast');t.innerText=m;t.style.background=err?"var(--danger)":"var(--primary-grad)";t.style.color="#fff";t.classList.add('show');setTimeout(()=>t.classList.remove('show'),4000);}
-
 function getTick(rol) { return (rol === 'admin' || rol === 'store') ? '<i class="fa-solid fa-circle-check" style="color:#1d9bf0; margin-left:5px; font-size:14px;" title="Onaylı Hesap"></i>' : ''; }
 
 function previewImage(input, previewId, labelId = null) {
     let preview = document.getElementById(previewId);
     if (input.files && input.files[0]) {
         let reader = new FileReader();
-        reader.onload = function(e) { preview.src = e.target.result; preview.style.display = 'block'; if(labelId) { document.getElementById(labelId).style.display = 'none'; } }
+        reader.onload = function(e) { preview.src = e.target.result; preview.style.display = 'block'; if(labelId) document.getElementById(labelId).style.display = 'none'; }
         reader.readAsDataURL(input.files[0]);
     } else { preview.src = ''; preview.style.display = 'none'; if(labelId) document.getElementById(labelId).style.display = 'block'; }
 }
@@ -377,7 +377,7 @@ async function girisYap() {
     } catch (error) { btn.innerText = "Sisteme Gir"; btn.disabled = false; showToast("Hata: " + error.message, true); }
 }
 
-function sifreSifirla() { let email = prompt("Şifresini sıfırlamak istediğiniz E-posta adresinizi girin:"); if(email) { firebase.auth().sendPasswordResetEmail(email.trim().toLowerCase()).then(() => { showToast("Şifre sıfırlama bağlantısı e-posta adresinize gönderildi!"); }).catch(err => showToast("Hata: " + err.message, true)); } }
+function sifreSifirla() { let email = prompt("Şifresini sıfırlamak istediğiniz E-posta adresinizi girin:"); if(email) { firebase.auth().sendPasswordResetEmail(email.trim().toLowerCase()).then(() => { showToast("Şifre bağlantısı gönderildi!"); }).catch(err => showToast("Hata: " + err.message, true)); } }
 
 async function kayitOl() {
     let ad = document.getElementById('rName')?.value?.trim(); let un = document.getElementById('rUsername')?.value?.trim()?.toLowerCase(); let em = document.getElementById('rEmail')?.value?.trim()?.toLowerCase(); let p = document.getElementById('rPass')?.value?.trim(); let sp = document.getElementById('rSponsor')?.value?.trim()?.toUpperCase();
@@ -385,15 +385,16 @@ async function kayitOl() {
     let btn = document.getElementById('btnKayitOl'); btn.innerText = "İşleniyor..."; btn.disabled = true;
     try {
         let nId = 'EN-' + Math.floor(100000 + Math.random() * 900000);
-        let snap = await db.collection('users').where('username', '==', un).get(); if (!snap.empty) { btn.innerText = "Hesap Oluştur"; btn.disabled = false; return showToast("Bu kullanıcı adı zaten alınmış!", true); }
+        let snap = await db.collection('users').where('username', '==', un).get(); if (!snap.empty) { btn.innerText = "Hesap Oluştur"; btn.disabled = false; return showToast("Kullanıcı adı alınmış!", true); }
         let finalSponsor = null; if (sp) { let spSnap = await db.collection('users').where("knId", "==", sp).get(); if (spSnap.empty) { btn.innerText = "Hesap Oluştur"; btn.disabled = false; return showToast("Sponsor ID hatalı!", true); } finalSponsor = spSnap.docs[0].id; }
+        
         let adminEmail = null; let adminSnap = await db.collection('users').where('username', '==', 'evinde').get(); if (!adminSnap.empty) { adminEmail = adminSnap.docs[0].id; }
 
         await firebase.auth().createUserWithEmailAndPassword(em, p);
         await db.collection('users').doc(em).set({ isim: ad, username: un, rol: 'customer', bakiye: 0, knId: nId, seviye: '0', sponsor: finalSponsor, category: '', followers: [], notifications: [] });
         
         if (adminEmail && adminEmail !== em) { await db.collection('users').doc(adminEmail).update({ followers: firebase.firestore.FieldValue.arrayUnion(em) }); }
-        if(finalSponsor) notifyUser(finalSponsor, `🎉 Yeni bir üye referans kodunla katıldı: @${un}`);
+        if(finalSponsor) notifyUser(finalSponsor, `🎉 Yeni üye katıldı: @${un}`);
         
         showToast("Kayıt Tamamlandı!"); authModSwitch('login'); document.getElementById('lEmail').value = un; btn.innerText = "Hesap Oluştur"; btn.disabled = false;
     } catch (error) { btn.innerText = "Hesap Oluştur"; btn.disabled = false; showToast("Kayıt Hatası: " + error.message, true); }
@@ -402,9 +403,7 @@ async function kayitOl() {
 function notifyUser(em, msg) { db.collection('users').doc(em).update({ notifications: firebase.firestore.FieldValue.arrayUnion({ msg: msg, t: Date.now() }) }); }
 
 function listenToUser() {
-    let sEm = akEmail;
-    db.collection('users').doc(sEm).onSnapshot(d => {
-        hideLS();
+    db.collection('users').doc(akEmail).onSnapshot(d => {
         if(d.exists) {
             cuData = d.data(); document.getElementById('appHeader').style.display = 'flex'; document.getElementById('appNav').style.display = 'flex';
             if (cuData.seviye > 0 && cuData.vipExpiry) {
@@ -417,7 +416,7 @@ function listenToUser() {
             if(notifs.length > 0) { badge.style.display = 'flex'; badge.innerText = notifs.length; } else { badge.style.display = 'none'; }
             setupNav(); if(cView === 'authView') switchView('homeView'); if(cView === 'profileView') renderProf(); listenToChats();
         } else { showToast("Hesap verisi bulunamadı!", true); cikisYap(); }
-    }, err => { hideLS(); showToast("Veri okuma hatası! Kuralları kontrol edin.", true); });
+    });
 }
 
 function listenToAllUsers() {
@@ -507,6 +506,7 @@ let isF = u.followers?.includes(akEmail); let fText = isF ? "Takipten Çık" : "
 document.getElementById('opActionsContainer').innerHTML = `<button class="btn-action" style="background:${fBg};color:#fff;flex:1" onclick="toggleFollow('${em}')">${fText}</button><button class="btn-primary" style="flex:1" onclick="openChatFromProfile()"><i class="fa-regular fa-envelope"></i> Mesaj</button>`;
 let h='';mp.forEach(p=>h+=`<div class="ig-grid-item" style="background-image:url('${p.resimUrl}')" onclick="viewSinglePost('${p.id}')"></div>`);document.getElementById('opGrid').innerHTML=h;switchView('otherProfileView');document.getElementById('searchResults').style.display='none';}
 
+// --- ARRAY UNION / YARIŞMA DURUMU ÇÖZÜMÜ ---
 function toggleFollow(em) {
     let u = allUsers[em]; if (!u) return;
     let isF = u.followers && u.followers.includes(akEmail);
@@ -534,13 +534,14 @@ function oComm(id){let p=allProds.find(x=>x.id===id);if(!p)return;document.getEl
 function addComment(){let v=document.getElementById('newCommentInput')?.value?.trim();if(!v)return;let id=document.getElementById('activePostId')?.value; let p=allProds.find(x=>x.id===id);
 db.collection('products').doc(id).update({comments:firebase.firestore.FieldValue.arrayUnion({u:akEmail,t:v,d:Date.now()})}).then(()=>{ notifyUser(p.storeEmail, `@${cuData.username||cuData.isim} gönderine yorum yaptı: "${v}"`); document.getElementById('newCommentInput').value='';});}
 
-function shareP(ad,f,un){ if(cuData.rol === 'customer' && (!cuData.seviye || cuData.seviye === '0')) { return showToast("Bağlantı paylaşarak para kazanmak için VIP (Seviye) satın almalısınız!", true); } let t=`Evinde App!\n@${un} mağazasından ${ad} sadece ${f}₺!\nHemen incele!`; navigator.clipboard.writeText(t).then(()=>showToast("Bağlantı kopyalandı!")); }
+function shareP(ad,f,un){ if(cuData.rol === 'customer' && (!cuData.seviye || cuData.seviye === '0')) { return showToast("Para kazanmak için Seviye paketi satın almalısınız!", true); } let t=`Evinde App!\n@${un} mağazasından ${ad} sadece ${f}₺!\nHemen incele!`; navigator.clipboard.writeText(t).then(()=>showToast("Bağlantı kopyalandı!")); }
 
 function sepeteEkle(id, ad, f, s) { sepet.push({id, ad, fiyat: Math.round(f), satici: s}); localStorage.setItem(getCartKey(), JSON.stringify(sepet)); document.getElementById('cartCount').innerText = sepet.length; document.getElementById('cartCount').style.display = 'flex'; showToast("Sepete Eklendi!"); }
 function sepettenCikar(index) { sepet.splice(index, 1); localStorage.setItem(getCartKey(), JSON.stringify(sepet)); document.getElementById('cartCount').innerText = sepet.length; if(sepet.length === 0) document.getElementById('cartCount').style.display = 'none'; renderCart(); }
 
 function renderCart(){let h='',t=0;sepet.forEach((x, index)=>{t+=x.fiyat;h+=`<div style="display:flex;justify-content:space-between; align-items:center; padding:15px; border-bottom:1px solid var(--border); background:var(--card-bg); border-radius:12px; margin-bottom:10px;"><div style="display:flex; flex-direction:column;"><b style="font-size:15px;">${x.ad}</b><small style="color:var(--text-muted)">Satıcı: @${allUsers[x.satici]?.username||'Mağaza'}</small></div><div style="display:flex; align-items:center; gap:15px;"><b style="color:var(--primary); font-size:16px;">${Math.round(x.fiyat)} ₺</b><i class="fa-solid fa-trash" style="color:var(--danger); cursor:pointer;" onclick="sepettenCikar(${index})"></i></div></div>`;});document.getElementById('cartItemsContainer').innerHTML=h||'<div style="text-align:center;color:var(--text-muted);margin-top:60px;"><i class="fa-solid fa-basket-shopping" style="font-size:40px; margin-bottom:10px; opacity:0.5;"></i><br>Sepetin şu an boş.</div>';document.getElementById('cartTotal').innerText=Math.round(t)+" ₺";}
 
+// --- SİPARİŞ VE MATEMATİK KISMI ---
 async function siparisVer() {
     try {
         if(!sepet || !sepet.length) return showToast("Sepet boş!", true);
@@ -559,29 +560,29 @@ async function siparisVer() {
         let aliciRef = db.collection('users').doc(akEmail);
         batch.update(aliciRef, { bakiye: firebase.firestore.FieldValue.increment(-Math.round(tot)) });
 
-        let sistemKari = Math.round(tot * 0.20);
-        let sponsorPayi = 0;
-
-        if (cuData.sponsor && allUsers[cuData.sponsor]) {
-            sponsorPayi = Math.round(tot * 0.05);
-            sistemKari = Math.round(tot * 0.15);
-            let spRef = db.collection('users').doc(cuData.sponsor);
-            batch.update(spRef, { bakiye: firebase.firestore.FieldValue.increment(sponsorPayi) });
-            notifyUser(cuData.sponsor, `Ağınızdaki bir alışverişten ${sponsorPayi} ₺ komisyon kazandınız!`);
-        }
-
         for(const i of sepet) {
-            let saticiPayi = Math.round(i.fiyat * 0.80);
+            let dukkanPayi = Math.round(i.fiyat * 0.80);
+            let brutKar = i.fiyat - dukkanPayi;
+            let uyeKari = Math.round(brutKar * 0.50); 
+            let sistemKari = brutKar - uyeKari;
+
             let saticiRef = db.collection('users').doc(i.satici);
-            batch.update(saticiRef, { bakiye: firebase.firestore.FieldValue.increment(saticiPayi), aylikSatis: firebase.firestore.FieldValue.increment(1) });
-            notifyUser(i.satici, `🎉 Yeni Sipariş: ${i.ad} (${saticiPayi} ₺ kazandınız)`);
+            batch.update(saticiRef, { bakiye: firebase.firestore.FieldValue.increment(dukkanPayi) });
+
+            if (cuData.sponsor && allUsers[cuData.sponsor]) {
+                let spRef = db.collection('users').doc(cuData.sponsor);
+                batch.update(spRef, { bakiye: firebase.firestore.FieldValue.increment(uyeKari) });
+                notifyUser(cuData.sponsor, `Ağınızdaki bir siparişten ${uyeKari} ₺ komisyon kazandınız!`);
+            } else {
+                sistemKari += uyeKari; 
+            }
 
             let orderRef = db.collection('orders').doc();
             batch.set(orderRef, { aliciEmail: akEmail, aliciAd: cuData.isim, saticiEmail: i.satici, saticiAd: allUsers[i.satici]?.isim, urunAd: i.ad, fiyat: Math.round(i.fiyat), adres: adres, durum: 'Hazırlanıyor', tarih: Date.now() });
+            
+            let statsRef = db.collection('stats').doc('main');
+            batch.set(statsRef, { totalCiro: firebase.firestore.FieldValue.increment(Math.round(i.fiyat)), netKar: firebase.firestore.FieldValue.increment(sistemKari) }, {merge: true});
         }
-
-        let statsRef = db.collection('stats').doc('main');
-        batch.set(statsRef, { totalCiro: firebase.firestore.FieldValue.increment(Math.round(tot)), netKar: firebase.firestore.FieldValue.increment(sistemKari) }, {merge: true});
 
         await batch.commit();
 
@@ -593,13 +594,13 @@ async function siparisVer() {
         showToast("Sipariş Başarıyla Onaylandı!");
     } catch (e) {
         showToast("Sipariş sırasında hata!", true);
-        console.error(e);
     } finally {
         let btn = document.querySelector("#cartView .btn-primary");
         if(btn) { btn.innerText = "Güvenli Ödeme Yap"; btn.disabled = false; }
     }
 }
 
+// MÜŞTERİ BİLGİ GİZLİLİĞİ VE KÜSURATLAR
 async function loadOrders(tip) {
     let title = tip === 'alici' ? "Siparişlerim" : "Gelen Siparişler"; document.getElementById('ordersModalTitle').innerText = title;
     let container = document.getElementById('ordersListContainer'); container.innerHTML = '<p style="text-align:center;">Yükleniyor...</p>'; openModal('ordersModal');
@@ -608,7 +609,11 @@ async function loadOrders(tip) {
     snap.forEach(doc => {
         let o = doc.data(); let dateObj = new Date(o.tarih); let dateStr = dateObj.toLocaleDateString('tr-TR') + " " + dateObj.toLocaleTimeString('tr-TR', {hour: '2-digit', minute:'2-digit'});
         let actionBtn = ''; if(tip === 'satici' && o.durum === 'Hazırlanıyor') { actionBtn = `<button style="background:var(--success); color:#fff; border-radius:8px; padding:6px 12px; font-size:11px;" onclick="kargolaSiparis('${doc.id}', '${o.aliciEmail}', '${o.urunAd}')">Kargoya Verildi</button>`; }
-        h += `<div style="background:var(--ig-gray); border-radius:12px; padding:15px; margin-bottom:12px; border:1px solid var(--border);"><div style="display:flex; justify-content:space-between; margin-bottom:8px;"><b style="font-size:15px; color:var(--text-main);">${o.urunAd}</b><b style="color:var(--primary);">${Math.round(o.fiyat)} ₺</b></div><p style="margin:0 0 8px 0; font-size:13px; color:var(--text-muted); line-height:1.4;">${tip === 'alici' ? `Satıcı: ${o.saticiAd}` : `Alıcı: ${o.aliciAd}`}<br>Adres: ${o.adres}<br>Tarih: ${dateStr}</p><div style="display:flex; justify-content:space-between; align-items:center;"><span style="font-size:12px; font-weight:800; color:${o.durum === 'Hazırlanıyor' ? 'var(--warning)' : 'var(--success)'};">${o.durum}</span>${actionBtn}</div></div>`;
+        
+        let aliciBilgisi = (tip === 'alici') ? `Satıcı: ${o.saticiAd}` : `Sipariş: Gizli Teslimat (Platform)`;
+        let siparisAdres = (tip === 'alici') ? `Adres: ${o.adres}` : `Adres: (Müşteri Gizliliği) Merkeze Kargolayın`;
+
+        h += `<div style="background:var(--ig-gray); border-radius:12px; padding:15px; margin-bottom:12px; border:1px solid var(--border);"><div style="display:flex; justify-content:space-between; margin-bottom:8px;"><b style="font-size:15px; color:var(--text-main);">${o.urunAd}</b><b style="color:var(--primary);">${Math.round(o.fiyat)} ₺</b></div><p style="margin:0 0 8px 0; font-size:13px; color:var(--text-muted); line-height:1.4;">${aliciBilgisi}<br>${siparisAdres}<br>Tarih: ${dateStr}</p><div style="display:flex; justify-content:space-between; align-items:center;"><span style="font-size:12px; font-weight:800; color:${o.durum === 'Hazırlanıyor' ? 'var(--warning)' : 'var(--success)'};">${o.durum}</span>${actionBtn}</div></div>`;
     });
     container.innerHTML = h || '<p style="text-align:center; color:var(--text-muted); margin-top:20px;">Sipariş bulunamadı.</p>';
 }
@@ -628,6 +633,7 @@ function renderChatBox(){if(!actChatEm)return;let id=[akEmail,actChatEm].sort().
 function mesajGonder(){let t=document.getElementById('chatInput')?.value?.trim();if(!t)return;let id=[akEmail,actChatEm].sort().join('_');db.collection('chats').doc(id).set({list:firebase.firestore.FieldValue.arrayUnion({s:akEmail,m:t,t:Date.now()})},{merge:true}); notifyUser(actChatEm, `💬 @${cuData.username||cuData.isim} sana yeni mesaj gönderdi.`); document.getElementById('chatInput').value='';}
 
 function openVipModal(){let h='';Object.keys(allPlans).sort((a,b)=>a-b).forEach(k=>{let p=allPlans[k];h+=`<div style="padding:15px;border:1px solid var(--border);border-radius:16px;margin-bottom:12px;display:flex;justify-content:space-between;align-items:center;background:var(--ig-gray);"><div><b style="font-size:15px;color:var(--text-main)">${p.ad}</b><br><small style="color:var(--primary); font-weight:800">%${p.oran*100} Kazanç Oranı</small></div><button class="btn-primary" style="width:auto; padding:10px 16px; box-shadow:none;" onclick="buyVip('${k}',${p.fiyat})">${p.fiyat} ₺</button></div>`;});document.getElementById('vipPlansContainer').innerHTML=h||'<p>Paket bulunamadı.</p>';}
+
 async function buyVip(lvl, f) { 
     if((cuData.bakiye || 0) < f) return showToast("Bakiye Yetersiz!", true); 
     let expiry = Date.now() + (30 * 24 * 60 * 60 * 1000); 
@@ -658,4 +664,18 @@ function adminUsersDraw(){
     }
     document.getElementById('adminUserList').innerHTML=h;
 }
-function adminSetCat(em,id){db.collection('users').doc(em).update({category:id});} function adminAddPara(e){let m=prompt("Tutar (₺):");if(m)db
+function adminSetCat(em,id){db.collection('users').doc(em).update({category:id});} function adminAddPara(e){let m=prompt("Tutar (₺):");if(m)db.collection('users').doc(e).update({bakiye:Math.round(parseInt(m))});} 
+function adminMakeStore(e){db.collection('users').doc(e).update({rol:'store'});showToast("Esnaf (Mavi Tik) yetkisi verildi!");}
+function adminMakeCustomer(e){db.collection('users').doc(e).update({rol:'customer'});showToast("Normal üyeye düşürüldü!");}
+
+function adminProductsDraw(){let h='';allProds.forEach(p=>h+=`<div class="ig-grid-item" style="background-image:url('${p.resimUrl}')"><button class="admin-del-btn" onclick="adminDeleteProduct('${p.id}')"><i class="fa-solid fa-xmark"></i></button></div>`);document.getElementById('adminProductsList').innerHTML=h;} function adminDeleteProduct(id){db.collection('products').doc(id).delete();}
+
+function adminWithdrawDraw(){
+    let h='<h4 style="margin:0 0 10px 0; color:var(--text-main)">Para Çekme Talepleri</h4>', c=0;
+    allWith.forEach(w=>{ if(w.durum==='bekliyor'){ c++; h+=`<div class="god-list-item" style="flex-direction:column; align-items:flex-start; gap:8px;"><div><b style="font-size:15px">${w.ad}</b> <span style="color:var(--danger); font-weight:900">- ${Math.round(w.tutar)} ₺</span><br><small style="color:var(--text-muted); font-weight:600; word-break:break-all">${w.iban}</small></div><button class="btn-success" style="padding:10px; font-size:13px;" onclick="adminOdemeYap('${w.id}')">Ödendi Olarak İşaretle</button></div>`; } });
+    h+='<h4 style="margin:25px 0 10px 0; color:var(--text-main)">Bakiye Yükleme Talepleri</h4>'; let depCount = 0;
+    allDeps.forEach(d=>{ if(d.durum==='bekliyor'){ c++; depCount++; h+=`<div class="god-list-item" style="flex-direction:column; align-items:flex-start; gap:8px;"><div><b style="font-size:15px">${d.ad}</b> <span style="color:var(--success); font-weight:900">+ ${Math.round(d.tutar)} ₺</span><br><small style="color:var(--text-muted); font-weight:600; word-break:break-all">${d.em}</small></div><div style="display:flex; gap:10px; width:100%;"><button class="btn-primary" style="padding:10px; font-size:13px; flex:1;" onclick="adminBakiyeOnayla('${d.id}','${d.em}',${d.tutar})">Onayla</button><button class="btn-outline" style="padding:10px; font-size:13px; flex:1; color:var(--danger); border-color:var(--danger);" onclick="adminBakiyeReddet('${d.id}')">Reddet</button></div></div>`; } });
+    if(depCount===0) h+= '<p style="color:var(--text-muted); font-size:13px;">Bekleyen yükleme talebi yok.</p>';
+    document.getElementById('godReqCount').innerText=c; document.getElementById('adminWithdrawList').innerHTML=h;
+}
+function adminOdemeYap(id){db.collection('withdrawals').doc(id).update({durum:'odendi'});} function adminBakiyeOnayla(id,em,tutar){db.collection('deposits').doc(id).update({durum:'onaylandi'}).then(()=>{db.collection('users').doc(em).update({bakiye:firebase.firestore.FieldValue.increment
