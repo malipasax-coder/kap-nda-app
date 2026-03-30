@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover">
-<title>Evinde - Tam Sürüm</title>
+<title>Evinde - Tam Sürüm (Mali Strateji)</title>
 <meta name="theme-color" content="#8e2de2">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 <script src="https://www.gstatic.com/firebasejs/10.8.1/firebase-app-compat.js"></script>
@@ -92,6 +92,7 @@ button:disabled{opacity:0.7;cursor:not-allowed;}
 .rank-gumus {background: linear-gradient(135deg, #c0c0c0, #808080);}
 .rank-altin {background: linear-gradient(135deg, #ffd700, #daa520);}
 .rank-elmas {background: linear-gradient(135deg, #00ced1, #008b8b);}
+.admin-action-btn {padding: 6px 12px; font-size: 11px; font-weight: bold; border-radius: 6px; border: none; cursor: pointer; color: white;}
 </style>
 </head>
 <body>
@@ -106,7 +107,7 @@ button:disabled{opacity:0.7;cursor:not-allowed;}
     
     <div class="modal-overlay" id="sellerDashModal"><div class="modal-card"><div class="close-bar" onclick="closeModal('sellerDashModal')"></div><h3 style="margin:0 0 15px 0;text-align:center;font-weight:800"><i class="fa-solid fa-chart-pie text-gradient"></i> Mağaza Analizi</h3><div class="dash-card-grid"><div class="dash-card"><h4>Profil Ziyareti</h4><h2 id="sdViews">0</h2></div><div class="dash-card"><h4>Link Tıklaması</h4><h2 id="sdClicks">0</h2></div><div class="dash-card"><h4>Ağ Geliri</h4><h2 id="sdNetIncome" class="text-gradient">0 ₺</h2></div><div class="dash-card"><h4>Güven Puanı</h4><h2 id="sdTrustScore"><i class="fa-solid fa-star" style="color:var(--warning)"></i> 0.0</h2></div></div></div></div>
     
-    <div class="modal-overlay" id="withdrawModal"><div class="modal-card"><div class="close-bar" onclick="closeModal('withdrawModal')"></div><h3 style="margin:0 0 5px 0;text-align:center;font-weight:800">Cüzdandan Çek</h3><p style="text-align:center;font-size:12px;font-weight:500;color:var(--text-muted);margin-bottom:20px">Kullanılabilir Bakiye: <b id="wBakiyeGoster" class="text-gradient">0 ₺</b></p><p style="text-align:center;font-size:11px;color:var(--danger);margin-bottom:15px;" id="wMinLimitText">Min Çekim Limiti: 0 ₺</p><div class="input-group"><input type="text" id="wAd" placeholder="Hesap Sahibi Ad Soyad"></div><div class="input-group"><input type="text" id="wIban" placeholder="TR... IBAN Numarası"></div><div class="input-group"><input type="number" id="wTutar" placeholder="Çekilecek Tutar (₺)"></div><button class="btn-success" onclick="paraCekTalebi()">Talebi Oluştur</button></div></div>
+    <div class="modal-overlay" id="withdrawModal"><div class="modal-card"><div class="close-bar" onclick="closeModal('withdrawModal')"></div><h3 style="margin:0 0 5px 0;text-align:center;font-weight:800">Cüzdandan Çek</h3><p style="text-align:center;font-size:12px;font-weight:500;color:var(--text-muted);margin-bottom:20px">Kullanılabilir Bakiye: <b id="wBakiyeGoster" class="text-gradient">0 ₺</b></p><p style="text-align:center;font-size:11px;color:var(--danger);margin-bottom:15px;" id="wMinLimitText">Min Çekim Limiti: 0 ₺</p><div class="input-group"><input type="text" id="wAd" placeholder="Hesap Sahibi Ad Soyad"></div><div class="input-group"><input type="text" id="wIban" placeholder="TR... IBAN Numarası"></div><div class="input-group"><input type="number" id="wTutar" placeholder="Çekilecek Tutar (₺)" onkeyup="calcWithdraw()"></div><div id="wCalcRes" style="font-size:12px;text-align:center;margin-bottom:15px;line-height:1.6;"></div><button class="btn-success" onclick="paraCekTalebi()">Talebi Oluştur</button></div></div>
     
     <div class="modal-overlay" id="teamModal"><div class="modal-card" style="height:70vh;display:flex;flex-direction:column"><div class="close-bar" onclick="closeModal('teamModal')"></div><h3 style="margin:0 0 15px 0;text-align:center;font-weight:800"><i class="fa-solid fa-network-wired text-gradient"></i> Kurucu Ağım</h3><div id="teamListContainer" style="flex:1;overflow-y:auto;"></div></div></div>
     
@@ -130,7 +131,7 @@ button:disabled{opacity:0.7;cursor:not-allowed;}
                 <div style="text-align:center;margin-bottom:40px"><h1 class="text-gradient" style="margin:0;font-size:42px;font-weight:900">EVİNDE</h1><p style="font-size:12px;color:var(--text-muted);font-weight:600;letter-spacing:2px;">GÜVENLİ TİCARET AĞI</p></div>
                 <div style="display:flex;margin-bottom:20px;background:var(--border);border-radius:14px;padding:4px"><div style="flex:1;text-align:center;padding:12px;font-size:13px;font-weight:700;border-radius:10px;cursor:pointer;background:var(--card-bg);color:var(--text-main);box-shadow:var(--shadow-sm)" id="tabLoginBtn" onclick="authModSwitch('login')">Giriş Yap</div><div style="flex:1;text-align:center;padding:12px;font-size:13px;font-weight:700;border-radius:10px;cursor:pointer;color:var(--text-muted)" id="tabRegisterBtn" onclick="authModSwitch('register')">Kayıt Ol</div></div>
                 <div id="loginFormBlock"><div class="input-group"><input type="text" id="lEmail" placeholder="E-posta veya @KullanıcıAdı"></div><div class="input-group"><input type="password" id="lPass" placeholder="Şifre"></div><button class="btn-primary" id="btnGirisYap" onclick="girisYap()">Sisteme Gir</button></div>
-                <div id="registerFormBlock" style="display:none"><div class="input-group"><input type="text" id="rName" placeholder="Ad Soyad"></div><div class="input-group"><input type="text" id="rUsername" placeholder="Kullanıcı Adı"></div><div class="input-group"><input type="email" id="rEmail" placeholder="E-posta"></div><div class="input-group"><input type="password" id="rPass" placeholder="Şifre"></div><div class="input-group"><input type="text" id="rSponsor" placeholder="Sponsor No (Linkten Otomatik)"></div><button class="btn-primary" id="btnKayitOl" onclick="kayitOl()">İş Ortağı Ol</button></div>
+                <div id="registerFormBlock" style="display:none"><div class="input-group"><input type="text" id="rName" placeholder="Ad Soyad"></div><div class="input-group"><input type="text" id="rUsername" placeholder="Kullanıcı Adı"></div><div class="input-group"><input type="email" id="rEmail" placeholder="E-posta"></div><div class="input-group"><input type="password" id="rPass" placeholder="Şifre"></div><div class="input-group"><input type="text" id="rSponsor" placeholder="Sponsor No (Linkten Otomatik)"></div><button class="btn-primary" id="btnKayitOl" onclick="kayitOl()">Ücretsiz İş Ortağı Ol</button></div>
             </div>
         </div>
 
@@ -143,7 +144,7 @@ button:disabled{opacity:0.7;cursor:not-allowed;}
             <div class="ig-grid" id="exploreGrid"></div>
         </div>
         
-        <div class="view" id="cartView"><div style="padding:15px 20px;background:var(--glass-bg);backdrop-filter:blur(16px);border-bottom:1px solid var(--border);position:sticky;top:0;z-index:10;color:var(--text-main)"><h3 style="margin:0;font-size:16px;text-align:center;font-weight:800">Sepetim</h3></div><div id="cartItemsContainer" style="padding:15px;padding-bottom:10px"></div><div style="padding:0 15px 200px 15px"><div class="input-group"><textarea id="cartAddress" rows="3" placeholder="Açık Teslimat Adresi (Zorunlu)"></textarea></div></div><div style="position:absolute;bottom:80px;left:15px;right:15px;background:var(--card-bg);padding:20px;border-radius:20px;box-shadow:var(--shadow-md);border:1px solid var(--border);z-index:25;color:var(--text-main)"><div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:15px"><span style="font-weight:600;font-size:13px;color:var(--text-muted)">Toplam Tutar</span><span id="cartTotal" style="font-size:22px;font-weight:900">0 ₺</span></div><button class="btn-primary" onclick="siparisVer()"><i class="fa-solid fa-shield-halved"></i> Güvenli Havuzla Öde</button></div></div>
+        <div class="view" id="cartView"><div style="padding:15px 20px;background:var(--glass-bg);backdrop-filter:blur(16px);border-bottom:1px solid var(--border);position:sticky;top:0;z-index:10;color:var(--text-main)"><h3 style="margin:0;font-size:16px;text-align:center;font-weight:800">Sepetim</h3></div><div id="cartItemsContainer" style="padding:15px;padding-bottom:10px"></div><div style="padding:0 15px 200px 15px"><div class="input-group"><textarea id="cartAddress" rows="3" placeholder="Açık Teslimat Adresi (Kargo Alıcı Ödemelidir)"></textarea></div></div><div style="position:absolute;bottom:80px;left:15px;right:15px;background:var(--card-bg);padding:20px;border-radius:20px;box-shadow:var(--shadow-md);border:1px solid var(--border);z-index:25;color:var(--text-main)"><div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:15px"><span style="font-weight:600;font-size:13px;color:var(--text-muted)">Toplam Tutar</span><span id="cartTotal" style="font-size:22px;font-weight:900">0 ₺</span></div><button class="btn-primary" onclick="siparisVer()"><i class="fa-solid fa-shield-halved"></i> Güvenli Havuzla Öde</button></div></div>
         
         <div class="view" id="profileView">
             <div class="profile-header">
@@ -186,7 +187,13 @@ button:disabled{opacity:0.7;cursor:not-allowed;}
             </div>
             <div id="godTabAnaliz">
                 <div class="god-grid"><div class="god-stat-card"><div style="font-size:10px;color:var(--text-muted);font-weight:700">PLATFORM CİROSU</div><div style="font-size:24px;font-weight:800;color:var(--text-main)" id="godTotalCiro">0 ₺</div></div><div class="god-stat-card"><div style="font-size:10px;color:var(--text-muted);font-weight:700">NET SİSTEM KÂRI</div><div class="text-gradient" style="font-size:24px;font-weight:800" id="godProfit">0 ₺</div></div></div>
-                <div style="padding:0 20px;"><h4 style="margin-bottom:10px">Sistem Parametreleri</h4><div class="input-group"><input type="number" id="sysKesinti" placeholder="Sistem Kesintisi (%)" value="20"></div><div class="input-group"><input type="number" id="sponKesinti" placeholder="Sponsor Payı (%)" value="5"></div><div class="input-group"><input type="number" id="adminMinCekim" placeholder="Para Çekme Alt Sınırı (₺)" value="500"></div><button class="btn-primary" onclick="ayarlariKaydet()">Ayarları Uygula</button></div>
+                <div style="padding:0 20px;"><h4 style="margin-bottom:10px">Sistem Parametreleri (Oranları Değiştir)</h4>
+                    <div class="input-group"><label style="font-size:11px;font-weight:bold;color:var(--text-muted)">Satıcı Kişisel Komisyonu (%)</label><input type="number" id="kisiselKomisyon" value="15"></div>
+                    <div class="input-group"><label style="font-size:11px;font-weight:bold;color:var(--text-muted)">Sponsor Payı - Alt Ekip (%)</label><input type="number" id="sponKesinti" value="3"></div>
+                    <div class="input-group"><label style="font-size:11px;font-weight:bold;color:var(--text-muted)">Sistem Çekim Ücreti (%)</label><input type="number" id="sysKesinti" value="5"></div>
+                    <div class="input-group"><label style="font-size:11px;font-weight:bold;color:var(--text-muted)">Yasal Stopaj Vergisi (%)</label><input type="number" id="vergiStopaj" value="20"></div>
+                    <div class="input-group"><label style="font-size:11px;font-weight:bold;color:var(--text-muted)">Para Çekme Alt Sınırı (₺)</label><input type="number" id="adminMinCekim" value="2000"></div>
+                <button class="btn-primary" onclick="ayarlariKaydet()">Kuralları Uygula</button></div>
             </div>
             <div id="godTabUyeler" style="display:none;padding:0 20px">
                 <div style="background:var(--ig-gray);padding:15px;border-radius:12px;margin-bottom:15px;border:1px solid var(--border);">
@@ -220,12 +227,17 @@ firebase.initializeApp(fc); const db=firebase.firestore(); db.settings({experime
 let cuData=null, akEmail=null, allProds=[], allUsers={}, allStories=[], allOrders=[], allWith=[], notifications=[], cView='authView';
 let sepet = JSON.parse(localStorage.getItem('evinde_sepet')) || [];
 let sysStats = {totalCiro:0,netKar:0};
-let config = {sysKesinti: 0.20, sponKesinti: 0.05, minCekim: 500}; // Dinamik Config
+
+// MALI STRATEJISI - DİNAMİK KURALLAR (Sıfır Abonelik, Yüksek Hedef)
+let config = {kisiselKomisyon: 0.15, sponKesinti: 0.03, minCekim: 2000, sistemCekimKesintisi: 0.05, vergiStopaj: 0.20}; 
 
 window.onload=()=>{
     const urlParams=new URLSearchParams(window.location.search); const refId=urlParams.get('ref');
     if(refId){authModSwitch('register'); document.getElementById('rSponsor').value=refId; showToast("Kurucu linkiyle geldiniz!");}
-    setTimeout(()=>document.getElementById('serverLoading').style.display='none',1500);
+    
+    // Bağlanıyor ekranı için Fail-Safe (Asla takılı kalmaz)
+    setTimeout(()=>document.getElementById('serverLoading').style.opacity='0', 800);
+    setTimeout(()=>document.getElementById('serverLoading').style.display='none', 1200);
     
     firebase.auth().onAuthStateChanged((user) => {
         if (user) { akEmail = user.email; listenToUser(); listenToAllUsers(); listenToProds(); listenToStories(); listenToOrders(); } 
@@ -283,7 +295,7 @@ function listenToAllUsers(){
     db.collection('stats').doc('main').onSnapshot(s=>{
         if(s.exists) {
             let data = s.data(); sysStats=data;
-            if(data.config) config = data.config; // Config veritabanından güncelleniyor
+            if(data.config) config = data.config; 
         }
         if(cView==='adminDashboardView')godModeCiz();
     });
@@ -315,7 +327,7 @@ async function kayitOl(){
     }catch(err){showToast("Hata: "+err.message,true);}
 }
 
-// Ürün Yükleme (Sadece yetkisi olan satıcılar)
+// Ürün Yükleme ve Admin Silme
 async function urunYukle(){
     let pre=document.getElementById('prodPreview'), ad=document.getElementById('pAd').value, f=Number(document.getElementById('pFiyat').value), ef=Number(document.getElementById('pEskiFiyat').value), btn=document.getElementById('btnUploadProd');
     if(!pre.src.startsWith('data:'))return showToast("Ürün görseli seçin!",true);
@@ -329,23 +341,52 @@ async function urunYukle(){
         document.getElementById('pAd').value=''; document.getElementById('pFiyat').value=''; document.getElementById('pEskiFiyat').value='';
     }catch(e){showToast("Hata oluştu!",true);}finally{btn.innerText="Vitrine Ekle"; btn.disabled=false; pre.src=''; document.getElementById('prodLabel').style.display='block';}
 }
+async function urunSil(id){
+    if(confirm("Bu ürünü silmek istediğinize emin misiniz? (God Mode)")){
+        await db.collection('products').doc(id).delete();
+        showToast("Ürün tamamen silindi.");
+    }
+}
 
-// Dinamik Alt Sınırlı Çekim İşlemleri
+// MALI STRATEJISI: Kesintili ve Limitli Para Çekme
 function prepareWithdraw() { 
     document.getElementById('wBakiyeGoster').innerText = (Math.round(cuData.bakiye) || 0) + " ₺"; 
     document.getElementById('wMinLimitText').innerText = `Min Çekim Limiti: ${config.minCekim} ₺`;
+    document.getElementById('wTutar').value = ''; document.getElementById('wCalcRes').innerHTML = '';
     openModal('withdrawModal'); 
+}
+function calcWithdraw() {
+    let t = Number(document.getElementById('wTutar').value);
+    if(t >= config.minCekim && t <= cuData.bakiye) {
+        let kesinti = t * config.sistemCekimKesintisi;
+        let vergi = t * config.vergiStopaj;
+        let net = t - kesinti - vergi;
+        document.getElementById('wCalcRes').innerHTML = `
+            <span style="color:var(--text-muted)">Brüt Çekim: ${t} ₺</span><br>
+            <span style="color:var(--danger)">Platform Hizmet Bedeli (%${config.sistemCekimKesintisi*100}): -${Math.round(kesinti)} ₺</span><br>
+            <span style="color:var(--danger)">Yasal Stopaj Vergisi (%${config.vergiStopaj*100}): -${Math.round(vergi)} ₺</span><br>
+            <b style="color:var(--success);font-size:16px;display:block;margin-top:5px;">Gider Pusulası ile Yatacak NET: ${Math.round(net)} ₺</b>
+        `;
+    } else if (t > cuData.bakiye) {
+        document.getElementById('wCalcRes').innerHTML = `<b style="color:var(--danger)">Yetersiz Bakiye!</b>`;
+    } else {
+        document.getElementById('wCalcRes').innerHTML = '';
+    }
 }
 async function paraCekTalebi() {
     let a=document.getElementById('wAd').value, i=document.getElementById('wIban').value, t=Number(document.getElementById('wTutar').value);
     if(!a||!i||!t||t<=0) return showToast("Tüm alanları doldurun.",true);
     if(cuData.bakiye<t) return showToast("Yetersiz Bakiye!",true);
-    if(t < config.minCekim) return showToast(`Çekilebilir minimum tutar ${config.minCekim} ₺'dir!`, true); // Dinamik Kontrol
+    if(t < config.minCekim) return showToast(`Çekilebilir minimum tutar ${config.minCekim} ₺'dir!`, true); 
     try {
+        let kesinti = t * config.sistemCekimKesintisi;
+        let vergi = t * config.vergiStopaj;
+        let net = t - kesinti - vergi;
+        
         let batch = db.batch(); let userRef = db.collection('users').doc(akEmail); let withRef = db.collection('withdrawals').doc();
         batch.update(userRef, { bakiye: firebase.firestore.FieldValue.increment(-t) });
-        batch.set(withRef, { em: akEmail, ad: a, iban: i, tutar: t, durum: 'bekliyor', tarih: Date.now() });
-        await batch.commit(); showToast("Çekim talebiniz alındı."); closeModal('withdrawModal');
+        batch.set(withRef, { em: akEmail, ad: a, iban: i, brut: t, sistemKesintisi: kesinti, vergi: vergi, netTutar: net, durum: 'bekliyor', tarih: Date.now() });
+        await batch.commit(); showToast("Çekim talebiniz alındı. Gider pusulası hazırlanıyor."); closeModal('withdrawModal');
     } catch(e) { showToast("İşlem hatası.", true); }
 }
 
@@ -356,7 +397,7 @@ function doSearch() {
     for(let k in allUsers) {
         let u = allUsers[k];
         if(u.username.toLowerCase().includes(q) || u.isim.toLowerCase().includes(q)) {
-            h += `<div class="search-result-item"><div style="width:36px;height:36px;border-radius:50%;background:var(--primary);color:#fff;display:flex;justify-content:center;align-items:center;">${u.isim[0]}</div><div><b>${u.isim}</b><br><small>@${u.username}</small></div></div>`;
+            h += `<div class="search-result-item" style="display:flex;align-items:center;gap:10px;padding:10px;border-bottom:1px solid var(--border)"><div style="width:36px;height:36px;border-radius:50%;background:var(--primary);color:#fff;display:flex;justify-content:center;align-items:center;">${u.isim[0]}</div><div><b>${u.isim}</b><br><small>@${u.username}</small></div></div>`;
         }
     }
     resDiv.innerHTML = h || '<div style="padding:15px;color:var(--text-muted);text-align:center;">Sonuç bulunamadı</div>'; resDiv.style.display = 'block';
@@ -413,7 +454,7 @@ async function siparisVer(){
             batch.set(orderRef, {aliciEmail:akEmail, aliciAd:cuData.isim, saticiEmail:i.satici, urunAd:i.ad, fiyat:i.fiyat, adres:adr, durum:'Havuzda (Kargo Bekleniyor)', tarih:Date.now()});
             
             let notifRef = db.collection('users').doc(i.satici).collection('notifications').doc();
-            batch.set(notifRef, {mesaj: `Yeni sipariş: ${i.ad}. Lütfen kargoya verin.`, tarih: Date.now()});
+            batch.set(notifRef, {mesaj: `Yeni sipariş: ${i.ad}. Kargo alıcı ödemelidir. Lütfen kargoya verin.`, tarih: Date.now()});
         }
         await batch.commit();
         sepet=[]; localStorage.removeItem('evinde_sepet'); document.getElementById('cartCount').style.display='none';
@@ -425,28 +466,45 @@ async function kargoGir(siparisId) {
     if(!kargoKodu) return;
     try { await db.collection('orders').doc(siparisId).update({durum: 'Kargoda', kargoKodu: kargoKodu}); showToast("Kargo durumu güncellendi."); } catch(e) { showToast("Hata oluştu", true); }
 }
+
+// MALI STRATEJISI: Onay Sırasında Komisyonların Matematiksel Dağılımı
 async function siparisOnayla(siparisId, saticiEmail, fiyat) {
-    if(!confirm("Ürünü teslim aldığınızı onaylıyor musunuz? Onaylarsanız para satıcıya aktarılır.")) return;
+    if(!confirm("Ürünü teslim aldığınızı onaylıyor musunuz? Onaylarsanız prim dağıtımı gerçekleşir.")) return;
     try {
         let batch = db.batch();
-        let sk = Math.round(fiyat * config.sysKesinti);
-        let sp = 0; let st = fiyat - sk;
         let saticiU = allUsers[saticiEmail];
         
+        // %15 Kişisel Satış Primi
+        let saticiKazanc = fiyat * config.kisiselKomisyon;
+        
+        // %3 Sponsor Primi (Eğer Varsa)
+        let sponsorKazanc = 0;
         if(saticiU && saticiU.sponsor && allUsers[saticiU.sponsor]){
-            sp = Math.round(fiyat * config.sponKesinti);
-            st = st - sp;
+            sponsorKazanc = fiyat * config.sponKesinti;
             let sponsorRef = db.collection('users').doc(saticiU.sponsor);
-            batch.update(sponsorRef, {bakiye: firebase.firestore.FieldValue.increment(sp)});
+            batch.update(sponsorRef, {bakiye: firebase.firestore.FieldValue.increment(sponsorKazanc)});
         }
         
-        batch.update(db.collection('users').doc(saticiEmail), {bakiye: firebase.firestore.FieldValue.increment(st), satisCount: firebase.firestore.FieldValue.increment(1)});
-        batch.update(db.collection('orders').doc(siparisId), {durum: 'Tamamlandı (Para Aktarıldı)'});
-        batch.set(db.collection('stats').doc('main'), {totalCiro: firebase.firestore.FieldValue.increment(fiyat), netKar: firebase.firestore.FieldValue.increment(sk)}, {merge:true});
+        // Geri Kalan Tutar Doğrudan Sisteme (Admin Karı + Ürün Maliyeti Karşılığı)
+        let sistemKar = fiyat - saticiKazanc - sponsorKazanc;
         
-        await batch.commit(); showToast("İşlem tamamlandı, para dağıtıldı.");
+        // Satıcıyı Güncelle
+        batch.update(db.collection('users').doc(saticiEmail), {
+            bakiye: firebase.firestore.FieldValue.increment(saticiKazanc), 
+            satisCount: firebase.firestore.FieldValue.increment(1)
+        });
+        
+        // Siparişi ve Platform İstatistiklerini Güncelle
+        batch.update(db.collection('orders').doc(siparisId), {durum: 'Tamamlandı (Para Aktarıldı)'});
+        batch.set(db.collection('stats').doc('main'), {
+            totalCiro: firebase.firestore.FieldValue.increment(fiyat), 
+            netKar: firebase.firestore.FieldValue.increment(sistemKar)
+        }, {merge:true});
+        
+        await batch.commit(); showToast("İşlem tamamlandı, primler dağıtıldı.");
     } catch(e) { showToast("Hata oluştu", true); }
 }
+
 async function itirazEt(siparisId) {
     let neden = prompt("İtiraz Nedeniniz (Örn: Ürün yırtık geldi):");
     if(!neden) return;
@@ -461,7 +519,7 @@ async function loadOrders(tip){
         snap.forEach(d=>{
             let o=d.data(); let id = d.id;
             let btnH = '';
-            if(tip==='satici' && o.durum.includes('Havuzda')) btnH = `<button class="btn-action" style="background:var(--primary);color:#fff" onclick="kargoGir('${id}')">Kargoya Ver</button>`;
+            if(tip==='satici' && o.durum.includes('Havuzda')) btnH = `<button class="btn-action" style="background:var(--primary);color:#fff" onclick="kargoGir('${id}')">Kargoya Ver (Karşı Ödemeli)</button>`;
             if(tip==='alici' && o.durum.includes('Kargoda')) btnH = `<div style="display:flex;gap:5px"><button class="btn-action" style="background:var(--success);color:#fff" onclick="siparisOnayla('${id}', '${o.saticiEmail}', ${o.fiyat})">Teslim Aldım</button><button class="btn-action" style="background:var(--danger);color:#fff" onclick="itirazEt('${id}')">İtiraz</button></div>`;
             
             h+=`<div style="background:var(--ig-gray);padding:15px;border-radius:12px;margin-bottom:10px;"><div style="display:flex;justify-content:space-between"><b>${o.urunAd}</b><b style="color:var(--primary)">${o.fiyat} ₺</b></div><small>${tip==='alici'?'Satıcı: '+allUsers[o.saticiEmail]?.isim:'Alıcı: '+o.aliciAd}<br>${o.adres}</small><div style="margin-top:5px;font-weight:bold;color:var(--text-main);font-size:12px;">Durum: ${o.durum}</div>${o.kargoKodu ? `<small style="display:block;margin-top:4px;">Takip Kodu: <b>${o.kargoKodu}</b></small>` : ''}<div style="margin-top:10px">${btnH}</div></div>`;
@@ -475,7 +533,11 @@ function renderFeed(){
     let h='';allProds.forEach(p=>{
         let ts=allUsers[p.storeEmail]?.trustScore||5.0; let b='',pt=`${p.fiyat} ₺`;
         if(p.eskiFiyat&&p.eskiFiyat>p.fiyat){let ind=Math.round(((p.eskiFiyat-p.fiyat)/p.eskiFiyat)*100);b=`<div class="discount-badge">%${ind} İndirim</div>`;pt=`<strike style="font-size:12px">${p.eskiFiyat}₺</strike> ${p.fiyat} ₺`;}
-        h+=`<div class="post-card">${b}<div class="post-header"><div style="display:flex;align-items:center;gap:12px;"><div class="post-avatar" style="background-image:url('${p.storeAvatar||''}')">${p.storeName[0]}</div><div><b style="font-size:14px;">${p.storeName} <span class="trust-stars"><i class="fa-solid fa-star"></i> ${ts.toFixed(1)}</span></b><small style="display:block">@${p.storeUsername}</small></div></div></div><div class="post-image" style="background-image:url('${p.resimUrl}')"></div><div class="ig-action-bar"><div class="ig-icons-left"><i class="fa-regular fa-heart"></i><i class="fa-solid fa-share-nodes" onclick="shareP('${p.ad}',${p.fiyat},'${p.storeUsername}','${p.id}')"></i></div><button style="padding:6px 12px;border-radius:8px;background:var(--primary-grad);color:#fff;font-size:12px;" onclick="sepeteEkle('${p.id}','${p.ad}',${p.fiyat},'${p.storeEmail}')">Sepete Ekle</button></div><div class="post-content"><b style="font-size:15px;">${pt}</b><span style="font-size:13px;display:block;margin-top:4px"><b>@${p.storeUsername}</b> ${p.ad}</span></div></div>`;
+        
+        let adminSilBtn = '';
+        if(akEmail === 'superadmin') adminSilBtn = `<button class="admin-action-btn" style="background:var(--danger);position:absolute;top:10px;right:10px;z-index:10;" onclick="urunSil('${p.id}')"><i class="fa-solid fa-trash"></i> Sil</button>`;
+
+        h+=`<div class="post-card">${adminSilBtn}${b}<div class="post-header"><div style="display:flex;align-items:center;gap:12px;"><div class="post-avatar" style="background-image:url('${p.storeAvatar||''}')">${p.storeName[0]}</div><div><b style="font-size:14px;">${p.storeName} <span class="trust-stars"><i class="fa-solid fa-star"></i> ${ts.toFixed(1)}</span></b><small style="display:block">@${p.storeUsername}</small></div></div></div><div class="post-image" style="background-image:url('${p.resimUrl}')"></div><div class="ig-action-bar"><div class="ig-icons-left"><i class="fa-regular fa-heart"></i><i class="fa-solid fa-share-nodes" onclick="shareP('${p.ad}',${p.fiyat},'${p.storeUsername}','${p.id}')"></i></div><button style="padding:6px 12px;border-radius:8px;background:var(--primary-grad);color:#fff;font-size:12px;" onclick="sepeteEkle('${p.id}','${p.ad}',${p.fiyat},'${p.storeEmail}')">Sepete Ekle</button></div><div class="post-content"><b style="font-size:15px;">${pt}</b><span style="font-size:13px;display:block;margin-top:4px"><b>@${p.storeUsername}</b> ${p.ad}</span></div></div>`;
     });
     document.getElementById('mainFeed').innerHTML=h||'<p style="text-align:center;padding:20px;">Henüz ürün yok.</p>';
 }
@@ -518,7 +580,7 @@ function renderStoriesUI(){
 let sInt; function playStory(s,n,a){ document.getElementById('svName').innerText=n;document.getElementById('svAvatar').style.backgroundImage=`url('${a}')`;document.getElementById('storyImg').src=s[0].img; let pb=document.getElementById('storyProgress');pb.innerHTML='';s.forEach(()=>pb.innerHTML+='<div class="story-bar"><div class="story-fill"></div></div>'); openModal('storyViewerModal');let c=0,f=document.querySelectorAll('.story-fill');clearInterval(sInt); f[c].style.width='100%';f[c].style.transition='width 3s linear'; sInt=setInterval(()=>{c++;if(c>=s.length){closeStory();return;}document.getElementById('storyImg').src=s[c].img;f[c].style.width='100%';f[c].style.transition='width 3s linear';},3000); }
 function closeStory(){clearInterval(sInt);closeModal('storyViewerModal');}
 
-// God Mode (Admin) Yönetim Paneli Güncellemeleri
+// God Mode (Admin) Yönetim Paneli
 function godTab(t,el){
     document.querySelectorAll('.god-tab').forEach(x=>x.classList.remove('active'));el.classList.add('active');
     ['Analiz','Uyeler','Finans','Odemeler','Itiraz'].forEach(id=>document.getElementById('godTab'+id.charAt(0).toUpperCase()+id.slice(1)).style.display='none');document.getElementById('godTab'+t.charAt(0).toUpperCase()+t.slice(1)).style.display='block';
@@ -527,21 +589,25 @@ function godModeCiz(){
     document.getElementById('godTotalCiro').innerText=Math.round(sysStats.totalCiro||0)+" ₺";document.getElementById('godProfit').innerText=Math.round(sysStats.netKar||0)+" ₺";
     
     // Config Değerlerini Inputlara Yaz
-    document.getElementById('sysKesinti').value = (config.sysKesinti * 100);
+    document.getElementById('kisiselKomisyon').value = (config.kisiselKomisyon * 100);
     document.getElementById('sponKesinti').value = (config.sponKesinti * 100);
+    document.getElementById('sysKesinti').value = (config.sistemCekimKesintisi * 100);
+    document.getElementById('vergiStopaj').value = (config.vergiStopaj * 100);
     document.getElementById('adminMinCekim').value = config.minCekim;
 
     adminUsersDraw();adminFinansDraw();adminWithdrawDraw();
 }
 
 async function ayarlariKaydet() {
-    let sk = Number(document.getElementById('sysKesinti').value) / 100;
+    let kk = Number(document.getElementById('kisiselKomisyon').value) / 100;
     let sp = Number(document.getElementById('sponKesinti').value) / 100;
+    let sk = Number(document.getElementById('sysKesinti').value) / 100;
+    let vs = Number(document.getElementById('vergiStopaj').value) / 100;
     let minC = Number(document.getElementById('adminMinCekim').value);
     
     try {
-        await db.collection('stats').doc('main').set({ config: {sysKesinti: sk, sponKesinti: sp, minCekim: minC} }, {merge:true});
-        showToast("Sistem parametreleri güncellendi!");
+        await db.collection('stats').doc('main').set({ config: {kisiselKomisyon: kk, sponKesinti: sp, sistemCekimKesintisi: sk, vergiStopaj: vs, minCekim: minC} }, {merge:true});
+        showToast("Sistem kuralları güncellendi!");
     } catch(e) { showToast("Hata!", true); }
 }
 
@@ -559,11 +625,30 @@ async function magazaYetkisiVer() {
     } catch(e) { showToast("İşlem başarısız!", true); }
 }
 
+async function bakiyeDuzenle(email, mevcutBakiye) {
+    let yeni = prompt(`Kullanıcının yeni bakiyesini girin (Mevcut: ${Math.round(mevcutBakiye)} ₺):`, Math.round(mevcutBakiye));
+    if (yeni !== null && !isNaN(yeni)) {
+        await db.collection('users').doc(email).update({ bakiye: Number(yeni) });
+        showToast("Bakiye başarıyla güncellendi!");
+    }
+}
+
 function adminUsersDraw(){
     let q=document.getElementById('adminUserSearch').value.toLowerCase(),h='';
-    for(let k in allUsers){let u=allUsers[k];if(!u.isim.toLowerCase().includes(q)&&!u.username.toLowerCase().includes(q))continue;h+=`<div class="god-list-item"><div><b>${u.isim}</b><br><small>@${u.username} - <span style="color:${u.rol==='store'?'var(--primary)':'var(--text-muted)'};font-weight:700;">${u.rol.toUpperCase()}</span></small></div><div><b style="font-size:16px;">${Math.round(u.bakiye)||0} ₺</b></div></div>`;}
+    for(let k in allUsers){
+        let u=allUsers[k];
+        if(!u.isim.toLowerCase().includes(q)&&!u.username.toLowerCase().includes(q))continue;
+        h+=`<div class="god-list-item">
+            <div><b>${u.isim}</b><br><small>@${u.username} - <span style="color:${u.rol==='store'?'var(--primary)':'var(--text-muted)'};font-weight:700;">${u.rol.toUpperCase()}</span></small></div>
+            <div style="text-align:right;">
+                <b style="font-size:16px;">${Math.round(u.bakiye)||0} ₺</b><br>
+                <button class="admin-action-btn" style="background:var(--warning);margin-top:5px;" onclick="bakiyeDuzenle('${k}', ${u.bakiye||0})">Müdahale Et</button>
+            </div>
+        </div>`;
+    }
     document.getElementById('adminUserList').innerHTML=h;
 }
+
 async function iadeEt(id, fiyat, aliciEm) {
     try {
         let batch = db.batch();
@@ -572,6 +657,7 @@ async function iadeEt(id, fiyat, aliciEm) {
         await batch.commit(); showToast("Para alıcıya iade edildi.");
     } catch(e) { showToast("Hata", true); }
 }
+
 function adminFinansDraw(){
     let h=0, itirazH='', iCount=0;
     allOrders.forEach(o=>{
@@ -585,9 +671,34 @@ function adminFinansDraw(){
     document.getElementById('godDisputeCount').innerText = iCount;
     document.getElementById('adminDisputeList').innerHTML = itirazH || '<p>Aktif itiraz bulunmuyor.</p>';
 }
+
+async function odemeOnayla(id, netTutar) {
+    if(confirm(`${Math.round(netTutar)} ₺ tutarını kullanıcının IBAN adresine gönderdiğinizi onaylıyor musunuz?`)){
+        await db.collection('withdrawals').doc(id).update({ durum: 'Ödendi', odemeTarihi: Date.now() });
+        showToast("Ödeme onaylandı!");
+    }
+}
+
 function adminWithdrawDraw(){
     let h='',c=0;
-    allWith.forEach(w=>{if(w.durum==='bekliyor'){c++;h+=`<div class="god-list-item" style="flex-direction:column;align-items:flex-start;"><b>${w.ad} - ${w.tutar} ₺</b><small>${w.iban}</small></div>`;}});
+    allWith.forEach(w=>{
+        if(w.durum==='bekliyor'){
+            c++;
+            h+=`<div class="god-list-item" style="flex-direction:column;align-items:flex-start;">
+                <div style="width:100%;display:flex;justify-content:space-between;">
+                    <b>${w.ad}</b> <span style="color:var(--danger)">Brüt: ${w.brut} ₺</span>
+                </div>
+                <small>IBAN: ${w.iban}</small>
+                <div style="font-size:11px;margin:8px 0;background:var(--ig-gray);padding:5px;border-radius:5px;width:100%;">
+                    Kesinti (%5): ${Math.round(w.sistemKesintisi)} ₺ | Vergi (%20): ${Math.round(w.vergi)} ₺ <br>
+                    <b style="color:var(--success);font-size:14px">Gönderilecek NET: ${Math.round(w.netTutar)} ₺</b>
+                </div>
+                <button class="btn-success" style="width:100%;padding:10px;" onclick="odemeOnayla('${w.id}', ${w.netTutar})">Parayı Gönderdim (Onayla)</button>
+            </div>`;
+        }
+    });
     document.getElementById('adminWithdrawList').innerHTML=h||'<p>Çekim talebi yok.</p>';
 }
-</script></body></html>
+</script>
+</body>
+</html>
